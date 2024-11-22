@@ -116,6 +116,8 @@
       <file>$PROJ_DIR$\Output\Obj\main.pbi</file>
       <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\Include\CMSIS\arm_math.h</file>
+      <file>$PROJ_DIR$\Output\Obj\main.__cstat.et</file>
+      <file>$PROJ_DIR$\Output\List\main.lst</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\Exp04_6_key_interrupt(2).c</name>
@@ -384,7 +386,7 @@
       <inputs>
         <tool>
           <name>ILINK</name>
-          <file> 19 95 105 17 104 60 91 73</file>
+          <file> 19 106 105 17 104 60 91 73</file>
         </tool>
       </inputs>
     </file>
@@ -514,20 +516,24 @@
         </tool>
         <tool>
           <name>ICCARM</name>
-          <file> 106</file>
+          <file> 111 106</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 110</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 6 109 10 4 18 92 41 61 22 89 62 93 87 77 86 29 15 28 1 12 13 50 43 21 40 30</file>
+          <file> 6 77 109 4 18 92 61 22 89 62 93 87 41 10 86 29 15 28 1 12 13 50 43 21 40 30</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89 92 87 109 29 40 30</file>
         </tool>
       </inputs>
     </file>
-    <forcedrebuild>
-      <name>[MULTI_TOOL]</name>
-      <tool>ILINK</tool>
-    </forcedrebuild>
   </configuration>
 </project>
 

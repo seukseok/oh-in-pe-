@@ -2,6 +2,7 @@
 #include "OK-STM767.h"
 #include "OK-STM767_SD_card.h"
 #include "OK-STM767_VS1053b.h"
+#include "arm_math.h"
 
 void TFT_filename(void);                          // Display MP3 file name, number, size
 void TFT_volume(void);                            // Display volume
@@ -61,7 +62,7 @@ int main(void) {
   VS1053b_SetBassTreble(bass, treble);
 
   TFT_clear_screen();                           // Display basic screen
-  TFT_string(0, 0, White, Magenta, "  OK-STM767 키트를 이용한 MP3 플레이어  ");
+  TFT_string(0, 0, White, Magenta, "  OH-IN-PE-  ");
   TFT_string(0, 3, Cyan, Black, "----------------------------------------");
   TFT_string(0, 5, Magenta, Black, ">>");
   TFT_string(0, 7, Cyan, Black, "----------------------------------------");
@@ -216,81 +217,70 @@ int main(void) {
 		       }
 		     break;
 
+      // key3 입력 시 각 기능의 값 증가, 최대값에 도달하면 최소값으로 돌아감
       case KEY3:
-        if (func_mode == 0) {            // Select next music
-          if (file_number != (total_file - 1))
-			   file_number++;
-			 else
-			   file_number = 0;
+          if (func_mode == 0) {            // 다음 음악 선택
+              if (file_number != (total_file - 1))
+                  file_number++;
+              else
+                  file_number = 0;
 
-			 VS1053b_software_reset();
-			 TFT_filename();
-			 Check_valid_increment_file();
+              VS1053b_software_reset();
+              TFT_filename();
+              Check_valid_increment_file();
 
-			 MP3_start_sector[file_number] = MP3_start_backup[file_number];
-			 MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
-			 index = 512;
-          VS1053b_software_reset();
-        } else if (func_mode == 1) {     // Set volume for increment
-          if (volume < 250) {
-            volume++;
-    		             VS1053b_SetVolume(volume);
-			     TFT_volume();
-			   }
-        } else if (func_mode == 2) {     // Set bass for increment
-          if (bass < 15) {
-            bass++;
-    		             VS1053b_SetBassTreble(bass, treble);
-			     TFT_bass();
-			   }
-        } else {                         // Set treble for increment
-          if (treble < +7) {
-            treble++;
-    		             VS1053b_SetBassTreble(bass, treble);
-			     TFT_treble();
-			   }
-		       }
-		     break;
+              MP3_start_sector[file_number] = MP3_start_backup[file_number];
+              MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
+              index = 512;
+              VS1053b_software_reset();
+          } else if (func_mode == 1) {     // 볼륨 증가
+              volume++;
+              if (volume > 250) {
+                  volume = 5;  // 최소값으로 돌아감
+              }
+              VS1053b_SetVolume(volume);
+              TFT_volume();
+          } else if (func_mode == 2) {     // 베이스 증가
+              bass++;
+              if (bass > 15) {
+                  bass = 0;  // 최소값으로 돌아감
+              }
+              VS1053b_SetBassTreble(bass, treble);
+              TFT_bass();
+          } else {                         // 트레블 증가
+              treble++;
+              if (treble > 7) {
+                  treble = -8;  // 최소값으로 돌아감
+              }
+              VS1053b_SetBassTreble(bass, treble);
+              TFT_treble();
+          }
+          break;
 
+      // key4에 대한 기존 처리는 제거되었습니다.
       case KEY4:
-        if (func_mode == 0) {            // Select previous music
-          if (file_number != 0)
-			   file_number--;
-			 else
-			   file_number = total_file - 1;
+          if (func_mode == 0) {            // 이전 음악 선택
+              if (file_number != 0)
+                  file_number--;
+              else
+                  file_number = total_file - 1;
 
-			 TFT_filename();
-			 Check_valid_decrement_file();
+              TFT_filename();
+              Check_valid_decrement_file();
 
-			 MP3_start_sector[file_number] = MP3_start_backup[file_number];
-			 MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
-			 index = 512;
-          VS1053b_software_reset();
-        } else if (func_mode == 1) {     // Set volume for decrement
-          if (volume > 5) {
-            volume--;
-    		             VS1053b_SetVolume(volume);
-			     TFT_volume();
-			   }
-        } else if (func_mode == 2) {     // Set bass for decrement
-          if (bass != 0) {
-            bass--;
-    		             VS1053b_SetBassTreble(bass, treble);
-			     TFT_bass();
-			   }
-        } else {                         // Set treble for decrement
-          if (treble > -8) {
-            treble--;
-    		             VS1053b_SetBassTreble(bass, treble);
-			     TFT_treble();
-			   }
-		       }
-		     break;
+              MP3_start_sector[file_number] = MP3_start_backup[file_number];
+              MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
+              index = 512;
+              VS1053b_software_reset();
+          } else {
+              // key4에 대한 다른 기능을 위해 기존 처리를 제거하였습니다.
+          }
+          break;
 
       default:
         break;
-	}
-    }
+	  }
+  }
 }
 
 /* User-defined functions */
@@ -515,3 +505,66 @@ unsigned char Icon_input(void) {
 
   return keyPressed;
 }
+
+// void Analyze_Audio_Display_Graph(void) {
+//   #define FFT_SIZE 1024
+
+//   /* FFT input and output buffers */
+//   float32_t inputSignal[FFT_SIZE];
+//   float32_t fftOutput[FFT_SIZE];
+//   arm_rfft_fast_instance_f32 S;
+
+//   /* Initialize FFT instance */
+//   arm_rfft_fast_init_f32(&S, FFT_SIZE);
+
+//   /* Read audio samples */
+//   for (uint16_t i = 0; i < FFT_SIZE; i++) {
+//     inputSignal[i] = Get_Audio_Sample();
+//   }
+
+//   /* Perform FFT */
+//   arm_rfft_fast_f32(&S, inputSignal, fftOutput, 0);
+
+//   /* Compute magnitude */
+//   float32_t fftMagnitude[FFT_SIZE / 2];
+//   for (uint16_t i = 0; i < FFT_SIZE / 2; i++) {
+//     fftMagnitude[i] = sqrtf(fftOutput[2 * i] * fftOutput[2 * i] + fftOutput[2 * i + 1] * fftOutput[2 * i + 1]);
+//   }
+
+//   /* Display FFT result on TFT-LCD */
+//   Display_FFT_Graph(fftMagnitude, FFT_SIZE / 2);
+// }
+
+// float32_t Get_Audio_Sample(void) {
+//   /* Replace with actual audio sample retrieval code */
+//   return 0.0f;
+// }
+
+// void Display_FFT_Graph(float32_t *data, uint16_t length) {
+//   uint16_t maxHeight = 100;  // Adjust based on display resolution
+//   float32_t maxValue = 0.0f;
+
+//   /* Find maximum value for scaling */
+//   for (uint16_t i = 0; i < length; i++) {
+//     if (data[i] > maxValue) {
+//       maxValue = data[i];
+//     }
+//   }
+
+//   /* Avoid division by zero */
+//   if (maxValue == 0.0f) {
+//     maxValue = 1.0f;
+//   }
+
+//   /* Draw FFT graph */
+//   for (uint16_t i = 0; i < length; i++) {
+//     uint16_t x = i * (320 / length);  // Adjust for display width
+//     uint16_t barHeight = (uint16_t)((data[i] / maxValue) * maxHeight);
+//     Draw_Bar(x, maxHeight - barHeight, barHeight);
+//   }
+// }
+
+// void Draw_Bar(uint16_t x, uint16_t y, uint16_t height) {
+//   /* Replace with actual drawing code */
+//   /* Example: Draw a vertical line from (x, y) with the specified height */
+// }
