@@ -3,6 +3,8 @@
 #include "OK-STM767_SD_card.h"
 #include "OK-STM767_VS1053b.h"
 #include "arm_math.h"
+#include <stdio.h>
+#include <string.h>
 
 // FFT 관련 상수 수정
 #define FFT_SIZE 256  // FFT 크기 축소하여 처리 부하 감소
@@ -43,7 +45,7 @@ void Check_valid_decrement_file(void);            // Check if valid file for dec
 void TFT_MP3_bitrate(U16 highbyte, U16 lowbyte);  // Display MP3 file bitrate
 
 void FFT_Init(void);                              // FFT 초기화
-void Process_FFT(void);                           // FFT 처리
+void Process_FFT(uint8_t* audioData);             // FFT 처리
 void Draw_Spectrum(float32_t* data, uint16_t size, uint16_t color);// FFT 결과 그래픽 출력
 void PushAudioData(uint8_t* data, uint16_t len);  // 오디오 데이터 버퍼에 저장
 unsigned char Icon_input(void);                   // Input touch screen icon
@@ -353,6 +355,8 @@ int main(void) {
                   // FFT 화면으로 전환
                   Init_FFT_Screen();
                   FFT_Init();  // FFT 초기화
+                  // FFT 모드 진입 시 초기화
+                  memset(FFT_Mag, 0, sizeof(FFT_Mag));
               } else {
                   // 일반 화면으로 복귀
                   Display_Normal_Screen();
@@ -369,10 +373,7 @@ int main(void) {
     if (play_flag == 1 && fft_display_mode) {
         if (fft_update_flag) {
             fft_update_flag = 0;
-            
-            // FFT 처리 및 표시
-            PushAudioData(MP3buffer, 512);
-            Process_FFT();
+            Process_FFT(MP3buffer);
             
             switch(func_mode) {
                 case 1:  // 전체 스펙트럼
@@ -630,68 +631,72 @@ void PushAudioData(uint8_t* data, uint16_t len) {
 }
 
 // FFT 처리 함수 개선
-void Process_FFT(void) {
-    static float32_t fftInBuffer[FFT_SIZE];
-    
-    // 오디오 버퍼에서 데이터 복사
+void Process_FFT(uint8_t* audioData) {
+    // 윈도우 함수 적용
     for(int i = 0; i < FFT_SIZE; i++) {
-        if(audioBuffer.readIdx != audioBuffer.writeIdx || audioBuffer.isFull) {
-            fftInBuffer[i] = audioBuffer.buffer[audioBuffer.readIdx];
-            audioBuffer.readIdx = (audioBuffer.readIdx + 1) % 512;
-            audioBuffer.isFull = 0;
-        }
+        // Hanning 윈도우
+        float32_t window = 0.5f * (1.0f - cosf(2.0f * PI * i / (FFT_SIZE - 1)));
+        FFT_Input[i] = ((float32_t)audioData[i % 512] - 128.0f) / 128.0f * window;
     }
 
-    // FFT 처리
-    arm_rfft_fast_f32(&S, fftInBuffer, FFT_Output, 0);
-    arm_cmplx_mag_f32(FFT_Output, FFT_Mag, FFT_SIZE/2);
+    // FFT 실행
+    arm_rfft_fast_f32(&S, FFT_Input, FFT_Output, 0);
 
-    // 주파수 빈 평균화 (노이즈 감소)
-    for(int i = 1; i < FFT_SIZE/2-1; i++) {
-        FFT_Mag[i] = (FFT_Mag[i-1] + FFT_Mag[i] + FFT_Mag[i+1]) / 3.0f;
+    // 진폭 스펙트럼 계산
+    for(int i = 0; i < FFT_SIZE/2; i++) {
+        float32_t real = FFT_Output[2*i];
+        float32_t imag = FFT_Output[2*i + 1];
+        FFT_Mag[i] = sqrtf(real*real + imag*imag);
     }
 }
 
-// Draw_Spectrum 함수 수정
+// Draw_Spectrum 함수 개선
 void Draw_Spectrum(float32_t* data, uint16_t size, uint16_t color) {
     static uint32_t lastDrawTime = 0;
-    const uint32_t DRAW_INTERVAL = 50;
-    
     uint32_t currentTime = GetTick();
-    if(currentTime - lastDrawTime < DRAW_INTERVAL) {
-        return;
-    }
+    
+    if(currentTime - lastDrawTime < 50) return;  // 20fps로 제한
     lastDrawTime = currentTime;
 
-    // FFT 표시 영역 클리어
-    Rectangle(0, FFT_DISPLAY_Y_START, 
-             FFT_DISPLAY_WIDTH, 
-             FFT_DISPLAY_Y_START + FFT_DISPLAY_HEIGHT, 
-             Black);
-
-    float32_t maxVal = 0.0f;
-    uint16_t barWidth = FFT_DISPLAY_WIDTH / size;
+    // 그래프 영역 정의
+    const uint16_t GRAPH_X = 30;
+    const uint16_t GRAPH_Y = 40;
+    const uint16_t GRAPH_WIDTH = 280;
+    const uint16_t GRAPH_HEIGHT = 180;
     
-    // 최대값 찾기
+    // 이전 그래프 지우기
+    Rectangle(GRAPH_X, GRAPH_Y, GRAPH_X + GRAPH_WIDTH, GRAPH_Y + GRAPH_HEIGHT, Black);
+    
+    // 데이터 정규화 및 로그 스케일 변환
+    float32_t maxVal = 0.0f;
     for(int i = 0; i < size; i++) {
+        // 로그 스케일 변환
+        data[i] = 20 * log10f(data[i] + 1e-6f);
         if(data[i] > maxVal) maxVal = data[i];
     }
     
-    maxVal = maxVal > 0 ? maxVal : 1.0f;
-    
-    // 스펙트럼 그리기
+    // 막대 그래프 그리기
+    uint16_t barWidth = GRAPH_WIDTH / size;
     for(int i = 0; i < size; i++) {
-        uint16_t barHeight = (uint16_t)((data[i] * FFT_DISPLAY_HEIGHT) / maxVal);
-        if(barHeight > FFT_DISPLAY_HEIGHT) {
-            barHeight = FFT_DISPLAY_HEIGHT;
-        }
+        float32_t normalizedHeight = data[i] / maxVal;
+        if(normalizedHeight < 0.0f) normalizedHeight = 0.0f;
+        if(normalizedHeight > 1.0f) normalizedHeight = 1.0f;
         
-        // 막대 그래프 그리기
-        Rectangle(i * barWidth, 
-                 FFT_DISPLAY_Y_START + FFT_DISPLAY_HEIGHT - barHeight,
-                 (i + 1) * barWidth - 1,
-                 FFT_DISPLAY_Y_START + FFT_DISPLAY_HEIGHT,
+        uint16_t barHeight = (uint16_t)(normalizedHeight * GRAPH_HEIGHT);
+        
+        // 막대 그리기
+        Rectangle(GRAPH_X + i * barWidth,
+                 GRAPH_Y + GRAPH_HEIGHT - barHeight,
+                 GRAPH_X + (i + 1) * barWidth - 1,
+                 GRAPH_Y + GRAPH_HEIGHT,
                  color);
+                 
+        // 피크 표시
+        Line(GRAPH_X + i * barWidth,
+             GRAPH_Y + GRAPH_HEIGHT - barHeight,
+             GRAPH_X + (i + 1) * barWidth - 1,
+             GRAPH_Y + GRAPH_HEIGHT - barHeight,
+             White);
     }
 }
 
@@ -720,33 +725,34 @@ void Display_Normal_Screen(void) {
     TFT_treble();
 }
 
-// FFT 화면 초기화 함수 수정
+// FFT 화면 초기화 함수 개선
 void Init_FFT_Screen(void) {
     TFT_clear_screen();
     
-    // 상단 타이틀
+    // 제목 표시
     TFT_string(0, 0, White, Magenta, "  FFT Analyzer  ");
     TFT_string(0, 2, Cyan, Black, "----------------------------------------");
     
-    // FFT 모드 표시
-    switch(func_mode) {
-        case 1:
-            TFT_string(0, 4, Yellow, Black, "Mode: Full Spectrum Analysis");
-            break;
-        case 2:
-            TFT_string(0, 4, Blue, Black, "Mode: Low Frequency Analysis");
-            break;
-        case 3:
-            TFT_string(0, 4, Red, Black, "Mode: High Frequency Analysis");
-            break;
+    // 축 눈금 표시 (Y축)
+    for(int i = 0; i < 5; i++) {
+        char num[4];
+        sprintf(num, "%3d", i * 25);
+        TFT_string(0, 4 + i * 4, White, Black, num);
     }
     
-    // FFT 표시 영역 초기화
-    Rectangle(0, FFT_DISPLAY_Y_START, 
-             FFT_DISPLAY_WIDTH, 
-             FFT_DISPLAY_Y_START + FFT_DISPLAY_HEIGHT, 
-             Black);
-
-    // 하단 안내 메시지
-    TFT_string(0, 27, White, Black, "Press KEY4 to return to normal mode");
+    // X축 눈금 표시 (주파수)
+    for(int i = 0; i < 6; i++) {
+        char freq[8];
+        sprintf(freq, "%dkHz", i * 2);
+        TFT_string(5 + i * 6, 23, White, Black, freq);
+    }
+    
+    // 그래프 영역 테두리
+    Rectangle(30, 40, 310, 220, White);
+    
+    // 격자 그리기
+    for(int i = 1; i < 10; i++) {
+        Line(30, 40 + i * 18, 310, 40 + i * 18, DarkGrey);  // 수평선
+        Line(30 + i * 28, 40, 30 + i * 28, 220, DarkGrey);  // 수직선
+    }
 }
