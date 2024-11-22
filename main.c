@@ -120,7 +120,7 @@ int main(void) {
 
 		  MP3_start_sector[file_number] = MP3_start_backup[file_number];
 		  MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
-          VS1053b_software_reset();  // VS1053b software reset to change music file
+      VS1053b_software_reset();  // VS1053b software reset to change music file
 		}
 	      index = 0;
               SD_read_sector(MP3_start_sector[file_number]++, MP3buffer);
@@ -136,7 +136,7 @@ int main(void) {
     loop++;                                  // Display MP3 file bitrate or play percentage
     if ((extension == 0x004D5033) && (loop == 250) && (play_flag == 1)) {
       HDAT1 = VS1053b_SCI_Read(0x09);
-	  HDAT0 = VS1053b_SCI_Read(0x08);
+	    HDAT0 = VS1053b_SCI_Read(0x08);
 
       if ((HDAT1 & 0xFFE0) == 0xFFE0)
         if (((HDAT1 & 0x0006) != 0x0000) && ((HDAT0 & 0x0C00) != 0x0C00))
@@ -151,9 +151,9 @@ int main(void) {
       TFT_xy(21, 13);
       TFT_unsigned_decimal(time % 60, 1, 2);
 
-    playPercentage = MP3_end_sector - MP3_start_sector[file_number];
+      playPercentage = MP3_end_sector - MP3_start_sector[file_number];
       playPercentage = (unsigned int)((float)playPercentage / (float)(file_size[file_number] >> 9) * 100.);
-    playPercentage = 100 - playPercentage;
+      playPercentage = 100 - playPercentage;
 
       TFT_xy(24, 13);                      // Display play percentage
       TFT_color(Yellow, Black);
@@ -163,13 +163,13 @@ int main(void) {
         TFT_unsigned_decimal(playPercentage, 0, 2);
       else
         TFT_unsigned_decimal(playPercentage, 0, 1);
-      TFT_color(Cyan, Black);
-          TFT_English('%');
-	  TFT_English(')');
-          TFT_English(' ');
-          TFT_English(' ');
+        TFT_color(Cyan, Black);
+        TFT_English('%');
+	      TFT_English(')');
+        TFT_English(' ');
+        TFT_English(' ');
 
-	  stereo = VS1053b_SCI_Read(0x05);
+	    stereo = VS1053b_SCI_Read(0x05);
       TFT_xy(27, 11);                      // Sampling rate
   	  TFT_color(Yellow, Black);
       TFT_unsigned_decimal(stereo >> 1, 0, 5);
@@ -257,7 +257,7 @@ int main(void) {
           }
           break;
 
-      // key4에 대한 기존 처리는 제거되었습니다.
+      // key4 입력 시 처리 추가
       case KEY4:
           if (func_mode == 0) {            // 이전 음악 선택
               if (file_number != 0)
@@ -272,8 +272,9 @@ int main(void) {
               MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
               index = 512;
               VS1053b_software_reset();
-          } else {
-              // key4에 대한 다른 기능을 위해 기존 처리를 제거하였습니다.
+          } else if (func_mode >= 1 && func_mode <= 3) {
+              // 현재 재생 중인 오디오 데이터를 FFT로 분석하고 그래프로 표시
+              Analyze_Audio_Display_Graph(func_mode);
           }
           break;
 
@@ -506,65 +507,75 @@ unsigned char Icon_input(void) {
   return keyPressed;
 }
 
-// void Analyze_Audio_Display_Graph(void) {
-//   #define FFT_SIZE 1024
+// void Analyze_Audio_Display_Graph(unsigned char mode) {
+//     #define FFT_SIZE 1024
 
-//   /* FFT input and output buffers */
-//   float32_t inputSignal[FFT_SIZE];
-//   float32_t fftOutput[FFT_SIZE];
-//   arm_rfft_fast_instance_f32 S;
+//     /* FFT 입력 및 출력 버퍼 */
+//     float32_t inputSignal[FFT_SIZE];
+//     float32_t fftOutput[FFT_SIZE];
+//     arm_rfft_fast_instance_f32 S;
 
-//   /* Initialize FFT instance */
-//   arm_rfft_fast_init_f32(&S, FFT_SIZE);
+//     /* FFT 인스턴스 초기화 */
+//     arm_rfft_fast_init_f32(&S, FFT_SIZE);
 
-//   /* Read audio samples */
-//   for (uint16_t i = 0; i < FFT_SIZE; i++) {
-//     inputSignal[i] = Get_Audio_Sample();
-//   }
+//     /* 오디오 샘플 읽기 */
+//     for (uint16_t i = 0; i < FFT_SIZE; i++) {
+//         inputSignal[i] = Get_Audio_Sample();
+//     }
 
-//   /* Perform FFT */
-//   arm_rfft_fast_f32(&S, inputSignal, fftOutput, 0);
+//     /* FFT 수행 */
+//     arm_rfft_fast_f32(&S, inputSignal, fftOutput, 0);
 
-//   /* Compute magnitude */
-//   float32_t fftMagnitude[FFT_SIZE / 2];
-//   for (uint16_t i = 0; i < FFT_SIZE / 2; i++) {
-//     fftMagnitude[i] = sqrtf(fftOutput[2 * i] * fftOutput[2 * i] + fftOutput[2 * i + 1] * fftOutput[2 * i + 1]);
-//   }
+//     /* 크기 계산 */
+//     float32_t fftMagnitude[FFT_SIZE / 2];
+//     for (uint16_t i = 0; i < FFT_SIZE / 2; i++) {
+//         fftMagnitude[i] = sqrtf(fftOutput[2 * i] * fftOutput[2 * i] + fftOutput[2 * i + 1] * fftOutput[2 * i + 1]);
+//     }
 
-//   /* Display FFT result on TFT-LCD */
-//   Display_FFT_Graph(fftMagnitude, FFT_SIZE / 2);
+//     /* 모드에 따른 그래프 표시 */
+//     if (mode == 1) {
+//         // 전체 주파수 스펙트럼 그래프 표시
+//         Display_FFT_Graph(fftMagnitude, FFT_SIZE / 2);
+//     } else if (mode == 2) {
+//         // 저주파 대역 강조 그래프 표시
+//         Display_FFT_Graph(fftMagnitude, FFT_SIZE / 4);
+//     } else if (mode == 3) {
+//         // 고주파 대역 강조 그래프 표시
+//         Display_FFT_Graph(&fftMagnitude[FFT_SIZE / 4], FFT_SIZE / 4);
+//     }
 // }
 
 // float32_t Get_Audio_Sample(void) {
-//   /* Replace with actual audio sample retrieval code */
-//   return 0.0f;
+//     ADC1->CR2 |= 0x40000000; // ADC 변환 시작
+//     while (!(ADC1->SR & 0x00000002)); // 변환 완료 대기
+//     return ((float)ADC1->DR - 2048.0f) / 2048.0f; // ADC 값 정규화
 // }
 
 // void Display_FFT_Graph(float32_t *data, uint16_t length) {
-//   uint16_t maxHeight = 100;  // Adjust based on display resolution
-//   float32_t maxValue = 0.0f;
+//     uint16_t maxHeight = 100;  // 디스플레이 해상도에 맞게 조정
+//     float32_t maxValue = 0.0f;
 
-//   /* Find maximum value for scaling */
-//   for (uint16_t i = 0; i < length; i++) {
-//     if (data[i] > maxValue) {
-//       maxValue = data[i];
+//     /* 최대값 찾기 */
+//     for (uint16_t i = 0; i < length; i++) {
+//         if (data[i] > maxValue) {
+//             maxValue = data[i];
+//         }
 //     }
-//   }
 
-//   /* Avoid division by zero */
-//   if (maxValue == 0.0f) {
-//     maxValue = 1.0f;
-//   }
+//     /* 최대값이 0일 경우 대비 */
+//     if (maxValue == 0.0f) {
+//         maxValue = 1.0f;
+//     }
 
-//   /* Draw FFT graph */
-//   for (uint16_t i = 0; i < length; i++) {
-//     uint16_t x = i * (320 / length);  // Adjust for display width
-//     uint16_t barHeight = (uint16_t)((data[i] / maxValue) * maxHeight);
-//     Draw_Bar(x, maxHeight - barHeight, barHeight);
-//   }
+//     /* FFT 결과를 그래프로 표시 */
+//     for (uint16_t i = 0; i < length; i++) {
+//         uint16_t x = i * (320 / length);  // 디스플레이 폭에 맞게 조정
+//         uint16_t barHeight = (uint16_t)((data[i] / maxValue) * maxHeight);
+//         Draw_Bar(x, maxHeight - barHeight, barHeight);
+//     }
 // }
 
 // void Draw_Bar(uint16_t x, uint16_t y, uint16_t height) {
-//   /* Replace with actual drawing code */
-//   /* Example: Draw a vertical line from (x, y) with the specified height */
+//     /* 실제 그래프를 그리는 코드로 대체해야 합니다 */
+//     /* 예: 시작 좌표 (x, y)에서 높이만큼의 세로 막대를 그림 */
 // }
