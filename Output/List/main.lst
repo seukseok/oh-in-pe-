@@ -1,0 +1,631 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.80.4.12462/W32 for ARM       22/Nov/2024  19:16:37
+# Copyright 1999-2017 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  C:\IAR Systems\oh-in-pe-\main.c
+#    Command line =  
+#        "C:\IAR Systems\oh-in-pe-\main.c" -lC "C:\IAR
+#        Systems\oh-in-pe-\Output\List" -o "C:\IAR
+#        Systems\oh-in-pe-\Output\Obj" --debug --endian=little --cpu=Cortex-M7
+#        -e --fpu=VFPv5_d16 --dlib_config "C:\Program Files (x86)\IAR
+#        Systems\Embedded Workbench 7.5_2\arm\INC\c\DLib_Config_Full.h" -I
+#        "C:\IAR Systems\oh-in-pe-\" -I "C:\IAR Systems\oh-in-pe-\Include\" -I
+#        "C:\IAR Systems\oh-in-pe-\Include\CMSIS\" -I "C:\IAR
+#        Systems\oh-in-pe-\Include\STM32F7xx_HAL_Driver\Inc\" -I "C:\IAR
+#        Systems\oh-in-pe-\Include\STM32F7xx_HAL_Driver\Src\" -Ohz
+#        --use_c++_inline -I "C:\Program Files (x86)\IAR Systems\Embedded
+#        Workbench 7.5_2\arm\CMSIS\Include\" -D ARM_MATH_CM7
+#    Locale       =  Korean_Korea.949
+#    List file    =  C:\IAR Systems\oh-in-pe-\Output\List\main.lst
+#    Object file  =  C:\IAR Systems\oh-in-pe-\Output\Obj\main.o
+#
+###############################################################################
+
+C:\IAR Systems\oh-in-pe-\main.c
+      1          #include "stm32f767xx.h"
+      2          #include "OK-STM767.h"
+      3          #include "OK-STM767_SD_card.h"
+      4          #include "OK-STM767_VS1053b.h"
+      5          #include <arm_math.h> // FFT 라이브러리 포함
+      6          #define FFT_SIZE 256
+      7          
+      8          // FFT 관련 버퍼
+      9          float32_t ADC_buffer[FFT_SIZE];
+     10          float32_t FFT_input[FFT_SIZE * 2];
+     11          float32_t FFT_output[FFT_SIZE / 2];
+     12          float32_t max_value;
+     13          uint32_t max_index;
+     14          
+     15          void TFT_filename(void);			// display MP3 file name, number, size
+     16          void TFT_volume(void);				// display volume
+     17          void TFT_bass(void);				// display bass
+     18          void TFT_treble(void);				// display treble
+     19          void Check_valid_increment_file(void);		// check if valid file for increment
+     20          void Check_valid_decrement_file(void);		// check if valid file for decrement
+     21          void TFT_MP3_bitrate(U16 highbyte,U16 lowbyte);	// display MP3 file bitrate
+     22          unsigned char Icon_input(void);			// input touch screen icon
+     23          
+     24          unsigned char total_file;			// total file number
+     25          unsigned char file_number = 0;			// current file number
+     26          
+     27          /* ----- 메인 프로그램 -------------------------------------------------------- */
+     28          
+     29          int main(void)
+     30          {
+     31            unsigned char  i, key;
+     32            unsigned char  func_mode = 0;			// function key mode
+     33            unsigned char  play_flag = 0;			// play or stop flag
+     34            unsigned short index = 512;			// byte index in a sector
+     35            unsigned short loop = 0;			// MP3 play loop counter
+     36            unsigned int   percentage;			// play percentage
+     37          
+     38            unsigned int   MP3_start_sector[MAX_FILE];	// MP3 file start sector
+     39            unsigned int   MP3_start_backup[MAX_FILE];
+     40            unsigned char  MP3buffer[512];   		// MP3 data from SD card
+     41            unsigned int   MP3_end_sector;		// MP3 file end sector
+     42          
+     43            unsigned short time, stereo;			// decode time and mono/stereo
+     44            unsigned short HDAT1, HDAT0;			// MP3 file frame header information data
+     45          
+     46            Initialize_MCU();				// initialize MCU and kit
+     47            Initialize_ADC();        // initialize ADC
+                   ^
+Warning[Pe223]: function "Initialize_ADC" declared implicitly
+     48            arm_cfft_init_f32(&S, FFT_SIZE); // FFT 초기화
+                   ^
+Warning[Pe223]: function "arm_cfft_init_f32" declared implicitly
+
+    arm_cfft_init_f32(&S, FFT_SIZE); // FFT 초기화
+                       ^
+"C:\IAR Systems\oh-in-pe-\main.c",48  Error[Pe020]: identifier "S" is undefined
+     49            Delay_ms(50);					// wait for system stabilization
+     50            Initialize_LCD();				// initialize text LCD module
+     51            Initialize_TFT_LCD();				// initialize TFT-LCD module
+     52            Initialize_touch_screen();			// initialize touch screen
+     53          
+     54            LCD_string(0x80," OK-STM746 V1.0 ");		// display title
+     55            LCD_string(0xC0,"   Exp20_2.c    ");
+     56          
+     57            TFT_string(0,4,Green,Black,"****************************************");
+     58            TFT_string(0,6,White,Black,"  OK-STM767 키트를 이용한 MP3 플레이어  ");
+     59            TFT_string(0,8,Green,Black,"****************************************");
+     60            TFT_string(0,23,Cyan,Black,"           SD 카드 초기화...            ");
+     61            Beep();
+     62            Delay_ms(1000);
+     63            TFT_clear_screen();
+     64          
+     65            Initialize_SD();				// initialize SD card
+     66            Initialize_FAT32();				// initialize FAT32 file system
+     67            Initialize_VS1053b();				// initialize VS1053b
+     68            Delay_ms(1000);
+     69          
+     70            volume = 175;					// initial volume = 175/250(70%)
+     71            VS1053b_SetVolume(volume);
+     72            Delay_ms(1);
+     73            bass = 10;					// initial bass = 10 and treble = 5
+     74            treble = 5;
+     75            VS1053b_SetBassTreble(bass,treble);
+     76          
+     77            SysTick->LOAD = SystemCoreClock / 10000 - 1; // SysTick 10kHz
+     78            SysTick->CTRL = SysTick_CTRL_ENABLE_Msk | SysTick_CTRL_TICKINT_Msk;
+     79          
+     80            TFT_clear_screen();				// display basic screen
+     81            TFT_string(0, 0, White,Magenta, "  OK-STM767 키트를 이용한 MP3 플레이어  ");
+     82            TFT_string(0, 3, Cyan,   Black, "----------------------------------------");
+     83            TFT_string(0, 5, Magenta,Black, ">>");
+     84            TFT_string(0, 7, Cyan,   Black, "----------------------------------------");
+     85            TFT_string(0, 9, Cyan,   Black, "      파일 번호 : 000/000 (   kbps)     ");
+     86            TFT_string(0,11, Cyan,   Black, "      파일 용량 : 0000KB  (     Hz)     ");
+     87            TFT_string(0,13, Cyan,   Black, "      연주 진행 : 00:00(000%)   (      )");
+     88            TFT_string(0,15, Cyan,   Black, "----------------------------------------");
+     89            TFT_string(0,17, Green,  Black, "   음량(Volume) : 000%(000/250)         ");
+     90            TFT_string(0,19, Green,  Black, "   저음(Bass)   :  00 (00 ~ 15)         ");
+     91            TFT_string(0,21, Green,  Black, "   고음(Treble) :  00 (-8 ~ +7)         ");
+     92            TFT_string(0,23, Cyan,   Black, "----------------------------------------");
+     93            TFT_string(0,25, Cyan,   Black, "   KEY1      KEY2      KEY3      KEY4   ");
+     94            TFT_string(0,27, Magenta,Black, "  (PLAY)    (FUNC)     (INC)     (DEC)  ");
+     95            TFT_string(27,11, Yellow, Black, "00000");
+     96            TFT_string(18,13, Magenta, Black, "00");
+     97            TFT_string(21,13, Magenta, Black, "00");
+     98            TFT_string(33,13, Magenta,Black, " 정지 ");
+     99          
+    100            Rectangle( 12,196,  67,235, Yellow);		// display touch key outline
+    101            Rectangle( 92,196, 147,235, Yellow);
+    102            Rectangle(176,196, 231,235, Yellow);
+    103            Rectangle(256,196, 311,235, Yellow);
+    104          
+    105            TFT_volume();					// display initial play value
+    106            TFT_bass();
+    107            TFT_treble();
+    108          
+    109            total_file = fatGetDirEntry(FirstDirCluster);	// get total file number
+    110          
+    111            for(i = 0; i < total_file; i++)		// get start address of all files
+    112              { MP3_start_sector[i] = fatClustToSect(file_start_cluster[i]);
+    113                MP3_start_backup[i] = MP3_start_sector[i];
+    114              }
+    115          
+    116            TFT_xy(22,9);					// display total file number
+    117            TFT_color(Yellow,Black);
+    118            TFT_unsigned_decimal(total_file,1,3);
+    119            file_number = 0;				// display first file name
+    120            TFT_filename();
+    121            Check_valid_increment_file();
+    122          
+    123            MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
+    124          
+    125            while(1)
+    126              { if(((GPIOC->IDR & 0x0080) == 0x0080) && (play_flag == 1))	// if VS1053b request MP3 data
+    127                  { if(index == 512)
+    128                      { if(MP3_end_sector == MP3_start_sector[file_number])
+    129          		{ if(file_number != (total_file - 1))
+    130          	  	    file_number++;
+    131          	 	  else if(file_number == (total_file - 1))
+    132          	  	    file_number = 0;
+    133          
+    134          		  TFT_filename();
+    135          		  Check_valid_increment_file();
+    136          
+    137          		  MP3_start_sector[file_number] = MP3_start_backup[file_number];
+    138          		  MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
+    139          		  VS1053b_software_reset();	// VS1053b software reset to change music file
+    140          		}
+    141          	      index = 0;
+    142                        SD_read_sector(MP3_start_sector[file_number]++, MP3buffer);
+    143                      }
+    144          
+    145          	  for(i = 0; i < 32; i++)		// send 32 data byte
+    146                      { GPIOC->BSRR = 0x00400000;		// -MP3_DCS = 0
+    147                        SPI3_write(MP3buffer[index++]); 	// write a byte of MP3 data to VS1053b
+    148                        GPIOC->BSRR = 0x00000040;		// -MP3_DCS = 1
+    149          	    }
+    150          	}
+    151          
+    152                loop++;					// display MP3 file bitrate or play percentage
+    153                if((extension == 0x004D5033) && (loop == 250) && (play_flag == 1))
+    154          	{ HDAT1 = VS1053b_SCI_Read(0x09);
+    155          	  HDAT0 = VS1053b_SCI_Read(0x08);
+    156          
+    157          	  if((HDAT1 & 0xFFE0) == 0xFFE0)
+    158          	    if(((HDAT1 & 0x0006) != 0x0000) && ((HDAT0 & 0x0C00) != 0x0C00))
+    159          	      TFT_MP3_bitrate(HDAT1,HDAT0);
+    160          	}
+    161                else if((loop == 500) && (play_flag == 1))
+    162          	{ loop = 0;
+    163          
+    164                    time = VS1053b_SCI_Read(0x04);	// decode time
+    165                    TFT_xy(18,13);
+    166            	  TFT_color(Magenta, Black);
+    167          	  TFT_unsigned_decimal(time / 60,1,2);
+    168                    TFT_xy(21,13);
+    169          	  TFT_unsigned_decimal(time % 60,1,2);
+    170          
+    171          	  percentage = MP3_end_sector - MP3_start_sector[file_number];
+    172            	  percentage = (unsigned int)((float)percentage / (float)(file_size[file_number] >> 9) * 100.);
+    173          	  percentage = 100 - percentage;
+    174          
+    175            	  TFT_xy(24,13);			// display play percentage
+    176          	  TFT_color(Yellow,Black);
+    177                    if(percentage >= 100)     TFT_unsigned_decimal(percentage,0,3);
+    178          	  else if(percentage >= 10) TFT_unsigned_decimal(percentage,0,2);
+    179          	  else                      TFT_unsigned_decimal(percentage,0,1);
+    180            	  TFT_color(Cyan,Black);
+    181                    TFT_English('%');
+    182          	  TFT_English(')');
+    183                    TFT_English(' ');
+    184                    TFT_English(' ');
+    185          
+    186          	  stereo = VS1053b_SCI_Read(0x05);
+    187                    TFT_xy(27,11);			// sampling rate
+    188            	  TFT_color(Yellow, Black);
+    189          	  TFT_unsigned_decimal(stereo >> 1,0,5);
+    190                    if((stereo & 0x0001) == 0x0001)	// channel mode = stereo
+    191          	    { TFT_string(32,17, Cyan,Black, "(");
+    192          	      TFT_string(33,17, Yellow,Black, "stereo");
+    193                        TFT_string(39,17, Cyan,Black, ")");
+    194          	    }
+    195          	  else					// channel mode = mono
+    196          	    { TFT_string(32,17, Cyan,Black, "(");
+    197          	      TFT_string(33,17, Yellow,Black, " mono ");
+    198                        TFT_string(39,17, Cyan,Black, ")");
+    199          	    }
+    200          	}
+    201          
+    202                key = Key_input();			// key input
+    203                if(key == no_key)				// if no key input, read touch screen icon
+    204                  key = Icon_input();
+    205          
+    206                switch(key)
+    207          	{ case KEY1: play_flag ^= 0x01;		// toggle play or stop
+    208                               if(play_flag == 1) TFT_string(33,13, Yellow, Black, "연주중");
+    209                               else               TFT_string(33,13, Magenta,Black, " 정지 ");
+    210                               break;
+    211          
+    212                    case KEY2: if(func_mode == 0)		// select function
+    213          		       { func_mode = 1;
+    214          			 TFT_string(0, 5,Magenta,Black,"  ");
+    215          			 TFT_string(0,17,Magenta,Black,">>");
+    216          		       }
+    217          		     else if(func_mode == 1)
+    218          		       { func_mode = 2;
+    219          			 TFT_string(0,17,Magenta,Black,"  ");
+    220          			 TFT_string(0,19,Magenta,Black,">>");
+    221          		       }
+    222          		     else if(func_mode == 2)
+    223          		       { func_mode = 3;
+    224          			 TFT_string(0,19,Magenta,Black,"  ");
+    225          			 TFT_string(0,21,Magenta,Black,">>");
+    226          		       }
+    227          		     else
+    228          		       { func_mode = 0;
+    229          			 TFT_string(0,21,Magenta,Black,"  ");
+    230          			 TFT_string(0, 5,Magenta,Black,">>");
+    231          		       }
+    232          		     break;
+    233          
+    234          	  case KEY3: if(func_mode == 0)		// if func_mode == 0, select next music
+    235          		       { if(file_number != (total_file - 1))
+    236          			   file_number++;
+    237          			 else
+    238          			   file_number = 0;
+    239          
+    240          			 VS1053b_software_reset();
+    241          			 TFT_filename();
+    242          			 Check_valid_increment_file();
+    243          
+    244          			 MP3_start_sector[file_number] = MP3_start_backup[file_number];
+    245          			 MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
+    246          			 index = 512;
+    247          			 VS1053b_software_reset(); // VS1053b software reset to change music file
+    248          		       }
+    249          		     else if(func_mode == 1)	// if func_mode == 1, set volume for increment
+    250          		       { if(volume < 250)
+    251          			   { volume++;
+    252              		             VS1053b_SetVolume(volume);
+    253          			     TFT_volume();
+    254          			   }
+    255          		       }
+    256          		     else if(func_mode == 2)	// if func_mode == 2, set bass for increment
+    257          		       { if(bass < 15)
+    258          			   { bass++;
+    259              		             VS1053b_SetBassTreble(bass, treble);
+    260          			     TFT_bass();
+    261          			   }
+    262          		       }
+    263          		     else			// if func_mode == 3, set treble for increment
+    264          		       { if(treble < +7)
+    265          			   { treble++;
+    266              		             VS1053b_SetBassTreble(bass, treble);
+    267          			     TFT_treble();
+    268          			   }
+    269          		       }
+    270          		     break;
+    271          
+    272          	  case KEY4: if(func_mode == 0)		// if func_mode == 0, select previous music
+    273          		       { if(file_number != 0)
+    274          			   file_number--;
+    275          			 else
+    276          			   file_number = total_file - 1;
+    277          
+    278          			 TFT_filename();
+    279          			 Check_valid_decrement_file();
+    280          
+    281          			 MP3_start_sector[file_number] = MP3_start_backup[file_number];
+    282          			 MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
+    283          			 index = 512;
+    284          			 VS1053b_software_reset(); // VS1053b software reset to change music file
+    285          		       }
+    286          		     else if(func_mode == 1)	// if func_mode == 1, set volume for decrement
+    287          		       { if(volume > 5)
+    288          			   { volume--;
+    289              		             VS1053b_SetVolume(volume);
+    290          			     TFT_volume();
+    291          			   }
+    292          		       }
+    293          		     else if(func_mode == 2)	// if func_mode == 2, set bass for decrement
+    294          		       { if(bass != 0)
+    295          			   { bass--;
+    296              		             VS1053b_SetBassTreble(bass, treble);
+    297          			     TFT_bass();
+    298          			   }
+    299          		       }
+    300          		     else { 
+    301                    TFT_clear_screen();
+    302                    TFT_string(0, 0, White, Magenta, "FFT 분석 모드");
+    303                    Display_FFT_Result();
+                           ^
+Warning[Pe223]: function "Display_FFT_Result" declared implicitly
+    304          		      }
+    305          		     break;
+    306          
+    307                    default:   break;
+    308          	}
+    309              }
+    310          }
+    311          
+    312          /* ----- 사용자 정의 함수 ----------------------------------------------------- */
+    313          void Initialize_ADC(void) {
+                      ^
+Error[Pe159]: declaration is incompatible with previous "Initialize_ADC"
+          (declared at line 47)
+    314              RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;        // ADC1 클럭 활성화
+    315              GPIOA->MODER |= GPIO_MODER_MODER0;         // PA0을 아날로그 모드로 설정
+    316              ADC1->CR2 = ADC_CR2_ADON;                  // ADC 활성화
+    317              ADC1->SMPR2 |= ADC_SMPR2_SMP0;             // 샘플링 시간 설정
+    318              ADC1->SQR3 = 0;                            // 채널 0 선택
+    319          }
+    320          
+    321          void SysTick_Handler(void) {
+    322              static uint16_t sample_count = 0;
+    323          
+    324              // ADC 시작
+    325              ADC1->CR2 |= ADC_CR2_SWSTART;
+    326              while (!(ADC1->SR & ADC_SR_EOC)); // 변환 대기
+    327              ADC_buffer[sample_count++] = ADC1->DR;
+    328          
+    329              if (sample_count >= FFT_SIZE) {
+    330                  sample_count = 0;
+    331                  Perform_FFT(); // FFT 수행
+                         ^
+Warning[Pe223]: function "Perform_FFT" declared implicitly
+    332              }
+    333          }
+    334          
+    335          void Perform_FFT(void) {
+                      ^
+Error[Pe159]: declaration is incompatible with previous "Perform_FFT" (declared
+          at line 331)
+    336              for (int i = 0; i < FFT_SIZE; i++) {
+    337                  FFT_input[i * 2] = ADC_buffer[i];   // 실수부
+    338                  FFT_input[i * 2 + 1] = 0;          // 허수부
+    339              }
+    340          
+    341              arm_cfft_f32(&S, FFT_input, 0, 1); // FFT 계산
+                                   ^
+Error[Pe020]: identifier "S" is undefined
+    342              arm_cmplx_mag_f32(FFT_input, FFT_output, FFT_SIZE / 2);
+    343          
+    344              arm_max_f32(FFT_output, FFT_SIZE / 2, &max_value, &max_index); // 최대값 찾기
+    345          }
+    346          
+    347          void Display_FFT_Result(void) {
+                      ^
+Error[Pe159]: declaration is incompatible with previous "Display_FFT_Result"
+          (declared at line 303)
+    348              for (int i = 1; i < FFT_SIZE / 2; i++) {
+    349                  float amplitude = FFT_output[i] / max_value * 100;  // 비율 계산
+    350                  Draw_FFT_Bar(i, amplitude); // 막대 그래프 표시
+                         ^
+Warning[Pe223]: function "Draw_FFT_Bar" declared implicitly
+    351              }
+    352          }
+    353          
+    354          void Draw_FFT_Bar(uint16_t index, float amplitude) {
+                      ^
+Error[Pe159]: declaration is incompatible with previous "Draw_FFT_Bar"
+          (declared at line 350)
+    355              uint16_t bar_height = (uint16_t)(amplitude * 180 / 100);
+    356              if (bar_height > 180) bar_height = 180;
+    357          
+    358              // TFT 막대 그래프 그리기
+    359              Line(30 + index * 2, 220, 30 + index * 2, 220 - bar_height, Magenta);
+    360          }
+    361          
+    362          
+    363          void TFT_filename(void)				/* display MP3 file name, number, size */
+    364          {
+    365            unsigned char  file_flag;
+    366            unsigned short file_KB;
+    367          
+    368            TFT_string(0,7, Cyan, Black, "----------------------------------------");
+    369            TFT_string(3,5, Green,Black, "                                     ");
+    370          
+    371            file_flag = Get_long_filename(file_number);	// check file name
+    372          
+    373            if(file_flag == 0)				// short file name(8.3 format)
+    374              TFT_short_filename(3,5, Green,Black);
+    375            else if(file_flag == 1)			// long file name
+    376              TFT_long_filename(3,5, Green,Black);
+    377            else if(file_flag == 2)			// file name is longer than 195 characters
+    378              TFT_string(3,5, Red,Black, "* 파일명 길이 초과 *");
+    379            else						// file name error
+    380              TFT_string(3,5, Red,Black, "*** 파일명 오류 ***");
+    381          
+    382            file_KB = file_size[file_number]/1024;	// calculate file size in KB
+    383            if((file_size[file_number] % 1024) != 0)
+    384              file_KB++;
+    385          
+    386            if(file_flag != 3)
+    387              { TFT_xy(18,9);				// file number
+    388                TFT_color(Magenta, Black);
+    389                TFT_unsigned_decimal(file_number + 1,1,3);   
+    390                TFT_xy(17,11);				// file size
+    391                TFT_color(Magenta, Black);
+    392                TFT_unsigned_decimal(file_KB,0,5);
+    393              }
+    394          
+    395            TFT_string(27,9, Yellow,Black, "000");	// clear bitrate
+    396          
+    397            TFT_xy(24,13);				// display percentage = 0
+    398            TFT_color(Yellow,Black);
+    399            TFT_English('0');
+    400            TFT_color(Cyan,Black);
+    401            TFT_English('%');
+    402            TFT_English(')');
+    403            TFT_English(' ');
+    404            TFT_English(' ');
+    405          }
+    406          
+    407          void TFT_volume(void)				/* display volume */
+    408          {
+    409            TFT_xy(18,17);
+    410            TFT_color(Magenta,Black);
+    411            TFT_unsigned_decimal((unsigned int)(volume*100./250.+0.5), 0, 3);
+    412            TFT_xy(23,17);
+    413            TFT_color(Yellow,Black);
+    414            TFT_unsigned_decimal(volume,1,3);
+    415          }
+    416          
+    417          void TFT_bass(void)				/* display bass */
+    418          {
+    419            TFT_xy(19,19);
+    420            TFT_color(Magenta,Black);
+    421            TFT_unsigned_decimal(bass,1,2);
+    422          }
+    423          
+    424          void TFT_treble(void)				/* display treble */
+    425          {
+    426            TFT_xy(19,21);
+    427            TFT_color(Magenta,Black);
+    428            TFT_signed_decimal(treble,0,1);
+    429          }
+    430          
+    431          void Check_valid_increment_file(void)		/* check if valid file for increment */
+    432          {
+    433            unsigned char file_OK_flag;
+    434          
+    435            file_OK_flag = 0;
+    436            do{ if((extension != 0x004D5033) && (extension != 0x00414143) && (extension != 0x00574D41) && (extension != 0x004D4944))
+    437          	{ if(file_number != (total_file - 1))	// if not MP3/AAC/WMA/MID file, skip   
+    438          	    file_number++;
+    439          	  else
+    440          	    file_number = 0;
+    441                    TFT_filename();
+    442          	}
+    443                else
+    444                  file_OK_flag = 1;
+    445              } while(file_OK_flag == 0);
+    446          }
+    447          
+    448          void Check_valid_decrement_file(void)		/* check if valid file for decrement */
+    449          {
+    450            unsigned char file_OK_flag;
+    451          
+    452            file_OK_flag = 0;
+    453            do{ if((extension != 0x004D5033) && (extension != 0x00414143) && (extension != 0x00574D41) && (extension != 0x004D4944))
+    454          	{ if(file_number != 0)			// if not MP3/AAC/WMA/MID file, skip   
+    455          	    file_number--;
+    456          	  else
+    457          	    file_number = total_file - 1;
+    458                    TFT_filename();
+    459          	}
+    460                else
+    461                  file_OK_flag = 1;
+    462              } while(file_OK_flag == 0);
+    463          }
+    464          
+    465          void TFT_MP3_bitrate(U16 highbyte,U16 lowbyte)	/* display MP3 file bitrate */
+    466          {
+    467            unsigned short MPEG10_Layer1[16] = {   0,  32,  64,  96, 128, 160, 192, 224,
+    468          				       256, 288, 320, 352, 384, 416, 448,   0 };
+    469            unsigned short MPEG10_Layer2[16] = {   0,  32,  48,  56,  64,  80,  96, 112,
+    470          				       128, 160, 192, 224, 256, 320, 384,   0 };
+    471            unsigned short MPEG10_Layer3[16] = {   0,  32,  40,  48,  56,  64, 80,   96,
+    472          				       112, 128, 160, 192, 224, 256, 320,   0 };
+    473            unsigned short MPEG20_Layer1[16] = {   0,  32,  48,  56,  64,  80,  96, 112,
+    474          				       128, 144, 160, 176, 192, 224, 256,   0 };
+    475            unsigned short MPEG20_Layer2[16] = {   0,   8,  16,  24,  32,  40,  48,  56,
+    476          				        64,  80,  96, 112, 128, 144, 160,   0 };
+    477          
+    478            if((highbyte & 0x0018) == 0x0018)		// MPEG-1.0
+    479              { switch(highbyte & 0x0006)
+    480                  { case 0x0002 : TFT_xy(27,9);		// Layer-3
+    481          		        TFT_color(Yellow,Black);
+    482          		        TFT_unsigned_decimal(MPEG10_Layer3[lowbyte >> 12],1,3);
+    483          		        break;
+    484          	  case 0x0004 : TFT_xy(27,9);		// Layer-2
+    485          		        TFT_color(Yellow,Black);
+    486          		        TFT_unsigned_decimal(MPEG10_Layer2[lowbyte >> 12],1,3);
+    487          		        break;
+    488          	  case 0x0006 : TFT_xy(27,9);		// Layer-1
+    489          		        TFT_color(Yellow,Black);
+    490          		        TFT_unsigned_decimal(MPEG10_Layer1[lowbyte >> 12],1,3);
+    491          		        break;
+    492          	}
+    493              }
+    494            else if((highbyte & 0x0018) == 0x0010)	// MPEG-2.0
+    495              { switch(highbyte & 0x0006)
+    496                  { case 0x0002 : TFT_xy(27,9);		// Layer-3
+    497          		        TFT_color(Yellow,Black);
+    498          		        TFT_unsigned_decimal(MPEG20_Layer2[lowbyte >> 12],1,3);
+    499          		        break;
+    500          	  case 0x0004 : TFT_xy(27,9);		// Layer-2
+    501          		        TFT_color(Yellow,Black);
+    502          		        TFT_unsigned_decimal(MPEG20_Layer2[lowbyte >> 12],1,3);
+    503          		        break;
+    504          	  case 0x0006 : TFT_xy(27,9);		// Layer-1
+    505          		        TFT_color(Yellow,Black);
+    506          		        TFT_unsigned_decimal(MPEG20_Layer1[lowbyte >> 12],1,3);
+    507          		        break;
+    508          	}
+    509              }
+    510            else						// MPEG-2.5
+    511              { switch(highbyte & 0x0006)
+    512                  { case 0x0002 : TFT_xy(27,9);		// Layer-3
+    513          		        TFT_color(Yellow,Black);
+    514          		        TFT_unsigned_decimal(MPEG20_Layer2[lowbyte >> 12],1,3);
+    515          		        break;
+    516          	  case 0x0004 : TFT_xy(27,9);		// Layer-2
+    517          		        TFT_color(Yellow,Black);
+    518          		        TFT_unsigned_decimal(MPEG20_Layer2[lowbyte >> 12],1,3);
+    519          		        break;
+    520          	  case 0x0006 : TFT_xy(27,9);		// Layer-1
+    521          		        TFT_color(Yellow,Black);
+    522          		        TFT_unsigned_decimal(MPEG20_Layer1[lowbyte >> 12],1,3);
+    523          		        break;
+    524          	}
+    525              }
+    526          }
+    527          
+    528          unsigned char icon_flag = 0;
+    529          
+    530          unsigned char Icon_input(void)			/* input touch screen icon */
+    531          {
+    532            unsigned char icon;
+    533          
+    534            Touch_screen_input();				// input touch screen
+    535          
+    536            if((icon_flag == 0) && (x_touch >= 12) && (x_touch <= 67) && (y_touch >= 196) && (y_touch <= 235))
+    537              { icon = KEY1;
+    538                icon_flag = 1;
+    539                Rectangle( 12,196,  67,235, Magenta);
+    540                Beep();
+    541              }
+    542            else if((icon_flag == 0) && (x_touch >= 92) && (x_touch <= 147) && (y_touch >= 196) && (y_touch <= 235))
+    543              { icon = KEY2;
+    544                icon_flag = 1;
+    545                Rectangle( 92,196, 147,235, Magenta);
+    546                Beep();
+    547              }
+    548            else if((icon_flag == 0) && (x_touch >= 176) && (x_touch <= 231) && (y_touch >= 196) && (y_touch <= 235))
+    549              { icon = KEY3;
+    550                icon_flag = 1;
+    551                Rectangle(176,196, 231,235, Magenta);
+    552                Beep();
+    553              }
+    554            else if((icon_flag == 0) && (x_touch >= 256) && (x_touch <= 311) && (y_touch >= 196) && (y_touch <= 235))
+    555              { icon = KEY4;
+    556                icon_flag = 1;
+    557                Rectangle(256,196, 311,235, Magenta);
+    558                Beep();
+    559              }
+    560            else if((icon_flag == 1) && (x_touch == 0) && (y_touch == 0))
+    561              { icon = no_key;
+    562                icon_flag = 0;
+    563                Rectangle( 12,196,  67,235, Yellow);
+    564                Rectangle( 92,196, 147,235, Yellow);
+    565                Rectangle(176,196, 231,235, Yellow);
+    566                Rectangle(256,196, 311,235, Yellow);
+    567                Delay_ms(50);
+    568              }
+    569            else
+    570              icon = no_key;
+    571          
+    572            return icon;
+    573          }
+
+Errors: 6
+Warnings: 5

@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>702921327</fileChecksum>
+  <fileChecksum>2809289949</fileChecksum>
   <configuration>
     <name>OK-STM767</name>
     <outputs>
@@ -112,6 +112,10 @@
       <file>$PROJ_DIR$\Output\Obj\Exp04_6_key_interrupt(2).o</file>
       <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
       <file>$PROJ_DIR$\Output\Obj\startup_stm32f767xx.o</file>
+      <file>$PROJ_DIR$\Output\Obj\main.o</file>
+      <file>$PROJ_DIR$\Output\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\Include\CMSIS\arm_math.h</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\Exp04_6_key_interrupt(2).c</name>
@@ -500,6 +504,25 @@
           <file> 72 102</file>
         </tool>
       </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 107</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 106</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 6 109 10 4 18 92 41 61 22 89 62 93 87 77 86 29 15 28 1 12 13 50 43 21 40 30</file>
+        </tool>
+      </inputs>
     </file>
     <forcedrebuild>
       <name>[MULTI_TOOL]</name>
