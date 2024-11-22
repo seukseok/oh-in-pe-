@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<Workspace>
+  <ConfigDictionary>
+    
+  <CurrentConfigs><Project>Cortex-M7/OK-STM767</Project></CurrentConfigs></ConfigDictionary>
+  <Desktop>
+    <Static>
+      <Workspace>
+        <ColumnWidths>
+          
+          
+          
+          
+        <Column0>200</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+      </Workspace>
+      <Build>
+        
+        
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>915</ColumnWidth1><ColumnWidth2>244</ColumnWidth2><ColumnWidth3>61</ColumnWidth3></Build>
+    <Debug-Log><ColumnWidth0>19</ColumnWidth0><ColumnWidth1>1862</ColumnWidth1></Debug-Log><TerminalIO/><DRIVER_CUSTOM_SFR><PreferedWindows><Position>3</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows><col-names><item>Access</item><item>Address</item><item>Name</item><item>Size</item><item>Zone</item><item>_I0</item></col-names><col-widths><item>120</item><item>150</item><item>150</item><item>50</item><item>120</item><item>20</item></col-widths></DRIVER_CUSTOM_SFR></Static>
+    <Windows>
+      
+      
+    <Wnd0>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-569-17256</Identity>
+            <TabName>Workspace</TabName>
+            <Factory>Workspace</Factory>
+            <Session>
+              
+            <NodeDict><ExpandedNode>Cortex-M7</ExpandedNode><ExpandedNode>Cortex-M7/Include</ExpandedNode><ExpandedNode>Cortex-M7/Output</ExpandedNode><ExpandedNode>Cortex-M7/Output/OK-STM767.out</ExpandedNode><ExpandedNode>Cortex-M7/Output/OK-STM767.out/Output</ExpandedNode><ExpandedNode>Cortex-M7/User</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp01_3_LED.c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp01_4_TLCD.c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp01_5_TFT-LCD.c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp02_2_register.c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp02_4_time_delay(2).c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp02_5_time_delay(2).c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp02_6_time_delay.c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp06_2_large.c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp08_1_touch_screen.c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp14_4_organ(1).c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp15_1_loopback.c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp16_1_SPI_16bit(1).c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp16_2_SPI_8bit.c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp18_1_FFT(1).c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp19_1_photo_album(1).c</ExpandedNode><ExpandedNode>Cortex-M7/User/Exp21_4_Omok_16x16.c</ExpandedNode><ExpandedNode>Cortex-M7/include</ExpandedNode></NodeDict></Session>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd0><Wnd2>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-22359-17462</Identity>
+            <TabName>Build</TabName>
+            <Factory>Build</Factory>
+            <Session/>
+          </Tab>
+        <Tab><Identity>TabID-29207-3940</Identity><TabName>Debug Log</TabName><Factory>Debug-Log</Factory><Session/></Tab></Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd2></Windows>
+    <Editor>
+      
+      
+      
+      
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Exp13_1_single.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>21</YPos2><SelStart2>721</SelStart2><SelEnd2>721</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Exp14_1_exec3.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Exec5.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>1037</SelStart2><SelEnd2>1037</SelEnd2></Tab><ActiveTab>2</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\jun.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>15</YPos2><SelStart2>1243</SelStart2><SelEnd2>1243</SelEnd2></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-050ACC30><key>iaridepm.enu1</key></Toolbar-050ACC30></Sizes></Row0></Top><Left><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>494</Bottom><Right>274</Right><x>-2</x><y>-2</y><xscreen>549</xscreen><yscreen>453</yscreen><sizeHorzCX>357422</sizeHorzCX><sizeHorzCY>580026</sizeHorzCY><sizeVertCX>179688</sizeVertCX><sizeVertCY>635083</sizeVertCY></Rect></Wnd0></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>242</Bottom><Right>1538</Right><x>-2</x><y>-2</y><xscreen>1540</xscreen><yscreen>244</yscreen><sizeHorzCX>1002604</sizeHorzCX><sizeHorzCY>312420</sizeHorzCY><sizeVertCX>357422</sizeVertCX><sizeVertCY>580026</sizeVertCY></Rect></Wnd2></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+  </Desktop>
+</Workspace>
+
+

@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project>
+  <fileVersion>2</fileVersion>
+  <fileChecksum>702921327</fileChecksum>
+  <configuration>
+    <name>OK-STM767</name>
+    <outputs>
+      <file>$PROJ_DIR$\Output\List\Exp01_1_LED.lst</file>
+      <file>$PROJ_DIR$\Include\CMSIS\core_cmSimd.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Cortex-M7.pbd</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp14_1_exec3.__cstat.et</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$PROJ_DIR$\Exp04_6_key_interrupt(2).c</file>
+      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+      <file>$PROJ_DIR$\Output\Obj\kit_test.__cstat.et</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp13_1_single.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+      <file>$PROJ_DIR$\Output\Obj\kit_test.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Full.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_5_key_interrupt(1).pbi</file>
+      <file>$PROJ_DIR$\Include\stm32f767xx.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp01_1_LED.pbi</file>
+      <file>$TOOLKIT_DIR$\CMSIS\Lib\IAR\iar_cortexM7lf_math.a</file>
+      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
+      <file>$PROJ_DIR$\Linker\stm32f767xx_flash.icf</file>
+      <file>$PROJ_DIR$\OK-STM767_large.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ymath.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_2_key_input.__cstat.et</file>
+      <file>$PROJ_DIR$\kit_test.c</file>
+      <file>$PROJ_DIR$\Output\List\Exp04_6_key_interrupt(2)_exex2.lst</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp14_1_exec3.o</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_5_key_interrupt(1).__cstat.et</file>
+      <file>$PROJ_DIR$\Include\CMSIS\core_cmInstr.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
+      <file>$PROJ_DIR$\Exp04_2_key_input.c</file>
+      <file>$PROJ_DIR$\Exp04_5_key_interrupt(1).c</file>
+      <file>$PROJ_DIR$\jun.c</file>
+      <file>$PROJ_DIR$\Output\List\Exp04_2_key_input.lst</file>
+      <file>$PROJ_DIR$\Exp04_6_key_interrupt(2)_exex2.c</file>
+      <file>$PROJ_DIR$\Output\Obj\jun.o</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_1_key_value.o</file>
+      <file>$PROJ_DIR$\Output\Obj\jun.__cstat.et</file>
+      <file>$PROJ_DIR$\Output\List\jun.lst</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+      <file>$PROJ_DIR$\Include\CMSIS\core_cm7.h</file>
+      <file>$PROJ_DIR$\Exp08_3_drawing_board.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\math.h</file>
+      <file>$PROJ_DIR$\Exp13_1_single.c</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_2_key_input.pbi</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp01_1_LED.__cstat.et</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_6_key_interrupt(2)_exex2.o</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_2_key_input.o</file>
+      <file>$PROJ_DIR$\OK-STM767_xlarge.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
+      <file>$PROJ_DIR$\Output\List\Exp08_3_drawing_board.lst</file>
+      <file>$PROJ_DIR$\Include\startup_stm32f767xx.s</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_6_key_interrupt(2)_exex2.pbi</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_6_key_interrupt(2)_exex2.__cstat.et</file>
+      <file>$PROJ_DIR$\Exp20_2_MP3(2).c</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp08_3_drawing_board.__cstat.et</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp08_3_drawing_board.o</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_6_key_interrupt(2).__cstat.et</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_1_key_value.pbi</file>
+      <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
+      <file>$PROJ_DIR$\Include\CMSIS\core_cmFunc.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp13_1_single.pbi</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp08_3_drawing_board.pbi</file>
+      <file>$PROJ_DIR$\Output\List\Exec5.lst</file>
+      <file>$PROJ_DIR$\Output\List\Exp04_1_key_value.lst</file>
+      <file>$PROJ_DIR$\Output\Obj\kit_test.o</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp14_1_exec3.pbi</file>
+      <file>$PROJ_DIR$\Output\Obj\jun.pbi</file>
+      <file>$PROJ_DIR$\Output\Obj\Exec5.o</file>
+      <file>$PROJ_DIR$\Output\List\Exp04_5_key_interrupt(1).lst</file>
+      <file>$PROJ_DIR$\Output\Exe\OK-STM767.out</file>
+      <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
+      <file>$PROJ_DIR$\Output\Exe\OK-STM767.hex</file>
+      <file>$PROJ_DIR$\Output\List\kit_test.lst</file>
+      <file>$PROJ_DIR$\Exp14_1_exec3.c</file>
+      <file>$PROJ_DIR$\Include\system_stm32f7xx.h</file>
+      <file>$PROJ_DIR$\Output\List\Exp13_1_single.lst</file>
+      <file>$PROJ_DIR$\Exp04_1_key_value.c</file>
+      <file>$PROJ_DIR$\Output\Obj\Exec5.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp20_2_MP3(2).pbi</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp20_2_MP3(2).__cstat.et</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp13_1_single.__cstat.et</file>
+      <file>$PROJ_DIR$\Output\List\Exp04_6_key_interrupt(2).lst</file>
+      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
+      <file>$PROJ_DIR$\OK-STM767_VS1053b.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Exec5.__cstat.et</file>
+      <file>$TOOLKIT_DIR$\inc\c\xtgmath.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_6_key_interrupt(2).pbi</file>
+      <file>$TOOLKIT_DIR$\lib\m7M_tlv.a</file>
+      <file>$PROJ_DIR$\OK-STM767_SD_card.h</file>
+      <file>$PROJ_DIR$\OK-STM767.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_1_key_value.__cstat.et</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp20_2_MP3(2).o</file>
+      <file>$PROJ_DIR$\Exec5.c</file>
+      <file>$PROJ_DIR$\Exp01_1_LED.c</file>
+      <file>$PROJ_DIR$\Output\List\Exp20_2_MP3(2).lst</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp01_1_LED.o</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_5_key_interrupt(1).o</file>
+      <file>$PROJ_DIR$\Output\List\Exp14_1_exec3.lst</file>
+      <file>$PROJ_DIR$\Output\List\OK-STM767.map</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp04_6_key_interrupt(2).o</file>
+      <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
+      <file>$PROJ_DIR$\Output\Obj\startup_stm32f767xx.o</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\Exp04_6_key_interrupt(2).c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 90</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 85 103</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 58</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 10 28 21 22 6 4 18 20 41 1 86 62 93 77 61 12 13 50 43 15 89</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89 20</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\kit_test.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 11</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 75 67</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 7</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 77 10 13 20 62 6 43 89 93 49 41 61 12 50 15 28 1 4 86 22 18 21</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89 20 49</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Exp04_2_key_input.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 45</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 34 48</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 23</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 43 62 77 6 10 13 20 61 12 50 93 41 28 1 4 86 22 18 21 15 89</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89 20</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Exp04_5_key_interrupt(1).c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 14</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 71 100</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 27</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 86 41 6 62 1 20 10 28 4 22 18 93 77 61 12 13 50 43 21 15 89</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89 20</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\jun.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 69</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 39 36</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 38</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 86 41 6 62 29 1 20 10 28 4 22 18 21 93 43 77 61 12 13 50 15 89 40 30</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89 20 29 40 30</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Exp04_6_key_interrupt(2)_exex2.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 53</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 25 47</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 54</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 10 28 21 22 6 4 18 20 41 1 86 62 93 77 61 12 13 50 43 15 89</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89 20</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Exp08_3_drawing_board.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 64</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 51 57</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 56</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 89 22 10 28 62 4 18 41 1 6 86 93 77 61 12 13 50 43 15 21</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Exp13_1_single.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 63</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 78 9</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 84</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 89 1 62 41 6 86 10 28 4 22 18 93 77 61 12 13 50 43 15 21</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Include\startup_stm32f767xx.s</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 105</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Exp20_2_MP3(2).c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 82</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 98 95</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 83</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 41 6 86 62 50 92 10 28 4 22 18 93 87 77 61 12 13 43 89 15 21</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89 92 87</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Output\Exe\OK-STM767.out</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 102</file>
+        </tool>
+        <tool>
+          <name>OBJCOPY</name>
+          <file> 74</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 19 95 105 17 104 60 91 73</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Exp14_1_exec3.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 68</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 101 26</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 3</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 89 10 13 62 77 6 43 61 12 50 93 41 28 1 4 86 22 18 15 21</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Exp04_1_key_value.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 59</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 66 37</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 94</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 50 6 61 12 20 77 10 62 13 43 93 41 28 1 4 86 22 18 21 15 89</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89 20</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Exec5.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 80</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 65 70</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 88</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 50 6 8 61 12 20 77 10 62 13 43 93 41 28 1 4 86 22 18 89 40 15 21 81</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77 93 43 21 89 20 8 40 81</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Exp01_1_LED.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 16</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0 99</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 46</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1 6 77 13 41 10 28 62 12 50 15 61 4 86 22 18</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 15 41 10 6 62 4 12 13 86 22 28 50 18 61 1 77</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 72 102</file>
+        </tool>
+      </outputs>
+    </file>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>ILINK</tool>
+    </forcedrebuild>
+  </configuration>
+</project>
+
+
