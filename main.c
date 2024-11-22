@@ -42,7 +42,7 @@ int main(void) {
   LCD_string(0xC0, "   Exp20_2.c    ");
 
   TFT_string(0, 4, Green, Black, "****************************************");
-  TFT_string(0, 6, White, Black, "  OK-STM767 키트를 이용한 MP3 플레이어  ");
+  TFT_string(0, 6, White, Black, "                OH-IN-PE-               ");
   TFT_string(0, 8, Green, Black, "****************************************");
   TFT_string(0, 23, Cyan, Black, "           SD 카드 초기화...            ");
   Beep();
@@ -192,10 +192,10 @@ int main(void) {
       case KEY1:
         play_flag ^= 0x01;               // Toggle play or stop
         if (play_flag == 1)
-          TFT_string(33, 13, Yellow, Black, "연주중");
+          TFT_string(33, 13, Yellow, Black, "재생중");
         else
           TFT_string(33, 13, Magenta, Black, " 정지 ");
-                     break;
+        break;
 
       case KEY2:
         if (func_mode == 0) {            // Select function
@@ -215,7 +215,7 @@ int main(void) {
           TFT_string(0,21, Magenta, Black, "  ");
           TFT_string(0, 5, Magenta, Black, ">>");
 		       }
-		     break;
+		    break;
 
       // key3 입력 시 각 기능의 값 증가, 최대값에 도달하면 최소값으로 돌아감
       case KEY3:
@@ -472,25 +472,25 @@ unsigned char Icon_input(void) {
     keyPressed = KEY1;
       icon_flag = 1;
     Rectangle(12, 196, 67, 235, Magenta);
-      Beep();
+
   } else if ((icon_flag == 0) && (x_touch >= 92) && (x_touch <= 147) &&
          (y_touch >= 196) && (y_touch <= 235)) {
     keyPressed = KEY2;
       icon_flag = 1;
     Rectangle(92, 196, 147, 235, Magenta);
-      Beep();
+
   } else if ((icon_flag == 0) && (x_touch >= 176) && (x_touch <= 231) &&
          (y_touch >= 196) && (y_touch <= 235)) {
     keyPressed = KEY3;
       icon_flag = 1;
     Rectangle(176, 196, 231, 235, Magenta);
-      Beep();
+
   } else if ((icon_flag == 0) && (x_touch >= 256) && (x_touch <= 311) &&
          (y_touch >= 196) && (y_touch <= 235)) {
     keyPressed = KEY4;
       icon_flag = 1;
     Rectangle(256, 196, 311, 235, Magenta);
-      Beep();
+
   } else if ((icon_flag == 1) && (x_touch == 0) && (y_touch == 0)) {
     keyPressed = no_key;
       icon_flag = 0;

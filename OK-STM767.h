@@ -1,17 +1,17 @@
 /* ============================================================================ */
-/*		OK-STM767 V1.0 Å°Æ®¿ë(STM32F767VGT6) ±âº» Çì´õ ÆÄÀÏ		*/
+/*		OK-STM767 V1.0 Å°Æ®ï¿½ï¿½(STM32F767VGT6) ï¿½âº» ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½		*/
 /* ============================================================================ */
 /*					Programmed by Duck-Yong Yoon in 2016.   */
 
 // -------------------------------------------------------------------------------
-//   ÀÌ Çì´õÆÄÀÏÀº OK-STM767 Å°Æ® V1.0À» À§ÇÑ °ÍÀÔ´Ï´Ù. ÀÌ°ÍÀº ¾Æ·¡ÀÇ Á¶°Ç¿¡¼­¸¸
-//  ¿Ã¹Ù¸¥ µ¿ÀÛÀ» º¸ÀåÇÕ´Ï´Ù.
+//   ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ OK-STM767 Å°Æ® V1.0ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô´Ï´ï¿½. ï¿½Ì°ï¿½ï¿½ï¿½ ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½ï¿½ï¿½
+//  ï¿½Ã¹Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 // -------------------------------------------------------------------------------
-//	(1) ½Ã½ºÅÛ Å¬·Ï  : 216MHz
-//	(2) C ÄÄÆÄÀÏ·¯   : IAR EWARM V7.80.2
-//	(3) ÃÖÀûÈ­ ¿É¼Ç  : High/Size
-//	(4) CSTACK Å©±â  : 0x1000
-//	(5) TFT-LCD ¸ðµâ : Ohm»ç FL320QVC18-A0(HX8347-A)
+//	(1) ï¿½Ã½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½  : 216MHz
+//	(2) C ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½   : IAR EWARM V7.80.2
+//	(3) ï¿½ï¿½ï¿½ï¿½È­ ï¿½É¼ï¿½  : High/Size
+//	(4) CSTACK Å©ï¿½ï¿½  : 0x1000
+//	(5) TFT-LCD ï¿½ï¿½ï¿½ : Ohmï¿½ï¿½ FL320QVC18-A0(HX8347-A)
 // -------------------------------------------------------------------------------
 
 #include <math.h>
@@ -26,7 +26,7 @@ typedef unsigned int 	U32;
 typedef   signed int	S32;
 
 /* ---------------------------------------------------------------------------- */
-/*		»ç¿ëÀÚ Á¤ÀÇ ÇÔ¼ö ¼±¾ð						*/
+/*		ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½						*/
 /* ---------------------------------------------------------------------------- */
 
 void Initialize_MCU(void);			// initialize STM32F767VGT6 MCU
@@ -58,7 +58,7 @@ unsigned char DS3234_read(U16 address);		// read DS3234
 void DS3234_write(U16 address, U08 value);	// write DS3234
 
 /* ---------------------------------------------------------------------------- */
-/*		OK-STM767 Å°Æ® ±âº» ÇÔ¼ö					*/
+/*		OK-STM767 Å°Æ® ï¿½âº» ï¿½Ô¼ï¿½					*/
 /* ---------------------------------------------------------------------------- */
 
 void SystemInit(void)				/* dummy system function */
@@ -68,14 +68,14 @@ void SystemInit(void)				/* dummy system function */
 
 void Initialize_MCU(void)			/* initialize STM32F767VGT6 MCU */
 {
-// (1) ¸í·É Ä³½Ã ¹× µ¥ÀÌÅÍ Ä³½Ã ¼³Á¤
+// (1) ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
   SCB_EnableICache();				// enable L1 instruction cache
   SCB_EnableDCache();				// enable L1 data cache
 
-// (2) ART °¡¼Ó±â, ÇÁ¸®ÆäÄ¡ ¹öÆÛ, ¿þÀÌÆ® »çÀÌÅ¬ ¼³Á¤
+// (2) ART ï¿½ï¿½ï¿½Ó±ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½Å¬ ï¿½ï¿½ï¿½ï¿½
   FLASH->ACR = 0x00000307;			// 7 waits, enable ART accelerator and prefetch
 
-// (3) HSE ¹× PLL ¼³Á¤(½Ã½ºÅÛ Å¬·Ï SYSCLK = 216MHz)
+// (3) HSE ï¿½ï¿½ PLL ï¿½ï¿½ï¿½ï¿½(ï¿½Ã½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ SYSCLK = 216MHz)
   RCC->CR |= 0x00010001;			// HSE on, HSI on
   while((RCC->CR & 0x00000002) == 0);		// wait until HSIRDY = 1
   RCC->CFGR = 0x00000000;			// SYSCLK = HSI
@@ -87,38 +87,38 @@ void Initialize_MCU(void)			/* initialize STM32F767VGT6 MCU */
   RCC->CR = 0x01010001;				// PLL on, HSE on, HSI on
   while((RCC->CR & 0x02000000) == 0);		// wait until PLLRDY = 1
 
-// (4) ¿À¹öµå¶óÀÌºê ¼³Á¤
-  RCC->APB1ENR |= 0x10000000;			// Àü¿ø¸ðµâ Å¬·Ï(PWREN = 1)
+// (4) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
+  RCC->APB1ENR |= 0x10000000;			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½(PWREN = 1)
   PWR->CR1 |= 0x00010000;			// over-drive enable(ODEN = 1)
   while((PWR->CSR1 & 0x00010000) == 0);		// ODRDY = 1 ?
   PWR->CR1 |= 0x00020000;			// over-drive switching enable(ODSWEN = 1)
   while((PWR->CSR1 & 0x00020000) == 0);		// ODSRDY = 1 ?
 
-// (5) ÁÖº¯ÀåÄ¡ Å¬·Ï ¼³Á¤(APB1CLK = APB2CLK = 54MHz)
+// (5) ï¿½Öºï¿½ï¿½ï¿½Ä¡ Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(APB1CLK = APB2CLK = 54MHz)
   RCC->CFGR = 0x3040B402;			// SYSCLK = PLL, AHB = 216MHz, APB1 = APB2 = 54MHz
 						// MCO1 = HSE, MCO2 = SYSCLK/4 (timer = 108MHz)
   while((RCC->CFGR & 0x0000000C) != 0x00000008);// wait until SYSCLK = PLL
   RCC->CR |= 0x00080000;			// CSS on
 
-// (6) I/O º¸»ó ¼³Á¤
-  RCC->APB2ENR |= 0x00004000;			// ÁÖº¯ÀåÄ¡ Å¬·°(SYSCFG = 1)
+// (6) I/O ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+  RCC->APB2ENR |= 0x00004000;			// ï¿½Öºï¿½ï¿½ï¿½Ä¡ Å¬ï¿½ï¿½(SYSCFG = 1)
   SYSCFG->CMPCR = 0x00000001;			// enable compensation cell
 
-// (7) Å°Æ®ÀÇ ÁÖº¯ÀåÄ¡¿¡ Å¬·ÏÀ» °ø±Þ
-  RCC->AHB1ENR |= 0x0000001F;			// Æ÷Æ® A,B,C,D,E¿¡ Å¬·° °ø±Þ
+// (7) Å°Æ®ï¿½ï¿½ ï¿½Öºï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+  RCC->AHB1ENR |= 0x0000001F;			// ï¿½ï¿½Æ® A,B,C,D,Eï¿½ï¿½ Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
   RCC->AHB2ENR |= 0x00000000;			// disable special peripherals
   RCC->AHB3ENR |= 0x00000000;			// disable FSMC
-  RCC->APB1ENR |= 0x2024C000;			// ÁÖº¯ÀåÄ¡ Å¬·°(DAC=I2C1=USART3=SPI3=SPI2=1)
-  RCC->APB2ENR |= 0x00000100;			// ÁÖº¯ÀåÄ¡ Å¬·°(ADC1 = 1)
+  RCC->APB1ENR |= 0x2024C000;			// ï¿½Öºï¿½ï¿½ï¿½Ä¡ Å¬ï¿½ï¿½(DAC=I2C1=USART3=SPI3=SPI2=1)
+  RCC->APB2ENR |= 0x00000100;			// ï¿½Öºï¿½ï¿½ï¿½Ä¡ Å¬ï¿½ï¿½(ADC1 = 1)
 
-// (8) Å°Æ®¿¡ ¸Â°Ô GPIO¸¦ ÃÊ±âÈ­
-  GPIOA->MODER  = 0xA956FFFF;			// Æ÷Æ®A ¼³Á¤
+// (8) Å°Æ®ï¿½ï¿½ ï¿½Â°ï¿½ GPIOï¿½ï¿½ ï¿½Ê±ï¿½È­
+  GPIOA->MODER  = 0xA956FFFF;			// ï¿½ï¿½Æ®A ï¿½ï¿½ï¿½ï¿½
   GPIOA->AFR[1] = 0x00000000;			// PA15 = JTDI, PA14 = JTCK, PA13 = JTMS, PA8 = MCO1
   GPIOA->AFR[0] = 0x00000000;			// PA7/6 = ADC12_IN7/6, PA5/4 = DAC_OUT2/1
   GPIOA->ODR = 0x00000000;			// PA3~0 = ADC123_IN3~0
   GPIOA->OSPEEDR = 0xFC030000;			// JTDI = JTCK = JTMS = MCO1 = 180MHz very high speed
 
-  GPIOB->MODER  = 0xA9AAA294;			// Æ÷Æ®B ¼³Á¤
+  GPIOB->MODER  = 0xA9AAA294;			// ï¿½ï¿½Æ®B ï¿½ï¿½ï¿½ï¿½
   GPIOB->AFR[1] = 0x55507799;			// PB15 = SPI2_MOSI, PB14 = SPI2_MISO, PB13 = SPI2_SCK
    						// PB11 = USART3_RX, PB10 = USART3_TX, PB9 = CAN1_TX, PB8 = CAN1_RX
   GPIOB->AFR[0] = 0x44000000;			// PB7 = I2C1_SDA, PB6 = I2C1_SCL, PB4 = NJTRST, PB3 = JTDO
@@ -126,17 +126,17 @@ void Initialize_MCU(void)			/* initialize STM32F767VGT6 MCU */
   GPIOB->OTYPER = 0x000000C0;			// PB7(I2C1_SCL) = PB6(I2C1_SDA) = open drain
   GPIOB->OSPEEDR = 0x000000C0;			// JTDO = 180MHz very high speed
 
-  GPIOC->MODER  = 0x46A91500;			// Æ÷Æ®C ¼³Á¤
+  GPIOC->MODER  = 0x46A91500;			// ï¿½ï¿½Æ®C ï¿½ï¿½ï¿½ï¿½
   GPIOC->AFR[1] = 0x00066600;			// PC12 = SPI3_MOSI, PC11 = SPI3_MISO, PC10 = SPI3_SCK, PC9 = MCO2
   GPIOC->AFR[0] = 0x00000000;
   GPIOC->ODR = 0x00002160;			// -SD_CS = -MP3_RESET = -MP3_DCS = -MP3_CS = 1, BUZZER = LED = 0
   GPIOC->OSPEEDR = 0x000C0000;			// MCO2 = 180MHz very high speed
 
-  GPIOD->MODER  = 0x55555555;			// Æ÷Æ®D ¼³Á¤
+  GPIOD->MODER  = 0x55555555;			// ï¿½ï¿½Æ®D ï¿½ï¿½ï¿½ï¿½
   GPIOD->ODR = 0x00000000;			// TFT_D15~TFT_D0 = 0
   GPIOD->OSPEEDR = 0x55555555;			// TFT-LCD signal = 50MHz medium speed
 
-  GPIOE->MODER  = 0x6AAA5555;			// Æ÷Æ®E ¼³Á¤, -RTC_CS = 1, LCD_E = 0
+  GPIOE->MODER  = 0x6AAA5555;			// ï¿½ï¿½Æ®E ï¿½ï¿½ï¿½ï¿½, -RTC_CS = 1, LCD_E = 0
   GPIOE->AFR[1] = 0x05551111;			// PE14 = SPI4_MOSI, PE13 = SPI4_MISO, PE12 = SPI4_SCK
   GPIOE->AFR[0] = 0x00000000;			// PE11/10/9/8 = TIM1_CH2/CH2N/CH1/CH1N
   GPIOE->ODR = 0x0000800D;			// -RTC_CS = -TFT_RESET = -TFT_CS = -TFT_WR = 1
@@ -415,7 +415,7 @@ unsigned char Key_input(void)			/* input key KEY1~KEY4 */
     { if(key_flag != 0)				// if continuous key, treat as no key input
         return 0x0F;
       else					// if new key, beep and delay for debounce
-        { Beep();
+        { //Beep();
           key_flag = 1;
           return key;
         }
@@ -463,20 +463,20 @@ void LED_toggle(void)				/* toggle LED1 to blink */
 }
 
 /* ---------------------------------------------------------------------------- */
-/*		ÅØ½ºÆ® LCD ±âº» ÇÔ¼ö						*/
+/*		ï¿½Ø½ï¿½Æ® LCD ï¿½âº» ï¿½Ô¼ï¿½						*/
 /* ---------------------------------------------------------------------------- */
 
 void Initialize_LCD(void)			/* initialize text LCD module */
 {
   RCC->AHB1ENR |= 0x00000018;			// enable clock of port D,E
 
-  GPIOD->MODER &= 0xFFFF0000;			// Æ÷Æ®D ¼³Á¤
+  GPIOD->MODER &= 0xFFFF0000;			// ï¿½ï¿½Æ®D ï¿½ï¿½ï¿½ï¿½
   GPIOD->MODER |= 0x00005555;
   GPIOD->ODR &= 0xFFFFFF00;			// TFT_D7~TFT_D0 = 0
   GPIOD->OSPEEDR &= 0xFFFF0000;			// 50MHz medium speed
   GPIOD->OSPEEDR |= 0x00005555;
 
-  GPIOE->MODER &= 0xFFFFF3F3;			// Æ÷Æ®E ¼³Á¤
+  GPIOE->MODER &= 0xFFFFF3F3;			// ï¿½ï¿½Æ®E ï¿½ï¿½ï¿½ï¿½
   GPIOE->MODER |= 0x00000404;
   GPIOE->ODR &= 0xFFFFFFDD;			// LCD_E = TFT_RS = 0
   GPIOE->OSPEEDR &= 0xFFFFF3F3;			// 50MHz medium speed
@@ -521,7 +521,7 @@ void LCD_string(U08 command, U08 *string)	/* display a string on LCD */
 }
 
 /* ---------------------------------------------------------------------------- */
-/*		ÅØ½ºÆ® LCD ¸ðµâÀÇ ¼öÄ¡ µ¥ÀÌÅÍ Ãâ·Â ÇÔ¼ö				*/
+/*		ï¿½Ø½ï¿½Æ® LCD ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½				*/
 /* ---------------------------------------------------------------------------- */
 
 void LCD_binary(U16 number, U08 digit)		/* display 8 or 16 bit binary number */
@@ -695,7 +695,7 @@ void LCD_signed_float(float number, U08 integral, U08 fractional) /* display sig
 }
 
 /* ---------------------------------------------------------------------------- */
-/*			DS3234 RTC °ü·Ã ÇÔ¼ö					*/
+/*			DS3234 RTC ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½					*/
 /* ---------------------------------------------------------------------------- */
 
 void DS3234_initialize(void)			/* initialize DS3234 RTC */
@@ -762,21 +762,21 @@ void DS3234_write(U16 address, U08 value)	/* write DS3234 */
 }
 
 /* ---------------------------------------------------------------------------- */
-/*		ÇÑ±Û ÆùÆ® Ã³¸® Å×ÀÌºí						*/
+/*		ï¿½Ñ±ï¿½ ï¿½ï¿½Æ® Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½						*/
 /* ---------------------------------------------------------------------------- */
-const unsigned char table_cho[21] =		// ÃÊ¼º : ÀÚÀ½(14) + ½ÖÀÚÀ½(5) = 19 °³
+const unsigned char table_cho[21] =		// ï¿½Ê¼ï¿½ : ï¿½ï¿½ï¿½ï¿½(14) + ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(5) = 19 ï¿½ï¿½
 	{0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
-const unsigned char table_joong[30] =		// Áß¼º : ÀÚÀ½(10) + ½ÖÀÚÀ½(11) = 21 °³
+const unsigned char table_joong[30] =		// ï¿½ß¼ï¿½ : ï¿½ï¿½ï¿½ï¿½(10) + ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(11) = 21 ï¿½ï¿½
 	{0,0,0,1,2,3,4,5,0,0,6,7,8,9,10,11,0,0,12,13,14,15,16,17,0,0,18,19,20,21};
-const unsigned char table_jong[30] =		// Á¾¼º : ÀÚÀ½(14) + ½ÖÀÚÀ½(11) + ½ÖÀÚÀ½(2) = 27 °³
+const unsigned char table_jong[30] =		// ï¿½ï¿½ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½(14) + ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(11) + ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(2) = 27 ï¿½ï¿½
 	{0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,0,17,18,19,20,21,22,23,24,25,26,27};
 
-const unsigned char bul_cho1[22] = {0,0,0,0,0,0,0,0,0,1,3,3,3,1,2,4,4,4,2,1,3,0}; // ¹ú¼ö
+const unsigned char bul_cho1[22] = {0,0,0,0,0,0,0,0,0,1,3,3,3,1,2,4,4,4,2,1,3,0}; // ï¿½ï¿½ï¿½ï¿½
 const unsigned char bul_cho2[22] = {0,5,5,5,5,5,5,5,5,6,7,7,7,6,6,7,7,7,6,6,7,5};
 const unsigned char bul_jong[22] = {0,0,2,0,2,1,2,1,2,3,0,2,1,3,3,1,2,1,3,3,1,1};
 
 /* ---------------------------------------------------------------------------- */
-/*			16x16 ÇÑ±Û ¸íÁ¶Ã¼ ÆùÆ®					*/
+/*			16x16 ï¿½Ñ±ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½ï¿½Æ®					*/
 /* ---------------------------------------------------------------------------- */
 const unsigned char KM_font[360][32] = {	/* 16x16 Korean character font */
   {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -1501,7 +1501,7 @@ const unsigned char KM_font[360][32] = {	/* 16x16 Korean character font */
    0x00,0x00,0x00,0x08,0x28,0x78,0x5C,0x5C,0x5C,0x5C,0x78,0x28,0x08,0x00,0x00,0x00}};
 
 /* ---------------------------------------------------------------------------- */
-/*			16x16 ÇÑ±Û °íµñÃ¼ ÆùÆ®					*/
+/*			16x16 ï¿½Ñ±ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½ï¿½Æ®					*/
 /* ---------------------------------------------------------------------------- */
 const unsigned char KG_font[360][32] = {	/* 16x16 Korean character font */
   {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -2226,7 +2226,7 @@ const unsigned char KG_font[360][32] = {	/* 16x16 Korean character font */
    0x00,0x00,0x00,0x14,0x3C,0x2C,0x2C,0x2E,0x2E,0x2C,0x2C,0x3C,0x14,0x00,0x00,0x00}};
 
 /* ---------------------------------------------------------------------------- */
-/*			16x16 ÇÑ±Û ÇÊ±âÃ¼ ÆùÆ®					*/
+/*			16x16 ï¿½Ñ±ï¿½ ï¿½Ê±ï¿½Ã¼ ï¿½ï¿½Æ®					*/
 /* ---------------------------------------------------------------------------- */
 const unsigned char KP_font[360][32] = {	/* 16x16 Korean character font */
   {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -2951,7 +2951,7 @@ const unsigned char KP_font[360][32] = {	/* 16x16 Korean character font */
    0x00,0x00,0x00,0x00,0x08,0x28,0x7A,0x5A,0x4E,0x7C,0x38,0x00,0x00,0x00,0x00,0x00}};
 
 /* ---------------------------------------------------------------------------- */
-/*		ÇÑ±Û ¿Ï¼ºÇü(KS) -> Á¶ÇÕÇü(KSSM) º¯È¯ Å×ÀÌºí			*/
+/*		ï¿½Ñ±ï¿½ ï¿½Ï¼ï¿½ï¿½ï¿½(KS) -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(KSSM) ï¿½ï¿½È¯ ï¿½ï¿½ï¿½Ìºï¿½			*/
 /* ---------------------------------------------------------------------------- */
 const unsigned char KS_Table[2350][2] = {
 {0x88,0x61},{0x88,0x62},{0x88,0x65},{0x88,0x68},{0x88,0x69},{0x88,0x6A},{0x88,0x6B},
@@ -3292,7 +3292,7 @@ const unsigned char KS_Table[2350][2] = {
 {0xD3,0xA9},{0xD3,0xB1},{0xD3,0xB3},{0xD3,0xB5},{0xD3,0xB7} };
 
 /* ---------------------------------------------------------------------------- */
-/*		8x16 ¿µ¹® ASCII ¸íÁ¶Ã¼ ÆùÆ®					*/
+/*		8x16 ï¿½ï¿½ï¿½ï¿½ ASCII ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½ï¿½Æ®					*/
 /* ---------------------------------------------------------------------------- */
 const unsigned char E_font[128][16] = {		/* 8x16 English ASCII character font */
   {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}, // 0x00
@@ -3425,7 +3425,7 @@ const unsigned char E_font[128][16] = {		/* 8x16 English ASCII character font */
   {0x00,0x00,0x60,0x90,0x90,0x60,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}};// 0x7F
 
 /* ---------------------------------------------------------------------------- */
-/*		»ç¿ëÀÚ Á¤ÀÇ ÇÔ¼ö ¼±¾ð						*/
+/*		ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½						*/
 /* ---------------------------------------------------------------------------- */
 
 void Initialize_TFT_LCD(void);			// initialize TFT-LCD with HX8347-A
@@ -3445,7 +3445,7 @@ void TFT_underscore(U16 underscore_color);	// set underscore and color
 void TFT_outline(U16 outline_color);		// set outline and color
 void TFT_string(U08 xChar, U08 yChar, U16 colorfore, U16 colorback, U08 *str);	// write TFT-LCD string
 void TFT_English(U08 code);			// write a English ASCII character
-unsigned short KS_code_conversion(U16 KS_code);	// convert ¿Ï¼ºÇü(KS) to Á¶ÇÕÇü(KSSM)
+unsigned short KS_code_conversion(U16 KS_code);	// convert ï¿½Ï¼ï¿½ï¿½ï¿½(KS) to ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(KSSM)
 void TFT_Korean(U16 code);			// write a Korean character
 void TFT_English_pixel(U16 Xpixel,U16 Ypixel, U08 code); // write a English ASCII character
 
@@ -3468,7 +3468,7 @@ unsigned short Read_ADS7846(U16 command);	// read X, Y value from ADS7846
 void Touch_screen_input(void);			// touch screen input of X, Y average value from ADS7846
 
 /* ---------------------------------------------------------------------------- */
-/*	TFT-LCD ±âº» ¹®ÀÚ Ãâ·Â ÇÔ¼ö(¿µ¹® : 8x16 ÇÈ¼¿, ÇÑ±Û : 16x16 ÇÈ¼¿)	*/
+/*	TFT-LCD ï¿½âº» ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½(ï¿½ï¿½ï¿½ï¿½ : 8x16 ï¿½È¼ï¿½, ï¿½Ñ±ï¿½ : 16x16 ï¿½È¼ï¿½)	*/
 /* ---------------------------------------------------------------------------- */
 
 #define Transparent	0x0821			//   1,   1,   1
@@ -3508,17 +3508,17 @@ unsigned short underscore;			// underscore color
 unsigned char  outline_flag = 0;		// 0 = outline off, 1 = outline on
 unsigned short outline;				// outline color
 unsigned short foreground, background;		// foreground and background color
-unsigned char  Kfont_type = 'M';		// M = ¸íÁ¶Ã¼, G = °íµñÃ¼, P = ÇÊ±âÃ¼
+unsigned char  Kfont_type = 'M';		// M = ï¿½ï¿½ï¿½ï¿½Ã¼, G = ï¿½ï¿½ï¿½ï¿½Ã¼, P = ï¿½Ê±ï¿½Ã¼
 
 void Initialize_TFT_LCD(void)			/* initialize TFT-LCD with HX8347-A */
 {
   RCC->AHB1ENR |= 0x00000018;			// enable clock of port D,E
 
-  GPIOD->MODER = 0x55555555;			// Æ÷Æ®D ¼³Á¤
+  GPIOD->MODER = 0x55555555;			// ï¿½ï¿½Æ®D ï¿½ï¿½ï¿½ï¿½
   GPIOD->ODR = 0x00000000;			// TFT_D15~TFT_D0 = 0
   GPIOD->OSPEEDR = 0x55555555;			// TFT-LCD signal = 50MHz medium speed
 
-  GPIOE->MODER &= 0xFFFFFF00;			// Æ÷Æ®E ¼³Á¤
+  GPIOE->MODER &= 0xFFFFFF00;			// ï¿½ï¿½Æ®E ï¿½ï¿½ï¿½ï¿½
   GPIOE->MODER |= 0x00000055;
   GPIOE->ODR |= 0x0000000D;			// -TFT_RESET = -TFT_CS = -TFT_WR = 1
   GPIOE->OSPEEDR &= 0xFFFFFF00;			// 50MHz medium speed
@@ -3654,7 +3654,7 @@ void TFT_write(U16 reg, U16 val)		/* write TFT-LCD register */
 }
 
 /* ---------------------------------------------------------------------------- */
-/*		TFT º¸µå Ãâ·ÂÁ¦¾î ÇÔ¼ö						*/
+/*		TFT ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½						*/
 /* ---------------------------------------------------------------------------- */
 
 void TFT_clear_screen(void)			/* TFT-LCD clear screen with black color */
@@ -3731,7 +3731,7 @@ void TFT_pixel(U16 xPos, U16 yPos, U16 color)	/* write a pixel */
 }
 
 /* ---------------------------------------------------------------------------- */
-/*		TFT-LCD ¹®ÀÚ Ãâ·Â ÇÔ¼ö						*/
+/*		TFT-LCD ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½						*/
 /* ---------------------------------------------------------------------------- */
 
 void TFT_landscape_mode(void)			/* set landscape mode */
@@ -3821,7 +3821,7 @@ void TFT_string(U08 xChar, U08 yChar, U16 colorfore, U16 colorback, U08 *str)	/*
 	{ ch2 = *str;
 	  hangeul = (ch1 << 8) + ch2;
           str++;
-	  hangeul = KS_code_conversion(hangeul);// convert ¿Ï¼ºÇü to Á¶ÇÕÇü
+	  hangeul = KS_code_conversion(hangeul);// convert ï¿½Ï¼ï¿½ï¿½ï¿½ to ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	  TFT_Korean(hangeul);
 	}
     }
@@ -3932,7 +3932,7 @@ void TFT_English(U08 code)			/* write a English ASCII character */
   Xcharacter += 1;				// go to next position
 }
 
-unsigned short KS_code_conversion(U16 KS_code)	/* convert ¿Ï¼ºÇü(KS) to Á¶ÇÕÇü(KSSM) */
+unsigned short KS_code_conversion(U16 KS_code)	/* convert ï¿½Ï¼ï¿½ï¿½ï¿½(KS) to ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(KSSM) */
 {
   unsigned char  HB, LB;
   unsigned short index, KSSM;
@@ -4147,7 +4147,7 @@ void TFT_English_pixel(U16 Xpixel,U16 Ypixel, U08 code)	/* write a English ASCII
 }
 
 /* ---------------------------------------------------------------------------- */
-/*		TFT-LCD ¼öÄ¡ µ¥ÀÌÅÍ Ãâ·Â ÇÔ¼ö					*/
+/*		TFT-LCD ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½					*/
 /* ---------------------------------------------------------------------------- */
 
 void TFT_binary(U32 number, U08 digit)		/* display binary number */
@@ -4318,7 +4318,7 @@ void TFT_signed_float(float number, U08 integral, U08 fractional) /* display sig
 }
 
 /* ---------------------------------------------------------------------------- */
-/*		±×·¡ÇÈ ÇÔ¼ö							*/
+/*		ï¿½×·ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½							*/
 /* ---------------------------------------------------------------------------- */
 
 void Line(S16 x1,S16 y1, S16 x2,S16 y2, U16 color)	/* draw a straight line */
@@ -4424,7 +4424,7 @@ void Sine(S16 peak, U08 mode, U16 color)	/* draw a sine curve */
 }
 
 /* ---------------------------------------------------------------------------- */
-/*		    TFT-32A º¸µå ÅÍÄ¡ ½ºÅ©¸° ÄÁÆ®·Ñ·¯ ÀÔ·Â ÇÔ¼ö			*/
+/*		    TFT-32A ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ ï¿½Ô·ï¿½ ï¿½Ô¼ï¿½			*/
 /* ---------------------------------------------------------------------------- */
 
 #define x_touch_min	250			// minimum value of touch screen x-axis
