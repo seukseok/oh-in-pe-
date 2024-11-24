@@ -1,0 +1,277 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.80.4.12462/W32 for ARM       24/Nov/2024  18:59:43
+# Copyright 1999-2017 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  C:\IAR Systems\oh-in-pe-\testmic.c
+#    Command line =  
+#        "C:\IAR Systems\oh-in-pe-\testmic.c" -lC "C:\IAR
+#        Systems\oh-in-pe-\Output\List" -o "C:\IAR
+#        Systems\oh-in-pe-\Output\Obj" --debug --endian=little --cpu=Cortex-M7
+#        -e --fpu=VFPv5_d16 --dlib_config "C:\Program Files (x86)\IAR
+#        Systems\Embedded Workbench 7.5_2\arm\INC\c\DLib_Config_Full.h" -I
+#        "C:\IAR Systems\oh-in-pe-\" -I "C:\IAR Systems\oh-in-pe-\Include\" -I
+#        "C:\IAR Systems\oh-in-pe-\Include\CMSIS\" -I "C:\IAR
+#        Systems\oh-in-pe-\Include\STM32F7xx_HAL_Driver\Inc\" -I "C:\IAR
+#        Systems\oh-in-pe-\Include\STM32F7xx_HAL_Driver\Src\" -Ohz
+#        --use_c++_inline -I "C:\Program Files (x86)\IAR Systems\Embedded
+#        Workbench 7.5_2\arm\CMSIS\Include\" -D ARM_MATH_CM7
+#    Locale       =  Korean_Korea.949
+#    List file    =  C:\IAR Systems\oh-in-pe-\Output\List\testmic.lst
+#    Object file  =  C:\IAR Systems\oh-in-pe-\Output\Obj\testmic.o
+#
+###############################################################################
+
+C:\IAR Systems\oh-in-pe-\testmic.c
+      1          #include "stm32f767xx.h"
+      2          
+      3          // Define GPIO_IDR_ID7 if not defined
+      4          #ifndef GPIO_IDR_ID7
+      5          #define GPIO_IDR_ID7 (1U << 7)
+      6          #endif
+      7          #include "OK-STM767.h"
+      8          #include "OK-STM767_VS1053b.h"
+
+    SPI3_medium_speed();				// must use below 12.288MHz / 7 = 1.755MHz
+    ^
+"C:\IAR Systems\oh-in-pe-\OK-STM767_VS1053b.h",48  Warning[Pe223]: function
+          "SPI3_medium_speed" declared implicitly
+
+    SPI3_high_speed();				// must use below 12.288MHz x 5.0 / 7 = 8.777MHz
+    ^
+"C:\IAR Systems\oh-in-pe-\OK-STM767_VS1053b.h",76  Warning[Pe223]: function
+          "SPI3_high_speed" declared implicitly
+
+    SPI3_write(0x02);				// write instruction
+    ^
+"C:\IAR Systems\oh-in-pe-\OK-STM767_VS1053b.h",83  Warning[Pe223]: function
+          "SPI3_write" declared implicitly
+
+    SPI3_write(0x03);				// read instruction
+    ^
+"C:\IAR Systems\oh-in-pe-\OK-STM767_VS1053b.h",97  Warning[Pe223]: function
+          "SPI3_write" declared implicitly
+
+    SPI3_write(0x03);				// read instruction
+    ^
+"C:\IAR Systems\oh-in-pe-\OK-STM767_VS1053b.h",111  Warning[Pe223]: function
+          "SPI3_write" declared implicitly
+      9          #include <math.h>
+     10          #include <string.h>
+     11          
+     12          // 상수 정의
+     13          #define SPECTRUM_BANDS    16      // 주파수 대역 수
+     14          #define UPDATE_RATE      50       // 업데이트 주기 (ms)
+     15          #define MAX_VOLUME      250       // 최대 볼륨
+     16          #define DEFAULT_VOLUME  175       // 기본 볼륨 (70%)
+     17          
+     18          // 디스플레이 관련 상수
+     19          #define SCREEN_WIDTH    320
+     20          #define SCREEN_HEIGHT   240
+     21          #define BAR_WIDTH       15
+     22          #define BAR_GAP         5
+     23          #define START_X         20
+     24          #define START_Y         220
+     25          #define MAX_BAR_HEIGHT  160
+     26          
+     27          // 색상 정의
+     28          #define COLOR_BG        Black
+     29          #define COLOR_TEXT      White
+     30          #define COLOR_GRID      DarkGrey
+     31          #define COLOR_BAR_LOW   Blue
+     32          #define COLOR_BAR_MID   Magenta
+     33          #define COLOR_BAR_HIGH  Red
+     34          
+     35          // 전역 변수
+     36          uint16_t spectrumData[SPECTRUM_BANDS];
+     37          uint8_t displayMode = 0;  // 0: 막대 그래프, 1: 선 그래프
+     38          volatile uint32_t systemTicks = 0;
+     39          
+     40          // VS1053B 패치 데이터
+     41          static const uint16_t spectrumPatch[] = {
+     42              0x0007, 0x0001,  // 패치 헤더
+     43              0x8040, 0x0006,  // 스펙트럼 분석기 모드
+     44              0x8042, 0x0000,  // ADC 설정
+     45              0x8043, 0x0008,  // FFT 설정
+     46              0x8044, 0x000C,  // 윈도우 함수 설정
+     47              0x8045, 0x0024,  // 게인 설정
+     48              0x8046, 0x0000,  // 끝 마커
+     49          };
+     50          
+     51          // VS1053B DREQ 핀 읽기 함수 추가
+     52          uint8_t VS1053b_DREQ_READ(void) {
+     53              return (GPIOC->IDR & GPIO_IDR_ID7) ? 1 : 0;
+     54          }
+     55          
+     56          // SysTick 인터럽트 핸들러
+     57          void SysTick_Handler(void) {
+     58              systemTicks++;
+     59          }
+     60          
+     61          // VS1053B 초기화
+     62          void VS1053b_Init(void) {
+     63              // 하드웨어 리셋
+     64              GPIOC->BSRR = 0x00200000;  // -MP3_RST = 0
+     65              Delay_ms(10);
+     66              GPIOC->BSRR = 0x00000020;  // -MP3_RST = 1
+     67              Delay_ms(10);
+     68              
+     69              // 소프트웨어 리셋
+     70              VS1053b_SCI_Write(0x00, 0x0804);
+     71              Delay_ms(10);
+     72              
+     73              // 기본 설정
+     74              VS1053b_SetVolume(DEFAULT_VOLUME);
+     75              VS1053b_SCI_Write(0x03, 0x9800);  // 44.1kHz
+     76          }
+     77          
+     78          // 스펙트럼 분석기 초기화
+     79          void InitSpectrum(void) {
+     80              // 패치 로딩
+     81              for(int i = 0; spectrumPatch[i] != 0x8046; i += 2) {
+     82                  VS1053b_SCI_Write(spectrumPatch[i], spectrumPatch[i+1]);
+     83                  Delay_ms(1);
+     84              }
+     85              
+     86              // 모드 설정
+     87              uint16_t mode = VS1053b_SCI_Read(0x00);
+     88              mode |= 0x0020;  // 스펙트럼 분석기 활성화
+     89              VS1053b_SCI_Write(0x00, mode);
+     90          }
+     91          
+     92          // 스펙트럼 데이터 읽기
+     93          void ReadSpectrum(void) {
+     94              static uint32_t lastUpdate = 0;
+     95              
+     96              if(systemTicks - lastUpdate >= UPDATE_RATE) {
+     97                  lastUpdate = systemTicks;
+     98                  
+     99                  for(int i = 0; i < SPECTRUM_BANDS; i++) {
+    100                      spectrumData[i] = VS1053b_SCI_Read(0x0C + i);
+    101                  }
+    102              }
+    103          }
+    104          
+    105          // 주파수 레이블 표시
+    106          void DisplayFrequencyLabels(void) {
+    107              const unsigned char* labels[] = {
+    108                  (unsigned char*)"31", 
+    109                  (unsigned char*)"62", 
+    110                  (unsigned char*)"125", 
+    111                  (unsigned char*)"250", 
+    112                  (unsigned char*)"500", 
+    113                  (unsigned char*)"1k", 
+    114                  (unsigned char*)"2k", 
+    115                  (unsigned char*)"4k", 
+    116                  (unsigned char*)"8k", 
+    117                  (unsigned char*)"16k"
+    118              };
+    119              
+    120              for(int i = 0; i < 10; i++) {
+    121                  TFT_xy(START_X + i * 30, START_Y + 10);
+    122                  TFT_string(labels[i], COLOR_TEXT, COLOR_BG);
+                                    ^
+Error[Pe167]: argument of type "unsigned char const *" is incompatible with
+          parameter of type "U08"
+
+          TFT_string(labels[i], COLOR_TEXT, COLOR_BG);
+                                ^
+"C:\IAR Systems\oh-in-pe-\testmic.c",122  Warning[Pe069]: integer conversion
+          resulted in truncation
+
+          TFT_string(labels[i], COLOR_TEXT, COLOR_BG);
+                                                    ^
+"C:\IAR Systems\oh-in-pe-\testmic.c",122  Error[Pe165]: too few arguments in
+          function call
+    123              }
+    124          }
+    125          
+    126          // 스펙트럼 표시
+    127          void DisplaySpectrum(void) {
+    128              static uint16_t prevHeight[SPECTRUM_BANDS] = {0};
+    129              
+    130              // 그리드 그리기
+    131              for(int i = 0; i < SPECTRUM_BANDS + 1; i++) {
+    132                  uint16_t x = START_X + i * (BAR_WIDTH + BAR_GAP);
+    133                  Line(x, START_Y - MAX_BAR_HEIGHT, x, START_Y, COLOR_GRID);
+    134              }
+    135              
+    136              // 주파수 대역 표시
+    137              for(int i = 0; i < SPECTRUM_BANDS; i++) {
+    138                  uint16_t x = START_X + i * (BAR_WIDTH + BAR_GAP);
+    139                  
+    140                  // 로그 스케일 변환
+    141                  float logVal = 20 * log10f(spectrumData[i] + 1);
+    142                  uint16_t height = (uint16_t)((logVal * MAX_BAR_HEIGHT) / 96.0f);
+    143                  if(height > MAX_BAR_HEIGHT) height = MAX_BAR_HEIGHT;
+    144                  
+    145                  // 색상 선택
+    146                  uint16_t color;
+    147                  if(height < MAX_BAR_HEIGHT/3)
+    148                      color = COLOR_BAR_LOW;
+    149                  else if(height < (MAX_BAR_HEIGHT*2)/3)
+    150                      color = COLOR_BAR_MID;
+    151                  else
+    152                      color = COLOR_BAR_HIGH;
+    153                  
+    154                  // 이전 막대 지우기
+    155                  Rectangle(x, START_Y - prevHeight[i],
+    156                           x + BAR_WIDTH, START_Y,
+    157                           COLOR_BG);
+    158                  
+    159                  // 새 막대 그리기
+    160                  Rectangle(x, START_Y - height,
+    161                           x + BAR_WIDTH, START_Y,
+    162                           color);
+    163                  
+    164                  prevHeight[i] = height;
+    165              }
+    166          }
+    167          
+    168          // 메인 함수
+    169          int main(void) {
+    170              // MCU 및 LCD 초기화
+    171              Initialize_MCU();
+    172              Initialize_TFT_LCD();
+    173              
+    174              // VS1053B 초기화
+    175              VS1053b_Init();
+    176              InitSpectrum();
+    177              
+    178              // 화면 초기화
+    179              TFT_clear_screen();
+    180              TFT_string((unsigned char*)"VS1053B Spectrum Analyzer", COLOR_TEXT, COLOR_BG);
+                                ^
+Error[Pe167]: argument of type "unsigned char *" is incompatible with parameter
+          of type "U08"
+
+      TFT_string((unsigned char*)"VS1053B Spectrum Analyzer", COLOR_TEXT, COLOR_BG);
+                                                              ^
+"C:\IAR Systems\oh-in-pe-\testmic.c",180  Warning[Pe069]: integer conversion
+          resulted in truncation
+
+      TFT_string((unsigned char*)"VS1053B Spectrum Analyzer", COLOR_TEXT, COLOR_BG);
+                                                                                  ^
+"C:\IAR Systems\oh-in-pe-\testmic.c",180  Error[Pe165]: too few arguments in
+          function call
+    181              DisplayFrequencyLabels();
+    182              
+    183              // 메인 루프
+    184              while(1) {
+    185                  if(VS1053b_DREQ_READ()) {
+    186                      ReadSpectrum();
+    187                      DisplaySpectrum();
+    188                  }
+    189                  
+    190                  // 키 입력 처리
+    191                  unsigned char key = Key_input();
+    192                  if(key == KEY1) {
+    193                      displayMode ^= 1;  // 디스플레이 모드 전환
+    194                  }
+    195              }
+    196          }
+
+Errors: 4
+Warnings: 7

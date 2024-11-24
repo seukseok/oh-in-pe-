@@ -978,7 +978,7 @@
   <group>
     <name>User</name>
     <file>
-      <name>$PROJ_DIR$\main.c</name>
+      <name>$PROJ_DIR$\testfft.c</name>
     </file>
   </group>
 </project>
