@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ANSI C/C++ Compiler V7.80.4.12462/W32 for ARM       24/Nov/2024  21:56:40
+# IAR ANSI C/C++ Compiler V7.80.4.12462/W32 for ARM       25/Nov/2024  00:32:25
 # Copyright 1999-2017 IAR Systems AB.
 #
 #    Cpu mode     =  thumb
@@ -26695,9 +26695,9 @@ C:\IAR Systems\oh-in-pe-\testfft.c
    \   00000000   0xB5F8             PUSH     {R3-R7,LR}
     130              // 주파수 대역별 감도 조정
     131              static const float bands[16] = {
-    132                  0.45f, 0.45f, 0.45f, 0.45f, 0.45f,    // 저주파 (균일한 감도)
-    133                  0.40f, 0.40f, 0.40f, 0.40f, 0.40f,    // 중주파
-    134                  0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f  // 고주파
+    132                  0.70f, 0.65f, 0.60f, 0.55f, 0.50f,    // 저주파 (20Hz-640Hz)
+    133                  0.45f, 0.40f, 0.35f, 0.30f, 0.25f,    // 중주파 (640Hz-10kHz)
+    134                  0.20f, 0.18f, 0.16f, 0.14f, 0.12f, 0.10f  // 고주파 (10kHz-20kHz)
     135              };
     136              
     137              // 이동 평균 필터용 버퍼
@@ -26823,22 +26823,22 @@ Warning[Pe223]: function "abs" declared implicitly
 
    \                                 In section .text, align 4, keep-with-next
    \                     `UpdateSpectrum::bands`:
-   \   00000000   0x3EE66666         DC32 3EE66666H, 3EE66666H, 3EE66666H, 3EE66666H, 3EE66666H, 3ECCCCCDH
+   \   00000000   0x3F333333         DC32 3F333333H, 3F266666H, 3F19999AH, 3F0CCCCDH, 3F000000H, 3EE66666H
+   \              0x3F266666   
+   \              0x3F19999A   
+   \              0x3F0CCCCD   
+   \              0x3F000000   
    \              0x3EE66666   
-   \              0x3EE66666   
-   \              0x3EE66666   
-   \              0x3EE66666   
-   \              0x3ECCCCCD   
-   \   00000018   0x3ECCCCCD         DC32 3ECCCCCDH, 3ECCCCCDH, 3ECCCCCDH, 3ECCCCCDH, 3EB33333H, 3EB33333H
-   \              0x3ECCCCCD   
-   \              0x3ECCCCCD   
-   \              0x3ECCCCCD   
+   \   00000018   0x3ECCCCCD         DC32 3ECCCCCDH, 3EB33333H, 3E99999AH, 3E800000H, 3E4CCCCDH, 3E3851ECH
    \              0x3EB33333   
-   \              0x3EB33333   
-   \   00000030   0x3EB33333         DC32 3EB33333H, 3EB33333H, 3EB33333H, 3EB33333H
-   \              0x3EB33333   
-   \              0x3EB33333   
-   \              0x3EB33333   
+   \              0x3E99999A   
+   \              0x3E800000   
+   \              0x3E4CCCCD   
+   \              0x3E3851EC   
+   \   00000030   0x3E23D70A         DC32 3E23D70AH, 3E0F5C29H, 3DF5C28FH, 3DCCCCCDH
+   \              0x3E0F5C29   
+   \              0x3DF5C28F   
+   \              0x3DCCCCCD   
 
    \                                 In section .bss, align 4
    \                     `UpdateSpectrum::filterIndex`:

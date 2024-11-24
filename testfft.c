@@ -129,9 +129,9 @@ void DrawSpectrumBar(uint8_t index, uint16_t height) {
 void UpdateSpectrum(void) {
     // 주파수 대역별 감도 조정
     static const float bands[16] = {
-        0.45f, 0.45f, 0.45f, 0.45f, 0.45f,    // 저주파 (균일한 감도)
-        0.40f, 0.40f, 0.40f, 0.40f, 0.40f,    // 중주파
-        0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f  // 고주파
+        0.70f, 0.65f, 0.60f, 0.55f, 0.50f,    // 저주파 (20Hz-640Hz)
+        0.45f, 0.40f, 0.35f, 0.30f, 0.25f,    // 중주파 (640Hz-10kHz)
+        0.20f, 0.18f, 0.16f, 0.14f, 0.12f, 0.10f  // 고주파 (10kHz-20kHz)
     };
     
     // 이동 평균 필터용 버퍼
