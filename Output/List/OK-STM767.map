@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ELF Linker V7.80.4.12462/W32 for ARM                24/Nov/2024  19:49:23
+# IAR ELF Linker V7.80.4.12462/W32 for ARM                24/Nov/2024  21:14:18
 # Copyright 2007-2017 IAR Systems AB.
 #
 #    Output file  =  C:\IAR Systems\oh-in-pe-\Output\Exe\OK-STM767.out
@@ -40,48 +40,24 @@ initialize by copy { rw };
   .intvec            ro code  0x08000000   0x1f8  startup_stm32f767xx.o [1]
                             - 0x080001f8   0x1f8
 
-"P1":                                     0xc44c
-  .text              ro code  0x080001f8  0x936c  testfft.o [1]
-  .text              ro code  0x08009564     0x6  ABImemclr4.o [5]
-  .text              ro code  0x0800956c    0x76  ABImemcpy_unaligned.o [5]
-  .text              ro code  0x080095e4    0x32  ABImemset48.o [5]
-  .rodata            const    0x08009618  0x2d00  testfft.o [1]
-  .text              ro code  0x0800c318    0x40  zero_init3.o [5]
-  .text              ro code  0x0800c358    0x38  packbits_init_single.o [5]
-  .text              ro code  0x0800c390    0x28  data_init.o [5]
-  .text              ro code  0x0800c3b8    0x22  fpinit_M.o [4]
-  .iar.init_table    const    0x0800c3dc    0x20  - Linker created -
-  .text              ro code  0x0800c3fc    0x1a  cmain.o [5]
-  .text              ro code  0x0800c416     0x4  low_level_init.o [3]
-  .text              ro code  0x0800c41a     0x4  exit.o [3]
-  .text              ro code  0x0800c420     0xa  cexit.o [5]
-  .text              ro code  0x0800c42c    0x14  exit.o [6]
-  .text              ro code  0x0800c440    0x10  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c450     0xc  cstartup_M.o [5]
-  .text              ro code  0x0800c45c     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c460     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c464     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c468     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c46c     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c470     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c474     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c478     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c47c     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c480     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c484     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c488     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c48c     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c490     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c494     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c498     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c49c     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c4a0     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c4a4     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c4a8     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c4ac     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c4b0     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c4b4     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800c4b8     0x4  startup_stm32f767xx.o [1]
+"P1":                                     0xc4b4
+  .text              ro code  0x080001f8  0x93cc  testfft.o [1]
+  .text              ro code  0x080095c4     0x6  ABImemclr4.o [5]
+  .text              ro code  0x080095cc    0x76  ABImemcpy_unaligned.o [5]
+  .text              ro code  0x08009644    0x32  ABImemset48.o [5]
+  .rodata            const    0x08009678  0x2d00  testfft.o [1]
+  .text              ro code  0x0800c378    0x40  zero_init3.o [5]
+  .text              ro code  0x0800c3b8    0x38  packbits_init_single.o [5]
+  .text              ro code  0x0800c3f0    0x28  data_init.o [5]
+  .text              ro code  0x0800c418    0x22  fpinit_M.o [4]
+  .iar.init_table    const    0x0800c43c    0x20  - Linker created -
+  .text              ro code  0x0800c45c    0x1a  cmain.o [5]
+  .text              ro code  0x0800c476     0x4  low_level_init.o [3]
+  .text              ro code  0x0800c47a     0x4  exit.o [3]
+  .text              ro code  0x0800c480     0xa  cexit.o [5]
+  .text              ro code  0x0800c48c    0x14  exit.o [6]
+  .text              ro code  0x0800c4a0    0x10  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c4b0     0xc  cstartup_M.o [5]
   .text              ro code  0x0800c4bc     0x4  startup_stm32f767xx.o [1]
   .text              ro code  0x0800c4c0     0x4  startup_stm32f767xx.o [1]
   .text              ro code  0x0800c4c4     0x4  startup_stm32f767xx.o [1]
@@ -175,32 +151,56 @@ initialize by copy { rw };
   .text              ro code  0x0800c624     0x4  startup_stm32f767xx.o [1]
   .text              ro code  0x0800c628     0x4  startup_stm32f767xx.o [1]
   .text              ro code  0x0800c62c     0x4  startup_stm32f767xx.o [1]
-  .rodata            const    0x0800c630     0x0  zero_init3.o [5]
-  .rodata            const    0x0800c630     0x0  packbits_init_single.o [5]
-  Initializer bytes  const    0x0800c630    0x14  <for P2-1>
-                            - 0x0800c644  0xc44c
+  .text              ro code  0x0800c630     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c634     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c638     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c63c     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c640     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c644     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c648     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c64c     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c650     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c654     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c658     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c65c     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c660     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c664     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c668     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c66c     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c670     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c674     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c678     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c67c     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c680     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c684     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800c688     0x4  startup_stm32f767xx.o [1]
+  .rodata            const    0x0800c68c     0x0  zero_init3.o [5]
+  .rodata            const    0x0800c68c     0x0  packbits_init_single.o [5]
+  Initializer bytes  const    0x0800c68c    0x20  <for P2-1>
+                            - 0x0800c6ac  0xc4b4
 
-"P2", part 1 of 3:                          0x5e
-  P2-1                        0x20000000    0x5e  <Init block>
-    .data            inited   0x20000000    0x40  testfft.o [1]
-    .data            inited   0x20000040    0x1e  testfft.o [1]
-                            - 0x2000005e    0x5e
+"P2", part 1 of 3:                         0x44a
+  P2-1                        0x20000000   0x44a  <Init block>
+    .data            inited   0x20000000   0x42c  testfft.o [1]
+    .data            inited   0x2000042c    0x1e  testfft.o [1]
+                            - 0x2000044a   0x44a
 
 "P2", part 2 of 3:                        0x1000
-  CSTACK                      0x20000060  0x1000  <Block>
-    CSTACK           uninit   0x20000060  0x1000  <Block tail>
-                            - 0x20001060  0x1000
+  CSTACK                      0x20000450  0x1000  <Block>
+    CSTACK           uninit   0x20000450  0x1000  <Block tail>
+                            - 0x20001450  0x1000
 
-"P2", part 3 of 3:                        0x1688
-  .bss               zero     0x20001060   0x3e8  testfft.o [1]
-  .bss               zero     0x20001448   0x3e8  testfft.o [1]
-  .bss               zero     0x20001830   0x3e8  testfft.o [1]
-  .bss               zero     0x20001c18   0x3e8  testfft.o [1]
-  .bss               zero     0x20002000   0x3e8  testfft.o [1]
-  .bss               zero     0x200023e8   0x200  testfft.o [1]
-  .bss               zero     0x200025e8    0xfc  testfft.o [1]
-  .bss               zero     0x200026e4     0x1  testfft.o [1]
-                            - 0x200026e5  0x1685
+"P2", part 3 of 3:                        0x16a8
+  .bss               zero     0x20001450   0x3e8  testfft.o [1]
+  .bss               zero     0x20001838   0x3e8  testfft.o [1]
+  .bss               zero     0x20001c20   0x3e8  testfft.o [1]
+  .bss               zero     0x20002008   0x3e8  testfft.o [1]
+  .bss               zero     0x200023f0   0x3e8  testfft.o [1]
+  .bss               zero     0x200027d8   0x200  testfft.o [1]
+  .bss               zero     0x200029d8    0xfc  testfft.o [1]
+  .bss               zero     0x20002ad4    0x20  testfft.o [1]
+  .bss               zero     0x20002af4     0x1  testfft.o [1]
+                            - 0x20002af5  0x16a5
 
 
 *******************************************************************************
@@ -210,14 +210,14 @@ initialize by copy { rw };
           Address     Size
           -------     ----
 Zero (__iar_zero_init3)
-    1 destination range, total size 0x1685:
-          0x20001060  0x1685
+    1 destination range, total size 0x16a5:
+          0x20001450  0x16a5
 
 Copy/packbits (__iar_packbits_init_single3)
-    1 source range, total size 0x14 (21% of destination):
-          0x0800c630    0x14
-    1 destination range, total size 0x5e:
-          0x20000000    0x5e
+    1 source range, total size 0x20 (2% of destination):
+          0x0800c68c    0x20
+    1 destination range, total size 0x44a:
+          0x20000000   0x44a
 
 
 
@@ -228,10 +228,10 @@ Copy/packbits (__iar_packbits_init_single3)
     Module                  ro code  ro data  rw data
     ------                  -------  -------  -------
 C:\IAR Systems\oh-in-pe-\Output\Obj: [1]
-    startup_stm32f767xx.o       988
-    testfft.o                37 740   11 540    5 859
+    startup_stm32f767xx.o       984
+    testfft.o                37 836   11 552    6 895
     -------------------------------------------------
-    Total:                   38 728   11 540    5 859
+    Total:                   38 820   11 552    6 895
 
 command line: [2]
     -------------------------------------------------
@@ -269,7 +269,7 @@ shb_l.a: [6]
     Gaps                          8        4
     Linker created                        32    4 096
 -----------------------------------------------------
-    Grand Total:             39 180   11 576    9 955
+    Grand Total:             39 272   11 588   10 991
 
 
 *******************************************************************************
@@ -278,53 +278,61 @@ shb_l.a: [6]
 
 Entry                      Address    Size  Type      Object
 -----                      -------    ----  ----      ------
-.iar.init_table$$Base   0x0800c3dc           --   Gb  - Linker created -
-.iar.init_table$$Limit  0x0800c3fc           --   Gb  - Linker created -
-?main                   0x0800c3fd          Code  Gb  cmain.o [5]
+.iar.init_table$$Base   0x0800c43c           --   Gb  - Linker created -
+.iar.init_table$$Limit  0x0800c45c           --   Gb  - Linker created -
+?main                   0x0800c45d          Code  Gb  cmain.o [5]
 Beep                    0x0800056b    0x1a  Code  Gb  testfft.o [1]
 Beep_3times             0x08000585    0x1c  Code  Gb  testfft.o [1]
-CSTACK$$Base            0x20000060           --   Gb  - Linker created -
-CSTACK$$Limit           0x20001060           --   Gb  - Linker created -
+CSTACK$$Base            0x20000450           --   Gb  - Linker created -
+CSTACK$$Limit           0x20001450           --   Gb  - Linker created -
 Delay_ms                0x08000553    0x18  Code  Gb  testfft.o [1]
 Delay_us                0x08000399   0x1ba  Code  Gb  testfft.o [1]
+DrawSpectrumBar         0x08009241    0x64  Code  Gb  testfft.o [1]
 E_font                  0x08007da0   0x800  Data  Gb  testfft.o [1]
 Fat32Enabled            0x20000000     0x1  Data  Gb  testfft.o [1]
-FirstDataSector         0x2000002c     0x4  Data  Gb  testfft.o [1]
-FirstDirCluster         0x20000038     0x4  Data  Gb  testfft.o [1]
-FirstFAT2Sector         0x20000034     0x4  Data  Gb  testfft.o [1]
-FirstFATSector          0x20000030     0x4  Data  Gb  testfft.o [1]
-InitSpectrum            0x08009191    0x42  Code  Gb  testfft.o [1]
-Initialize_FAT32        0x08008ce1    0xf0  Code  Gb  testfft.o [1]
+FirstDataSector         0x20000010     0x4  Data  Gb  testfft.o [1]
+FirstDirCluster         0x2000001c     0x4  Data  Gb  testfft.o [1]
+FirstFAT2Sector         0x20000018     0x4  Data  Gb  testfft.o [1]
+FirstFATSector          0x20000014     0x4  Data  Gb  testfft.o [1]
+InitSpectrum            0x080091c5    0x48  Code  Gb  testfft.o [1]
+Initialize_FAT32        0x08008cf1    0xf0  Code  Gb  testfft.o [1]
 Initialize_MCU          0x080001fd   0x192  Code  Gb  testfft.o [1]
 Initialize_SD           0x08008809   0x30e  Code  Gb  testfft.o [1]
 Initialize_TFT_LCD      0x080005a5   0x276  Code  Gb  testfft.o [1]
-Initialize_VS1053b      0x08008f57   0x11e  Code  Gb  testfft.o [1]
+Initialize_VS1053b      0x08008f77   0x11e  Code  Gb  testfft.o [1]
 KG_font                 0x08002344  0x2d00  Data  Gb  testfft.o [1]
-KM_font                 0x08009618  0x2d00  Data  Gb  testfft.o [1]
+KM_font                 0x08009678  0x2d00  Data  Gb  testfft.o [1]
 KP_font                 0x080050a0  0x2d00  Data  Gb  testfft.o [1]
 KS_Table                0x08000ccc  0x125c  Data  Gb  testfft.o [1]
 KS_code_conversion      0x08000c6f    0x38  Code  Gb  testfft.o [1]
-Kfont_type              0x2000004a     0x1  Data  Gb  testfft.o [1]
+Kfont_type              0x20000436     0x1  Data  Gb  testfft.o [1]
 Line                    0x080085d5    0xaa  Code  Gb  testfft.o [1]
-MP3_end_sector          0x2000003c     0x4  Data  Gb  testfft.o [1]
-MP3_start_backup        0x20002000   0x3e8  Data  Gb  testfft.o [1]
-MP3_start_sector        0x20001c18   0x3e8  Data  Gb  testfft.o [1]
-PlayAndDrawSpectrum     0x080091db   0x138  Code  Gb  testfft.o [1]
+MP3_end_sector          0x20000024     0x4  Data  Gb  testfft.o [1]
+MP3_start_backup        0x200023f0   0x3e8  Data  Gb  testfft.o [1]
+MP3_start_sector        0x20002008   0x3e8  Data  Gb  testfft.o [1]
+MP3buffer               0x2000002c   0x400  Data  Gb  testfft.o [1]
+PlayAndDrawSpectrum     0x080092df    0x9c  Code  Gb  testfft.o [1]
 PlayAndDrawSpectrum::index
-                        0x20000006     0x2  Data  Lc  testfft.o [1]
+                        0x20000008     0x2  Data  Lc  testfft.o [1]
+PlayAndDrawSpectrum::lastUpdate
+                        0x20000028     0x4  Data  Lc  testfft.o [1]
 Rectangle               0x08008695    0x46  Code  Gb  testfft.o [1]
-Region$$Table$$Base     0x0800c3dc           --   Gb  - Linker created -
-Region$$Table$$Limit    0x0800c3fc           --   Gb  - Linker created -
-SD_command              0x08008c41    0x44  Code  Gb  testfft.o [1]
-SD_read_sector          0x08008c85    0x58  Code  Gb  testfft.o [1]
-SD_type                 0x200026e4     0x1  Data  Gb  testfft.o [1]
+Region$$Table$$Base     0x0800c43c           --   Gb  - Linker created -
+Region$$Table$$Limit    0x0800c45c           --   Gb  - Linker created -
+SD_command              0x08008c51    0x44  Code  Gb  testfft.o [1]
+SD_read_sector          0x08008c95    0x58  Code  Gb  testfft.o [1]
+SD_type                 0x20002af4     0x1  Data  Gb  testfft.o [1]
 SPI3_high_speed         0x0800879b    0x54  Code  Gb  testfft.o [1]
 SPI3_low_speed          0x080086eb    0x54  Code  Gb  testfft.o [1]
 SPI3_medium_speed       0x0800873f    0x52  Code  Gb  testfft.o [1]
 SPI3_write              0x080087ef    0x18  Code  Gb  testfft.o [1]
-ScreenMode              0x20000040     0x1  Data  Gb  testfft.o [1]
-SectorBuffer            0x200023e8   0x200  Data  Gb  testfft.o [1]
-SectorsPerCluster       0x20000004     0x2  Data  Gb  testfft.o [1]
+ScreenMode              0x2000042c     0x1  Data  Gb  testfft.o [1]
+SectorBuffer            0x200027d8   0x200  Data  Gb  testfft.o [1]
+SectorsPerCluster       0x20000006     0x2  Data  Gb  testfft.o [1]
+SendMP3Data             0x08009215    0x2c  Code  Gb  testfft.o [1]
+SysTick_Count           0x20000020     0x4  Data  Gb  testfft.o [1]
+SysTick_Handler         0x080091a5     0xa  Code  Gb  testfft.o [1]
+SysTick_Initialize      0x080091af    0x10  Code  Gb  testfft.o [1]
 SystemInit              0x080001f9     0x4  Code  Gb  testfft.o [1]
 TFT_English             0x08000a41   0x222  Code  Gb  testfft.o [1]
 TFT_GRAM_address        0x080008c9    0x56  Code  Gb  testfft.o [1]
@@ -338,74 +346,76 @@ TFT_pixel               0x08000939    0x68  Code  Gb  testfft.o [1]
 TFT_string              0x080009cd    0x36  Code  Gb  testfft.o [1]
 TFT_write               0x08000897    0x10  Code  Gb  testfft.o [1]
 TFT_xy                  0x08000925     0xa  Code  Gb  testfft.o [1]
-VS1053b_SCI_Read        0x080090c7    0x22  Code  Gb  testfft.o [1]
+UpdateSpectrum          0x080092ad    0x32  Code  Gb  testfft.o [1]
+VS1053b_SCI_Read        0x080090e7    0x22  Code  Gb  testfft.o [1]
 VS1053b_SCI_Read_Hexadecimal
-                        0x080090e9    0x22  Code  Gb  testfft.o [1]
-VS1053b_SCI_Write       0x0800909b    0x2c  Code  Gb  testfft.o [1]
-VS1053b_SetBassTreble   0x0800917d    0x14  Code  Gb  testfft.o [1]
-VS1053b_SetVolume       0x0800915f    0x1e  Code  Gb  testfft.o [1]
-VS1053b_software_reset  0x0800913d    0x22  Code  Gb  testfft.o [1]
-Xcharacter              0x20000043     0x1  Data  Gb  testfft.o [1]
-XcharacterLimit         0x20000041     0x1  Data  Gb  testfft.o [1]
-Xcursor                 0x20000045     0x1  Data  Gb  testfft.o [1]
-Ycharacter              0x20000044     0x1  Data  Gb  testfft.o [1]
-YcharacterLimit         0x20000042     0x1  Data  Gb  testfft.o [1]
-Ycursor                 0x20000046     0x1  Data  Gb  testfft.o [1]
-__aeabi_memclr4         0x08009565          Code  Gb  ABImemclr4.o [5]
-__cmain                 0x0800c3fd          Code  Gb  cmain.o [5]
-__exit                  0x0800c42d    0x14  Code  Gb  exit.o [6]
-__iar_Memset4_word      0x080095e5          Code  Gb  ABImemset48.o [5]
-__iar_Memset8_word      0x080095e5          Code  Gb  ABImemset48.o [5]
-__iar_data_init3        0x0800c391    0x28  Code  Gb  data_init.o [5]
-__iar_init_vfp          0x0800c3b9          Code  Gb  fpinit_M.o [4]
+                        0x08009109    0x22  Code  Gb  testfft.o [1]
+VS1053b_SCI_Write       0x080090bb    0x2c  Code  Gb  testfft.o [1]
+VS1053b_SetBassTreble   0x08009191    0x14  Code  Gb  testfft.o [1]
+VS1053b_SetVolume       0x08009173    0x1e  Code  Gb  testfft.o [1]
+VS1053b_software_reset  0x08009151    0x22  Code  Gb  testfft.o [1]
+Xcharacter              0x2000042f     0x1  Data  Gb  testfft.o [1]
+XcharacterLimit         0x2000042d     0x1  Data  Gb  testfft.o [1]
+Xcursor                 0x20000431     0x1  Data  Gb  testfft.o [1]
+Ycharacter              0x20000430     0x1  Data  Gb  testfft.o [1]
+YcharacterLimit         0x2000042e     0x1  Data  Gb  testfft.o [1]
+Ycursor                 0x20000432     0x1  Data  Gb  testfft.o [1]
+__aeabi_memclr4         0x080095c5          Code  Gb  ABImemclr4.o [5]
+__cmain                 0x0800c45d          Code  Gb  cmain.o [5]
+__exit                  0x0800c48d    0x14  Code  Gb  exit.o [6]
+__iar_Memset4_word      0x08009645          Code  Gb  ABImemset48.o [5]
+__iar_Memset8_word      0x08009645          Code  Gb  ABImemset48.o [5]
+__iar_data_init3        0x0800c3f1    0x28  Code  Gb  data_init.o [5]
+__iar_init_vfp          0x0800c419          Code  Gb  fpinit_M.o [4]
 __iar_packbits_init_single3
-                        0x0800c359    0x38  Code  Gb  packbits_init_single.o [5]
-__iar_program_start     0x0800c451          Code  Gb  cstartup_M.o [5]
+                        0x0800c3b9    0x38  Code  Gb  packbits_init_single.o [5]
+__iar_program_start     0x0800c4b1          Code  Gb  cstartup_M.o [5]
 __iar_unaligned___aeabi_memcpy
-                        0x0800956d          Code  Gb  ABImemcpy_unaligned.o [5]
+                        0x080095cd          Code  Gb  ABImemcpy_unaligned.o [5]
 __iar_unaligned___aeabi_memcpy4
-                        0x0800958d          Code  Gb  ABImemcpy_unaligned.o [5]
+                        0x080095ed          Code  Gb  ABImemcpy_unaligned.o [5]
 __iar_unaligned___aeabi_memcpy8
-                        0x0800958d          Code  Gb  ABImemcpy_unaligned.o [5]
-__iar_zero_init3        0x0800c319    0x40  Code  Gb  zero_init3.o [5]
-__low_level_init        0x0800c417     0x4  Code  Gb  low_level_init.o [3]
+                        0x080095ed          Code  Gb  ABImemcpy_unaligned.o [5]
+__iar_zero_init3        0x0800c379    0x40  Code  Gb  zero_init3.o [5]
+__low_level_init        0x0800c477     0x4  Code  Gb  low_level_init.o [3]
 __vector_table          0x08000000          Data  Gb  startup_stm32f767xx.o [1]
-_call_main              0x0800c409          Code  Gb  cmain.o [5]
-_exit                   0x0800c421          Code  Gb  cexit.o [5]
-_main                   0x0800c413          Code  Gb  cmain.o [5]
-background              0x20000054     0x2  Data  Gb  testfft.o [1]
+_call_main              0x0800c469          Code  Gb  cmain.o [5]
+_exit                   0x0800c481          Code  Gb  cexit.o [5]
+_main                   0x0800c473          Code  Gb  cmain.o [5]
+background              0x20000440     0x2  Data  Gb  testfft.o [1]
 bul_cho1                0x080022fc    0x18  Data  Gb  testfft.o [1]
 bul_cho2                0x0800232c    0x18  Data  Gb  testfft.o [1]
 bul_jong                0x08002314    0x18  Data  Gb  testfft.o [1]
-cursor                  0x2000004c     0x2  Data  Gb  testfft.o [1]
-cursor_flag             0x20000047     0x1  Data  Gb  testfft.o [1]
-exit                    0x0800c41b     0x4  Code  Gb  exit.o [3]
-fatClustToSect          0x08008f43    0x14  Code  Gb  testfft.o [1]
-fatDir                  0x08008ec9    0x3c  Code  Gb  testfft.o [1]
-fatGetDirEntry          0x08008df3    0xca  Code  Gb  testfft.o [1]
-fatNextCluster          0x08008f05    0x3e  Code  Gb  testfft.o [1]
-file_number             0x20000001     0x1  Data  Gb  testfft.o [1]
-file_size               0x20001830   0x3e8  Data  Gb  testfft.o [1]
-file_start_cluster      0x20001060   0x3e8  Data  Gb  testfft.o [1]
-file_start_entry        0x200025e8    0xfc  Data  Gb  testfft.o [1]
-file_start_sector       0x20001448   0x3e8  Data  Gb  testfft.o [1]
-foreground              0x20000052     0x2  Data  Gb  testfft.o [1]
-main                    0x08009313    0x7a  Code  Gb  testfft.o [1]
-outline                 0x20000050     0x2  Data  Gb  testfft.o [1]
-outline_flag            0x20000049     0x1  Data  Gb  testfft.o [1]
-play_flag               0x20000003     0x1  Data  Gb  testfft.o [1]
-prevHeight              0x20000008    0x20  Data  Lc  testfft.o [1]
-sector_cluster          0x20000028     0x4  Data  Gb  testfft.o [1]
+currentBuffer           0x20000001     0x1  Data  Gb  testfft.o [1]
+cursor                  0x20000438     0x2  Data  Gb  testfft.o [1]
+cursor_flag             0x20000433     0x1  Data  Gb  testfft.o [1]
+exit                    0x0800c47b     0x4  Code  Gb  exit.o [3]
+fatClustToSect          0x08008f63    0x14  Code  Gb  testfft.o [1]
+fatDir                  0x08008ee9    0x3c  Code  Gb  testfft.o [1]
+fatGetDirEntry          0x08008e13    0xca  Code  Gb  testfft.o [1]
+fatNextCluster          0x08008f25    0x3e  Code  Gb  testfft.o [1]
+file_number             0x20000002     0x1  Data  Gb  testfft.o [1]
+file_size               0x20001c20   0x3e8  Data  Gb  testfft.o [1]
+file_start_cluster      0x20001450   0x3e8  Data  Gb  testfft.o [1]
+file_start_entry        0x200029d8    0xfc  Data  Gb  testfft.o [1]
+file_start_sector       0x20001838   0x3e8  Data  Gb  testfft.o [1]
+foreground              0x2000043e     0x2  Data  Gb  testfft.o [1]
+main                    0x08009381    0x82  Code  Gb  testfft.o [1]
+outline                 0x2000043c     0x2  Data  Gb  testfft.o [1]
+outline_flag            0x20000435     0x1  Data  Gb  testfft.o [1]
+play_flag               0x20000004     0x1  Data  Gb  testfft.o [1]
+prevHeight              0x20002ad4    0x20  Data  Lc  testfft.o [1]
+sector_cluster          0x2000000c     0x4  Data  Gb  testfft.o [1]
 table_cho               0x080022a4    0x18  Data  Gb  testfft.o [1]
 table_jong              0x080022dc    0x20  Data  Gb  testfft.o [1]
 table_joong             0x080022bc    0x20  Data  Gb  testfft.o [1]
-total_file              0x20000002     0x1  Data  Gb  testfft.o [1]
-underscore              0x2000004e     0x2  Data  Gb  testfft.o [1]
-underscore_flag         0x20000048     0x1  Data  Gb  testfft.o [1]
-x_12bit                 0x20000056     0x2  Data  Gb  testfft.o [1]
-x_touch                 0x2000005a     0x2  Data  Gb  testfft.o [1]
-y_12bit                 0x20000058     0x2  Data  Gb  testfft.o [1]
-y_touch                 0x2000005c     0x2  Data  Gb  testfft.o [1]
+total_file              0x20000003     0x1  Data  Gb  testfft.o [1]
+underscore              0x2000043a     0x2  Data  Gb  testfft.o [1]
+underscore_flag         0x20000434     0x1  Data  Gb  testfft.o [1]
+x_12bit                 0x20000442     0x2  Data  Gb  testfft.o [1]
+x_touch                 0x20000446     0x2  Data  Gb  testfft.o [1]
+y_12bit                 0x20000444     0x2  Data  Gb  testfft.o [1]
+y_touch                 0x20000448     0x2  Data  Gb  testfft.o [1]
 
 
 [1] = C:\IAR Systems\oh-in-pe-\Output\Obj
@@ -415,9 +425,9 @@ y_touch                 0x2000005c     0x2  Data  Gb  testfft.o [1]
 [5] = rt7M_tl.a
 [6] = shb_l.a
 
-  39 180 bytes of readonly  code memory
-  11 576 bytes of readonly  data memory
-   9 955 bytes of readwrite data memory
+  39 272 bytes of readonly  code memory
+  11 588 bytes of readonly  data memory
+  10 991 bytes of readwrite data memory
 
 Errors: none
 Warnings: none
