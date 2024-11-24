@@ -340,14 +340,14 @@ void SetupMainScreen(void) {
     TFT_string(0, 7, THEME_TEXT, THEME_BG, "----------------------------------------");
     TFT_string(0, 9, THEME_TEXT, THEME_BG, "      파일 번호 : 000/000 (   kbps)     ");
     TFT_string(0,11, THEME_TEXT, THEME_BG, "      파일 용량 : 0000KB  (     Hz)     ");
-    TFT_string(0,13, THEME_TEXT, THEME_BG, "      연주 진행 : 00:00(000%)   (      )");
+    TFT_string(0,13, THEME_TEXT, THEME_BG, "     Music Play : 00:00(000%)   (      )");
     TFT_string(0,15, THEME_TEXT, THEME_BG, "----------------------------------------");
     TFT_string(0,17, THEME_TEXT, THEME_BG, "   음량(Volume) : 000%(000/250)         ");
     TFT_string(0,19, THEME_TEXT, THEME_BG, "   저음(Bass)   :  00 (00 ~ 15)         ");
     TFT_string(0,21, THEME_TEXT, THEME_BG, "   고음(Treble) :  00 (-8 ~ +7)         ");
     TFT_string(0,23, THEME_TEXT, THEME_BG, "----------------------------------------");
     TFT_string(0,25, THEME_TEXT, THEME_BG, "   KEY1      KEY2      KEY3      KEY4   ");
-    TFT_string(0,27, THEME_ACCENT, THEME_BG, "  (PLAY)    (FUNC)     (INC)     (DEC)  ");
+    TFT_string(0,27, THEME_ACCENT, THEME_BG, "  (PLAY)   (select)    (up)     (mode)  ");
     
     // 버튼 영역
     Rectangle(12, 196, 67, 235, THEME_BUTTON);    
