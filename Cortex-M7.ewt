@@ -1166,10 +1166,10 @@
   </group>
   <group>
     <name>User</name>
+    <file>
+      <name>$PROJ_DIR$\testWAV.c</name>
+    </file>
   </group>
-  <file>
-    <name>$PROJ_DIR$\main.c</name>
-  </file>
 </project>
 
 

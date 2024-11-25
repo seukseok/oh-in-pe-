@@ -2,90 +2,123 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>762875466</fileChecksum>
+  <fileChecksum>981540748</fileChecksum>
   <configuration>
     <name>OK-STM767</name>
     <outputs>
+      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\math.h</file>
+      <file>$PROJ_DIR$\Include\CMSIS\core_cm7.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
+      <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
+      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+      <file>$PROJ_DIR$\Output\List\testfft.lst</file>
       <file>$PROJ_DIR$\main.c</file>
       <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
       <file>$PROJ_DIR$\Include\CMSIS\core_cmInstr.h</file>
-      <file>$PROJ_DIR$\Include\startup_stm32f767xx.s</file>
-      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
-      <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
-      <file>$PROJ_DIR$\Output\Obj\testfft.__cstat.et</file>
-      <file>$PROJ_DIR$\Output\List\testfft.lst</file>
-      <file>$PROJ_DIR$\OK-STM767.h</file>
-      <file>$TOOLKIT_DIR$\lib\m7M_tlv.a</file>
-      <file>$PROJ_DIR$\OK-STM767_VS1053b.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
-      <file>$PROJ_DIR$\Output\Exe\OK-STM767.hex</file>
-      <file>$PROJ_DIR$\Output\Exe\OK-STM767.out</file>
-      <file>$PROJ_DIR$\OK-STM767_SD_card.h</file>
       <file>$TOOLKIT_DIR$\inc\c\xtgmath.h</file>
       <file>$PROJ_DIR$\Output\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\Output\List\OK-STM767.map</file>
-      <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
-      <file>$PROJ_DIR$\Output\Obj\main.__cstat.et</file>
+      <file>$TOOLKIT_DIR$\lib\m7M_tlv.a</file>
+      <file>$PROJ_DIR$\OK-STM767_VS1053b.h</file>
       <file>$PROJ_DIR$\Include\system_stm32f7xx.h</file>
+      <file>$PROJ_DIR$\Output\Obj\testfft.__cstat.et</file>
+      <file>$PROJ_DIR$\Output\Obj\main.__cstat.et</file>
+      <file>$PROJ_DIR$\Output\List\OK-STM767.map</file>
       <file>$PROJ_DIR$\Output\Obj\main.o</file>
-      <file>$PROJ_DIR$\Output\Obj\startup_stm32f767xx.o</file>
+      <file>$PROJ_DIR$\Output\Exe\OK-STM767.out</file>
       <file>$PROJ_DIR$\Output\List\main.lst</file>
+      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
       <file>$PROJ_DIR$\Include\CMSIS\arm_math.h</file>
+      <file>$PROJ_DIR$\Output\Obj\startup_stm32f767xx.o</file>
+      <file>$PROJ_DIR$\Include\startup_stm32f767xx.s</file>
+      <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
+      <file>$PROJ_DIR$\Output\Exe\OK-STM767.hex</file>
+      <file>$PROJ_DIR$\OK-STM767_SD_card.h</file>
+      <file>$PROJ_DIR$\OK-STM767.h</file>
       <file>$PROJ_DIR$\Include\CMSIS\core_cmFunc.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\math.h</file>
-      <file>$PROJ_DIR$\Include\CMSIS\core_cm7.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Full.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
-      <file>$TOOLKIT_DIR$\CMSIS\Lib\IAR\iar_cortexM7lf_math.a</file>
-      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
-      <file>$PROJ_DIR$\Include\stm32f767xx.h</file>
-      <file>$PROJ_DIR$\Output\Obj\Cortex-M7.pbd</file>
-      <file>$PROJ_DIR$\Linker\stm32f767xx_flash.icf</file>
       <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
       <file>$PROJ_DIR$\Include\CMSIS\core_cmSimd.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ymath.h</file>
-      <file>$PROJ_DIR$\Output\Obj\Exp18_1_FFT(1).o</file>
-      <file>$PROJ_DIR$\Output\Obj\Exp18_1_FFT(1).pbi</file>
-      <file>$PROJ_DIR$\Include\CMSIS\arm_common_tables.h</file>
-      <file>$PROJ_DIR$\Include\CMSIS\arm_const_structs.h</file>
-      <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
       <file>$PROJ_DIR$\Output\Obj\testfft.pbi</file>
+      <file>$PROJ_DIR$\Output\Obj\Cortex-M7.pbd</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
       <file>$PROJ_DIR$\testfft.c</file>
       <file>$PROJ_DIR$\Output\Obj\testfft.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ymath.h</file>
+      <file>$PROJ_DIR$\Include\CMSIS\arm_const_structs.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp18_1_FFT(1).pbi</file>
+      <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp18_1_FFT(1).__cstat.et</file>
+      <file>$PROJ_DIR$\Include\stm32f767xx.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
       <file>$PROJ_DIR$\Exp18_1_FFT(1).c</file>
       <file>$PROJ_DIR$\Output\List\Exp18_1_FFT(1).lst</file>
-      <file>$PROJ_DIR$\Output\Obj\Exp18_1_FFT(1).__cstat.et</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Full.h</file>
+      <file>$TOOLKIT_DIR$\CMSIS\Lib\IAR\iar_cortexM7lf_math.a</file>
+      <file>$PROJ_DIR$\Linker\stm32f767xx_flash.icf</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp18_1_FFT(1).o</file>
+      <file>$PROJ_DIR$\Include\CMSIS\arm_common_tables.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+      <file>$PROJ_DIR$\testWAV.c</file>
+      <file>$PROJ_DIR$\Output\Obj\testWAV.pbi</file>
+      <file>$PROJ_DIR$\Output\Obj\testWAV.o</file>
+      <file>$PROJ_DIR$\Output\Obj\testWAV.__cstat.et</file>
+      <file>$PROJ_DIR$\Output\List\testWAV.lst</file>
     </outputs>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 20 18</file>
+        </tool>
+      </outputs>
+    </file>
     <file>
       <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 23 21</file>
+          <file> 21 19</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 16</file>
+          <file> 12</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 19</file>
+          <file> 17</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 37 30 40 36 4 31 32 34 11 42 2 1 33 25 41 20 8 29 43 15 14 10 24 26 27 28</file>
+          <file> 45 3 31 54 6 39 49 46 22 36 10 9 32 30 33 15 29 2 40 11 28 14 23 0 1 4 41 53</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 36 24 20 40 14 11 4 15 8 10 30 25 31 42 33 26 37 2 41 32 34 1 29 43 27 28</file>
+          <file> 36 54 23 30 28 15 39 32 2 4 29 14 41 3 31 22 6 11 1 45 10 33 49 46 9 40 0 53</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Output\Exe\OK-STM767.out</name>
+      <outputs>
+        <tool>
+          <name>OBJCOPY</name>
+          <file> 27</file>
+        </tool>
+        <tool>
+          <name>ILINK</name>
+          <file> 18</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 51 24 57 50 5 26 13 43</file>
         </tool>
       </inputs>
     </file>
@@ -94,35 +127,7 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 22</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Output\Exe\OK-STM767.out</name>
-      <outputs>
-        <tool>
-          <name>OBJCOPY</name>
-          <file> 12</file>
-        </tool>
-        <tool>
-          <name>ILINK</name>
-          <file> 17</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 39 21 22 35 18 5 9 48</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 13 17</file>
+          <file> 24</file>
         </tool>
       </outputs>
     </file>
@@ -131,25 +136,25 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 7 51</file>
+          <file> 7 38</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 49</file>
+          <file> 34</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 6</file>
+          <file> 16</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 37 30 40 36 4 31 32 34 11 42 2 1 33 25 41 20 8 29 43 15 24 26 27 28 47 46</file>
+          <file> 45 3 31 54 6 39 49 46 22 36 10 9 32 30 33 15 29 2 40 11 23 0 1 4 41 53</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 40 1 27 32 30 24 25 36 43 4 8 47 20 2 41 34 29 28 37 31 11 42 33 15 26 46</file>
+          <file> 31 9 1 49 3 23 30 54 40 6 29 41 15 10 33 46 2 4 45 39 22 36 32 11 0 53</file>
         </tool>
       </inputs>
     </file>
@@ -158,25 +163,52 @@
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 53 44</file>
+          <file> 48 52</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 45</file>
+          <file> 42</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 54</file>
+          <file> 44</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 37 30 40 36 4 31 32 34 11 42 2 1 33 25 41 20 8 29 43 15 24 26 27 28</file>
+          <file> 45 3 31 54 6 39 49 46 22 36 10 9 32 30 33 15 29 2 40 11 23 0 1 4</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 31 36 41 33 20 24 2 42 4 8 30 40 25 11 15 26 37 32 34 1 29 43 27 28</file>
+          <file> 39 54 33 32 15 23 10 36 6 29 3 31 30 22 11 0 45 49 46 9 2 40 1 4</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\testWAV.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 59 57</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 56</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 58</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 45 3 31 54 6 39 49 46 22 36 10 9 32 30 33 15 29 2 40 11 28 14 23 0 1 4</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 54 3 23 9 40 28 31 33 49 6 29 14 15 10 46 2 0 45 30 39 22 36 32 11 1 4</file>
         </tool>
       </inputs>
     </file>
