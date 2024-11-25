@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>2809289949</fileChecksum>
+  <fileChecksum>762875466</fileChecksum>
   <configuration>
     <name>OK-STM767</name>
     <outputs>
@@ -12,6 +12,8 @@
       <file>$PROJ_DIR$\Include\startup_stm32f767xx.s</file>
       <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
       <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
+      <file>$PROJ_DIR$\Output\Obj\testfft.__cstat.et</file>
+      <file>$PROJ_DIR$\Output\List\testfft.lst</file>
       <file>$PROJ_DIR$\OK-STM767.h</file>
       <file>$TOOLKIT_DIR$\lib\m7M_tlv.a</file>
       <file>$PROJ_DIR$\OK-STM767_VS1053b.h</file>
@@ -48,32 +50,42 @@
       <file>$PROJ_DIR$\Include\CMSIS\core_cmSimd.h</file>
       <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
       <file>$TOOLKIT_DIR$\inc\c\ymath.h</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp18_1_FFT(1).o</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp18_1_FFT(1).pbi</file>
+      <file>$PROJ_DIR$\Include\CMSIS\arm_common_tables.h</file>
+      <file>$PROJ_DIR$\Include\CMSIS\arm_const_structs.h</file>
       <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
+      <file>$PROJ_DIR$\Output\Obj\testfft.pbi</file>
+      <file>$PROJ_DIR$\testfft.c</file>
+      <file>$PROJ_DIR$\Output\Obj\testfft.o</file>
+      <file>$PROJ_DIR$\Exp18_1_FFT(1).c</file>
+      <file>$PROJ_DIR$\Output\List\Exp18_1_FFT(1).lst</file>
+      <file>$PROJ_DIR$\Output\Obj\Exp18_1_FFT(1).__cstat.et</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 21 19</file>
+          <file> 23 21</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 14</file>
+          <file> 16</file>
         </tool>
         <tool>
           <name>__cstat</name>
-          <file> 17</file>
+          <file> 19</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 35 28 38 34 4 29 30 32 9 40 2 1 31 23 39 18 6 27 41 13 12 8 22 24 25 26</file>
+          <file> 37 30 40 36 4 31 32 34 11 42 2 1 33 25 41 20 8 29 43 15 14 10 24 26 27 28</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 34 22 18 38 12 9 4 13 6 8 28 23 29 40 31 24 35 2 39 30 32 1 27 41 25 26</file>
+          <file> 36 24 20 40 14 11 4 15 8 10 30 25 31 42 33 26 37 2 41 32 34 1 29 43 27 28</file>
         </tool>
       </inputs>
     </file>
@@ -82,7 +94,7 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 20</file>
+          <file> 22</file>
         </tool>
       </outputs>
     </file>
@@ -91,17 +103,17 @@
       <outputs>
         <tool>
           <name>OBJCOPY</name>
-          <file> 10</file>
+          <file> 12</file>
         </tool>
         <tool>
           <name>ILINK</name>
-          <file> 15</file>
+          <file> 17</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ILINK</name>
-          <file> 37 19 20 33 16 5 7 42</file>
+          <file> 39 21 22 35 18 5 9 48</file>
         </tool>
       </inputs>
     </file>
@@ -110,9 +122,63 @@
       <outputs>
         <tool>
           <name>ILINK</name>
-          <file> 11 15</file>
+          <file> 13 17</file>
         </tool>
       </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\testfft.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 7 51</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 49</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 6</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 37 30 40 36 4 31 32 34 11 42 2 1 33 25 41 20 8 29 43 15 24 26 27 28 47 46</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 40 1 27 32 30 24 25 36 43 4 8 47 20 2 41 34 29 28 37 31 11 42 33 15 26 46</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Exp18_1_FFT(1).c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 53 44</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 45</file>
+        </tool>
+        <tool>
+          <name>__cstat</name>
+          <file> 54</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 37 30 40 36 4 31 32 34 11 42 2 1 33 25 41 20 8 29 43 15 24 26 27 28</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 31 36 41 33 20 24 2 42 4 8 30 40 25 11 15 26 37 32 34 1 29 43 27 28</file>
+        </tool>
+      </inputs>
     </file>
   </configuration>
 </project>

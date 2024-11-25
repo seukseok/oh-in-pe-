@@ -453,7 +453,7 @@ void UpdateSpectrum(void) {
     static uint8_t filterIndex = 0;
     
     for(uint8_t i = 0; i < 16; i++) {
-        uint16_t raw_value = VS1053b_SCI_Read(0x0C + i);
+        uint16_t raw_value = VS1053b_SCI_Read(0x0C + i); // 레지스터 값 읽기
         
         // 이동 평균 필터 적용
         prevValues[i][filterIndex] = (float)raw_value;
@@ -562,9 +562,9 @@ void TFT_filename(void) {
   file_flag = Get_long_filename(file_number);   // Check file name
 
   if (file_flag == 0)                           // Short file name (8.3 format)
-    TFT_short_filename(3, 5, Green, Black);
+    TFT_short_filename(3, 5, White, Black);
   else if (file_flag == 1)                      // Long file name
-    TFT_long_filename(3, 5, Green, Black);
+    TFT_long_filename(3, 5, White, Black);
   else if (file_flag == 2)                      // File name is longer than 195 characters
     TFT_string(3, 5, Red, Black, "* 파일명 길이 초과 *");
   else                                          // File name error
