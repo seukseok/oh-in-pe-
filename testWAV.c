@@ -39,6 +39,22 @@ unsigned char Icon_input(void);                   // Input touch screen icon
 void SetupMainScreen(void);                       // 메인 화면 구성
 void Initialize_VS1053b(void);                    // VS1053B 초기화
 
+// 음원 폴더 만들기 함수들
+void DelLongFilename(char *filename, char *delLong_filename, unsigned int max_length);
+unsigned char TFT_getTouch(unsigned int *x, unsigned int *y);
+unsigned char IsWAVFile(U32 sector);
+void sorting_music_file(void);
+
+// KEY 4 함수들
+void Piano_TILES(void);
+void White_key_Init(void);
+void Black_key_Init(void);
+void Draw_Keys(void);
+void Key_Touch(U16 touch_x, U16 touch_y);
+void Key_input_handler(void);
+
+void FFT_REC(void);
+
 /*******************************************************************************
  * WAV 관련 함수
  ******************************************************************************/
@@ -61,6 +77,7 @@ uint8_t MP3buffer[BUFFER_COUNT][BUFFER_SIZE];
 uint32_t file_start[MAX_FILE];
 uint32_t file_size[MAX_FILE];
 uint16_t volume = INITIAL_VOLUME;
+uint8_t graph_piano_mode = 0;
 
 typedef struct {
     uint32_t sampleRate;
@@ -288,6 +305,8 @@ int main(void) {
 
             case KEY4:
                 // 기능 없음
+                graph_piano_mode = 1;
+                Piano_TILES();
                 break;
 
             default:
@@ -339,7 +358,7 @@ uint8_t ParseWAVHeader(uint32_t sector) {
     uint8_t header[WAV_HEADER_SIZE];
     SD_read_sector(sector, header);
 
-    // Wave 포맷 체크 (RIFF, WAVE) 
+    // Wave 포맷 체크 (RIFF, WAVE) - front 4bit is ChunkID, back 4bit is Format 
     if(header[0] != 'R' || header[1] != 'I' || header[2] != 'F' || header[3] != 'F' ||
        header[8] != 'W' || header[9] != 'A' || header[10] != 'V' || header[11] != 'E') {
         return 0;
@@ -597,4 +616,267 @@ unsigned char Icon_input(void) {
   }
 
   return keyPressed;
+}
+
+// ===============================================================
+// Music File Sort & Make Select Box
+// ===============================================================
+
+#define FILES_PER_PAGE 8  // 한 페이지에 표시할 파일 수
+
+char short_filename_buffer[13];  // 8.3 형식 파일 이름 버퍼
+char long_filename_buffer[256]; // 긴 파일 이름 버퍼
+unsigned int touch_flag = 0;     // 파일 선택 플래그
+unsigned int selected_index = 0; // 선택된 파일 인덱스
+
+
+// 긴 파일 이름 잘라내기 함수
+void DelLongFilename(char *filename, char *delLong_filename, unsigned int max_length) {
+    if (max_length < 2) return;  // 너무 작은 길이는 처리하지 않음
+    if (strlen(filename) > max_length) {
+        strncpy(delLong_filename, filename, max_length - 1);
+        delLong_filename[max_length - 1] = '~';
+        delLong_filename[max_length] = '\0';
+    } else {
+        strcpy(delLong_filename, filename);
+    }
+}
+
+// 간단한 터치 감지 함수
+unsigned char TFT_getTouch(unsigned int *x, unsigned int *y) {
+    if (TouchScreen_IsTouched()) {
+        *x = TouchScreen_GetX();
+        *y = TouchScreen_GetY();
+        return 1;
+    }
+    return 0;
+}
+
+// 파일 검토 함수
+unsigned char IsWAVFile(U32 sector) {
+    return ParseWAVHeader(sector);
+}
+
+// 파일 불러오기 및 선택 함수
+void sorting_music_file(void) {
+    unsigned int current_page = 0;
+    unsigned int stopline = 1;
+    unsigned int start_file, end_file;
+    unsigned char file_flag;
+    unsigned int line_count;
+    unsigned int touch_flag = 0;                // 파일 선택 플래그
+    unsigned int selected_index = -1;           // 선택된 파일 인덱스
+  
+    clear_screen();
+    TFT_string(0, 0, THEME_HEADER, Black, "파일 목록 탐색");
+
+    while (stopline) {
+        Rectangle(0, 20, 320, 200, White);
+        color_screen(Black, 0, 20, 319, 199);
+
+        start_file = current_page * FILES_PER_PAGE;
+        end_file = start_file + FILES_PER_PAGE;
+        if (end_file > total_file) end_file = total_file;
+
+        line_count = 24;
+        for (unsigned int i = start_file; i < end_file; i++) {
+
+           // WAV 파일 필터링
+            if (!IsWAVFile(MP3_start_sector[i])) {
+                continue;  // WAV 파일이 아니면 건너뛰기
+            }
+
+            file_flag = Get_long_filename(i);
+            char cutLong_name[41]; // 화면에 표시할 이름 (최대 40자)
+
+            if (file_flag == 0) {
+              DelLongFilename(short_filename_buffer, cutLong_name, 40); // 이름 길이 잘라내기(최대 40자) - 아마 안쓰일것
+              TFT_string(5, line_count, (i == selected_index && touch_flag) ? THEME_HIGHLIGHT : White, Black, cutLong_name);
+            } else if (file_flag == 1) {
+              DelLongFilename(long_filename_buffer, cutLong_name, 40); // 이름 길이 잘라내기(최대 40자)
+              TFT_string(5, line_count, (i == selected_index && touch_flag) ? THEME_HIGHLIGHT : White, Black, cutLong_name);
+            } else if (file_flag == 2) {
+              TFT_string(5, line_count, Red, Black, "* 이름이 너무 깁니다 *");
+            } else {
+              TFT_string(5, line_count, Red, Black, "*** 파일 이름 오류 ***");
+            }
+
+            line_count += 2;
+            if(line_count >= 199) break; // 화면 끝에 도달하면 종료 & 오류 처리
+        }
+
+        if (current_page > 0) {
+          TFT_string(10, 210, White, Black, "[이전 페이지]");
+        }
+        if (current_page < (total_file + FILES_PER_PAGE - 1) / FILES_PER_PAGE - 1) {
+          TFT_string(200, 210, White, Black, "[다음 페이지]");
+        }
+
+        while (1) {
+            if (TFT_getTouch(&x_touch, &y_touch)) {
+                if (y_touch >= 24 && y_touch <= 199) {
+                    unsigned int temp_index = (y_touch - 24) / 16 + start_file;
+                    if (temp_index < total_file) {
+                      if (!IsWAVFile(MP3_start_sector[temp_index])) {
+                        continue; // WAV 파일이 아닌 경우 무시
+                      }
+
+                      if (touch_flag == 1 && temp_index == selected_index) {
+                        file_number = selected_index;
+                        stopline = 0;
+                        break;
+                      } else {
+                        touch_flag = 1;
+                        selected_index = temp_index;
+                        break;
+                      }
+                    }
+                } else {
+                    touch_flag = 0; // 잘못된 터치 처리
+                }
+                if ((x_touch >= 10 && x_touch <= 100) && (y_touch >= 210 && y_touch <= 230) && current_page > 0) {
+                  current_page--;
+                  break;
+                }
+                if ((x_touch >= 200 && x_touch <= 300) && (y_touch >= 210 && y_touch <= 230) &&
+                  current_page < (total_file + FILES_PER_PAGE - 1) / FILES_PER_PAGE - 1) {
+                  current_page++;
+                  break;
+                }
+            }
+        }
+    }
+    clear_screen();
+    SetupMainScreen();
+}
+
+// ===============================================================
+// Piano Tiles(C to B)
+// ===============================================================
+
+#define WHITE_TILES 7
+#define BLACK_TILES 5
+
+#define WHITE_KEY_WIDTH 40
+#define WHITE_KEY_HEIGHT 81
+#define BLACK_KEY_WIDTH 54
+#define BLACK_KEY_HEIGHT 25
+
+#define GRAY 0x7BEF
+
+typedef struct{
+  U16 xstart;
+  U16 xend;
+  U16 ystart;
+  U16 yend;
+} KeyInfo;
+
+KeyInfo White_key[WHITE_TILES];
+KeyInfo Black_key[BLACK_TILES];
+
+unsigned char IsWhiteKeyTouching[WHITE_TILES] = {0};
+unsigned char IsBlackKeyTouching[BLACK_TILES] = {0};
+
+void Piano_TILES(void){
+  White_key_Init();
+  Black_key_Init();
+  Delay_ms(10);
+  FFT_REC();
+  Draw_Keys();
+}
+
+void White_key_Init(void){
+  uint8_t x = 36;
+  uint8_t y = 127;
+
+  for(int i = 0; i < WHITE_TILES; i++){
+    White_key[i].xstart = x;
+    White_key[i].xend = x + WHITE_KEY_WIDTH;
+    White_key[i].ystart = y;
+    White_key[i].yend = y + WHITE_KEY_HEIGHT;
+    x += WHITE_KEY_WIDTH + 2; 
+  }
+}
+void Black_key_Init(void){
+  uint8_t x = 36 + WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2);
+  uint8_t y = 127;
+
+  //흑건 위치
+  int Black_key_pos[] = {0,1,3,4,5};
+
+  for(int i = 0; i < BLACK_TILES; i++){
+    Black_key[i].xstart = x + (Black_key_pos[i] * (WHITE_KEY_WIDTH + 2));
+    Black_key[i].xend = x + Black_key[i].xstart + BLACK_KEY_WIDTH;
+    Black_key[i].ystart = y;
+    Black_key[i].yend = y + BLACK_KEY_HEIGHT;
+    x += WHITE_KEY_WIDTH + 2; 
+  }
+}
+
+void FFT_REC(void){
+    // 사각형 테두리
+    Rectangle(36, 15, 328, 96, THEME_HEADER);
+    // 함수 들어가는 곳
+}
+
+void Draw_Keys(void) {
+    // 흰 건반 그리기
+    for (int i = 0; i < 7; i++) {
+        block(White_key[i].xstart, White_key[i].ystart,
+                     WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT, Black, White);
+    }
+    // 검은 건반 그리기
+    for (int i = 0; i < 5; i++) {
+        block(Black_key[i].xstart, Black_key[i].ystart,
+                     BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT, White);
+    }
+    Rectangle(36, 127, 328, 208, THEME_HEADER); // 테두리 사각형    
+}
+
+void Key_Touch(U16 touch_x, U16 touch_y){
+  for(int i = 0; i < WHITE_TILES; i++){
+    if(x_touch >= White_key[i].xstart && x_touch <= White_key[i].xend && y_touch >= White_key[i].ystart && y_touch <= White_key[i].yend){
+      if(!IsWhiteKeyTouching[i]){
+        IsWhiteKeyTouching[i] = 1;
+        block(White_key[i].xstart, White_key[i].ystart,
+                     WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT, Black, GRAY);
+        // 출력 음계(Toggle) ex) playWhite(i);
+      }
+    } else {
+      IsWhiteKeyTouching[i] = 0;
+      // 출력 종료 ex) stopWhite(i);
+    }
+  }
+
+  for(int i = 0; i < BLACK_TILES; i++){
+    if(x_touch >= Black_key[i].xstart && x_touch <= Black_key[i].xend && y_touch >= Black_key[i].ystart && y_touch <= Black_key[i].yend){
+      if(!IsBlackKeyTouching[i]){
+        IsBlackKeyTouching[i] = 1;
+        block(Black_key[i].xstart, Black_key[i].ystart,
+                     BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT, Black, GRAY);
+        // 출력 음계(Toggle) ex) playBlack(i)'
+      }
+    } else {
+      IsBlackKeyTouching[i] = 0;
+      // 출력 종료 ex) stopBlack(i);
+    }
+  }  
+}
+
+void Key_input_handler(void){ // SysTick 공부해서 추가예정
+  uint16_t touch_x, touch_y;
+  if(graph_piano_mode == 1){
+    if(TFT_getTouch(&x_touch,&y_touch)){
+      Key_Touch(touch_x, touch_y);
+    } else {
+      for(int i = 0; i < WHITE_TILES; i++){
+        IsWhiteKeyTouching[i] = 0;
+        // stop playing 구문 추가 ex) stopWhite(i);
+      }
+      for(int i = 0; i < BLACK_TILES; i++){
+        IsBlackKeyTouching[i] = 0;
+        // stop playing 구문 추가 ex) stopBlack(i);
+      }
+    }
+  }
 }
