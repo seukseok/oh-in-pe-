@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>981540748</fileChecksum>
+  <fileChecksum>460360971</fileChecksum>
   <configuration>
     <name>OK-STM767</name>
     <outputs>
@@ -66,6 +66,11 @@
       <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
       <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
       <file>$PROJ_DIR$\Output\Obj\main.__cstat.et</file>
+      <file>$PROJ_DIR$\test_mode.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
+      <file>$PROJ_DIR$\Output\Obj\test_mode.o</file>
+      <file>$PROJ_DIR$\Output\Obj\test_mode.pbi</file>
     </outputs>
     <file>
       <name>[ROOT_NODE]</name>
@@ -212,6 +217,29 @@
         </tool>
       </inputs>
     </file>
+    <file>
+      <name>$PROJ_DIR$\test_mode.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 63</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 64</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 7 42 58 35 20 31 33 51 50 10 52 34 54 61 55 18 47 24 37 57 62 8 12 25 32 4 14 39</file>
+        </tool>
+      </inputs>
+    </file>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>ILINK</tool>
+    </forcedrebuild>
   </configuration>
 </project>
 
