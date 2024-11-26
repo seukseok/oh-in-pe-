@@ -1167,7 +1167,7 @@
   <group>
     <name>User</name>
     <file>
-      <name>$PROJ_DIR$\test_mode.c</name>
+      <name>$PROJ_DIR$\testWAV.c</name>
     </file>
   </group>
 </project>
