@@ -6,15 +6,15 @@
 #include "arm_math.h"
 
 /*******************************************************************************
- * 상수 정의
+ * ?????? ??????
  ******************************************************************************/
-#define THEME_BG        Black       // 배경색
-#define THEME_HEADER    0x861D      // 진한 보라색
-#define THEME_TEXT      0xBDF7      // 밝은 회색
-#define THEME_HIGHLIGHT 0x05FF      // 청록색
-#define THEME_ACCENT    0xFD20      // 산호색
-#define THEME_BUTTON    0x2DB7      // 청남색
-#define THEME_WARNING   0xFBE0      // amber색
+#define THEME_BG        Black       // ���???
+#define THEME_HEADER    0x861D      // ���� ����???
+#define THEME_TEXT      0xBDF7      // ��??? ??????
+#define THEME_HIGHLIGHT 0x05FF      // ??�ϻ�
+#define THEME_ACCENT    0xFD20      // ?????????
+#define THEME_BUTTON    0x2DB7      // ????????
+#define THEME_WARNING   0xFBE0      // amber???
 
 #define BAR_WIDTH       15 
 #define BAR_GAP         4
@@ -23,20 +23,20 @@
 #define INITIAL_VOLUME  200
 #define BUFFER_SIZE     512
 #define BUFFER_COUNT    2
-#define UPDATE_PERIOD   20    /* 스펙트럼 업데이트 주기(ms) */
+#define UPDATE_PERIOD   20    /* ???????????? ???????????? �ֱ�(ms) */
 
-// 디버그 정보 표시를 위한 상수 추가
+// ???���� ????? ???????? ?????? ?????? ��???
 #define DEBUG_MODE      1
 #define FREQ_BANDS      16
 
-// WAV 파일 재생을 위한 추가 상수
+// WAV ?????? ????????? ?????? ��??? ??????
 #define WAV_HEADER_SIZE 44
 #define SAMPLE_RATE     48000
 #define CHANNELS        2
 #define BITS_PER_SAMPLE 16
 
 /*******************************************************************************
- * 함수 선언
+ * ?????? ??????
  ******************************************************************************/
 void TFT_filename(void);                          // Display MP3 file name, number, size
 void TFT_volume(void);                            // Display volume
@@ -47,7 +47,7 @@ void Check_valid_decrement_file(void);            // Check if valid file for dec
 void TFT_MP3_bitrate(U16 highbyte, U16 lowbyte);  // Display MP3 file bitrate
 unsigned char Icon_input(void);                   // Input touch screen icon
 
-void SetupMainScreen(void);                       // 메인 화면 구성 함수 추가
+void SetupMainScreen(void);                       // ���� ????? ���� ?????? ��???
 
 
 void InitSpectrum(void);
@@ -56,24 +56,24 @@ void PlayAndDrawSpectrum(void);
 void UpdateSpectrum(void);
 void DrawSpectrumBar(uint8_t index, uint16_t height);
 void DebugSpectrum(void);
-void Initialize_VS1053b(void);                    // VS1053B 초기화 함수 선언
+void Initialize_VS1053b(void);                    // VS1053B �ʱ�??? ?????? ??????
 
-// WAV 파일 헤더 파싱
+// WAV ?????? ?????? ??????
 uint8_t ParseWAVHeader(uint32_t sector);
 
-// VS1053B WAV 재생 설정
+// VS1053B WAV ?????? ??????
 void ConfigureVS1053ForWAV(void);
 
-// WAV 데이터 전송
+// WAV ????????? ??????
 void SendWAVData(uint8_t* buffer, uint16_t* index);
 
 /*******************************************************************************
- * 전역 변수
+ * ?????? ?????
  ******************************************************************************/
 unsigned char total_file;                         // Total file number
 unsigned char file_number = 0;                    // Current file number
 
-/* 추가된 전역 변수 */
+/* ��?????? ?????? ????? */
 volatile uint32_t SysTick_Count = 0;
 volatile uint8_t currentBuffer = 0;
 uint32_t MP3_start_sector[MAX_FILE];
@@ -85,7 +85,7 @@ uint32_t file_start[MAX_FILE];
 uint32_t file_size[MAX_FILE];
 uint16_t volume = INITIAL_VOLUME;
 
-// WAV 파일 헤더 정보를 저장할 구조체
+// WAV ?????? ?????? ???��??? ????????? ����??
 typedef struct {
     uint32_t sampleRate;
     uint16_t numChannels;
@@ -96,20 +96,20 @@ typedef struct {
 WAV_Header wavHeader;
 
 /*******************************************************************************
- * SysTick 관련 함수
+ * SysTick ????? ??????
  ******************************************************************************/
 void SysTick_Handler(void) {
     SysTick_Count++;
 }
 
 void SysTick_Initialize(void) {
-    SysTick->LOAD = 216000 - 1;    /* 216MHz/1000 = 216000 (1ms 주기) */
-    SysTick->VAL = 0;              /* 카운터 초기화 */
-    SysTick->CTRL = 0x07;          /* 클록 소스, 인터럽트, 타이머 활성화 */
+    SysTick->LOAD = 216000 - 1;    /* 216MHz/1000 = 216000 (1ms �ֱ�) */
+    SysTick->VAL = 0;              /* ī��??? �ʱ�??? */
+    SysTick->CTRL = 0x07;          /* ????? ??????, ????????????, ???????? ????????? */
 }
 
 /*******************************************************************************
- * 메인 함수
+ * ���� ??????
  ******************************************************************************/
 int main(void) {
     unsigned char i, key;
@@ -129,7 +129,7 @@ int main(void) {
     TFT_string(0, 4, Green, Black, "****************************************");
     TFT_string(0, 6, White, Black, "                OH-IN-PE-               ");
     TFT_string(0, 8, Green, Black, "****************************************");
-    TFT_string(0, 23, Cyan, Black, "           SD 카드 초기화...            ");
+    TFT_string(0, 23, Cyan, Black, "           SD ????...            ");
     Beep();
     Delay_ms(1000);
     TFT_clear_screen();
@@ -137,12 +137,12 @@ int main(void) {
     Initialize_SD();                              // Initialize SD card
     Initialize_FAT32();                           // Initialize FAT32 file system
     Initialize_VS1053b();                         // Initialize VS1053b
-    SysTick_Initialize();                         // SysTick 초기화
+    SysTick_Initialize();                         // SysTick �ʱ�???
     Delay_ms(1000);
 
-    volume = 175;                       // 볼륨 변수
-    bass = 10;                          // 베이스 변수
-    treble = 5;                         // 트레블 변수
+    volume = 175;                       // ���� ?????
+    bass = 10;                          // ����??? ?????
+    treble = 5;                         // ???????? ?????
 
     VS1053b_SetVolume(volume);
     Delay_ms(1);
@@ -157,7 +157,7 @@ int main(void) {
 
     file_number = 0;                              // Initialize file number
 
-    // 메인 화면 구성 함수 호출
+    // ���� ????? ���� ?????? ?????
     SetupMainScreen();
 
     while (1) {
@@ -246,9 +246,9 @@ int main(void) {
             case KEY1:
                 play_flag ^= 0x01;               // Toggle play or stop
                 if(play_flag == 1)
-                    TFT_string(33, 13, THEME_HIGHLIGHT, THEME_BG, "재생중");
+                    TFT_string(33, 13, THEME_HIGHLIGHT, THEME_BG, " play ");
                 else
-                    TFT_string(33, 13, THEME_TEXT, THEME_BG, " 정지 ");
+                    TFT_string(33, 13, THEME_TEXT, THEME_BG, " stop ");
                 break;
 
             case KEY2:
@@ -272,7 +272,7 @@ int main(void) {
                 break;
 
             case KEY3:
-                if (func_mode == 0) {            // 다음 음악 선택
+                if (func_mode == 0) {            // ?????? ?????? ??????
                     if (file_number != (total_file - 1))
                         file_number++;
                     else
@@ -286,24 +286,24 @@ int main(void) {
                     MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
                     index = 512;
                     VS1053b_software_reset();
-                } else if (func_mode == 1) {     // 볼륨 증가
+                } else if (func_mode == 1) {     // ���� ��???
                     volume++;
                     if (volume > 250) {
-                        volume = 5;  // 최소값으로 롤오버
+                        volume = 5;  // �ּҰ���?? �ѿ�??
                     }
                     VS1053b_SetVolume(volume);
                     TFT_volume();
-                } else if (func_mode == 2) {     // 베이스 증가
+                } else if (func_mode == 2) {     // ����??? ��???
                     bass++;
                     if (bass > 15) {
-                        bass = 0;  // 최소값으로 롤오버
+                        bass = 0;  // �ּҰ���?? �ѿ�??
                     }
                     VS1053b_SetBassTreble(bass, treble);
                     TFT_bass();
-                } else {                         // 트레블 증가
+                } else {                         // ???????? ��???
                     treble++;
                     if (treble > 7) {
-                        treble = -8;  // 최소값으로 롤오버
+                        treble = -8;  // �ּҰ���?? �ѿ�??
                     }
                     VS1053b_SetBassTreble(bass, treble);
                     TFT_treble();
@@ -312,26 +312,26 @@ int main(void) {
 
             case KEY4:
                 if (func_mode == 0) {
-                    //기능 없음
-                } else if (func_mode == 1) {     // 볼륨 감소
+                    //��� ??????
+                } else if (func_mode == 1) {     // ���� ����
                     if (volume > 5)
                         volume--;
                     else
-                        volume = 250;  // 최대값으로 롤오버
+                        volume = 250;  // ��???����?? �ѿ�??
                     VS1053b_SetVolume(volume);
                     TFT_volume();
-                } else if (func_mode == 2) {     // 베이스 감소
+                } else if (func_mode == 2) {     // ����??? ����
                     if (bass > 0)
                         bass--;
                     else
-                        bass = 15;  // 최대값으로 롤오버
+                        bass = 15;  // ��???����?? �ѿ�??
                     VS1053b_SetBassTreble(bass, treble);
                     TFT_bass();
-                } else {                         // 트레블 감소
+                } else {                         // ???????? ����
                     if (treble > -8)
                         treble--;
                     else
-                        treble = 7;  // 최대값으로 롤오버
+                        treble = 7;  // ��???����?? �ѿ�??
                     VS1053b_SetBassTreble(bass, treble);
                     TFT_treble();
                 }
@@ -343,26 +343,26 @@ int main(void) {
     }
 }
 
-/* 메인 화면 구성 함수 */
+/* ���� ????? ���� ?????? */
 void SetupMainScreen(void) {
-    // 메인 화면 구성
+    // ���� ????? ����
     TFT_clear_screen();                           
     TFT_string(0, 0, Black, THEME_HEADER, "  OH-IN-PE-  ");
     TFT_string(0, 3, THEME_TEXT, THEME_BG, "----------------------------------------");
     TFT_string(0, 5, THEME_HIGHLIGHT, THEME_BG, ">>");
     TFT_string(0, 7, THEME_TEXT, THEME_BG, "----------------------------------------");
-    TFT_string(0, 9, THEME_TEXT, THEME_BG, "      파일 번호 : 000/000 (   kbps)     ");
-    TFT_string(0,11, THEME_TEXT, THEME_BG, "      파일 용량 : 0000KB  (     Hz)     ");
-    TFT_string(0,13, THEME_TEXT, THEME_BG, "     Music Play : 00:00(000%)   (      )");
+    TFT_string(0, 9, THEME_TEXT, THEME_BG, "      ���� ��ȣ : 000/000 (   kbps)     ");
+    TFT_string(0,11, THEME_TEXT, THEME_BG, "      ���� �뷮 : 0000KB  (     Hz)     ");
+    TFT_string(0,13, THEME_TEXT, THEME_BG, "     Music play : 00:00(000%)   (      )");
     TFT_string(0,15, THEME_TEXT, THEME_BG, "----------------------------------------");
-    TFT_string(0,17, THEME_TEXT, THEME_BG, "   음량(Volume) : 000%(000/250)         ");
-    TFT_string(0,19, THEME_TEXT, THEME_BG, "   저음(Bass)   :  00 (00 ~ 15)         ");
-    TFT_string(0,21, THEME_TEXT, THEME_BG, "   고음(Treble) :  00 (-8 ~ +7)         ");
+    TFT_string(0,17, THEME_TEXT, THEME_BG, "   ����(Volume) : 000%(000/250)         ");
+    TFT_string(0,19, THEME_TEXT, THEME_BG, "   ����(Bass)   :  00 (00 ~ 15)         ");
+    TFT_string(0,21, THEME_TEXT, THEME_BG, "   ����(Treble) :  00 (-8 ~ +7)         ");
     TFT_string(0,23, THEME_TEXT, THEME_BG, "----------------------------------------");
     TFT_string(0,25, THEME_TEXT, THEME_BG, "   KEY1      KEY2      KEY3      KEY4   ");
-    TFT_string(0,27, THEME_ACCENT, THEME_BG, "  (PLAY)   (select)    (up)     (mode)  ");
+    TFT_string(0,27, THEME_ACCENT, THEME_BG, "  (PLAY)   (select)     (up)     (mode) ");
     
-    // 버튼 영역
+    // ��ư ??????
     Rectangle(12, 196, 67, 235, THEME_BUTTON);    
     Rectangle(92, 196, 147, 235, THEME_BUTTON);
     Rectangle(176, 196, 231, 235, THEME_BUTTON);
@@ -381,31 +381,31 @@ void SetupMainScreen(void) {
     MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
 }
 
-// MP3 데이터를 VS1053b로 전송하는 함수
+// MP3 ??????????? VS1053b?? ???????????? ??????
 void SendMP3Data(uint8_t* buffer, uint16_t* index) {
     GPIOC->BSRR = 0x00400000;      /* -MP3_DCS = 0 */
     
-    /* 32바이트 블록 단위로 전송 */
+    /* 32����??? ���� ???????? ?????? */
     for(uint8_t i = 0; i < 32; i++) {
-        while((GPIOC->IDR & 0x0080) == 0);  /* DREQ 대기 */
+        while((GPIOC->IDR & 0x0080) == 0);  /* DREQ ????? */
         SPI3_write(buffer[(*index)++]);
     }
     
     GPIOC->BSRR = 0x00000040;      /* -MP3_DCS = 1 */
 }
 
-// WAV 파일 헤더 파싱
+// WAV ?????? ?????? ??????
 uint8_t ParseWAVHeader(uint32_t sector) {
     uint8_t header[WAV_HEADER_SIZE];
     SD_read_sector(sector, header);
 
-    // WAV 파일 시그니처 확인 ("RIFF" & "WAVE")
+    // WAV ?????? ???�״�?? ?????? ("RIFF" & "WAVE")
     if(header[0] != 'R' || header[1] != 'I' || header[2] != 'F' || header[3] != 'F' ||
        header[8] != 'W' || header[9] != 'A' || header[10] != 'V' || header[11] != 'E') {
         return 0;
     }
 
-    // 헤더 정보 추출
+    // ?????? ????? ����
     wavHeader.sampleRate = *(uint32_t*)&header[24];
     wavHeader.numChannels = *(uint16_t*)&header[22];
     wavHeader.bitsPerSample = *(uint16_t*)&header[34];
@@ -414,29 +414,29 @@ uint8_t ParseWAVHeader(uint32_t sector) {
     return 1;
 }
 
-// VS1053B WAV 재생 설정
+// VS1053B WAV ?????? ??????
 void ConfigureVS1053ForWAV(void) {
     VS1053b_software_reset();
     Delay_ms(10);
     
-    // Native SPI 모드 활성화
+    // Native SPI ��� ?????????
     VS1053b_SCI_Write(0x00, 0x0820);
     Delay_ms(1);
     
-    // 샘플링 레이트 설정
-    VS1053b_SCI_Write(0x05, 0xAC45);  // 48kHz, 스테레오
+    // ???????? ????????? ??????
+    VS1053b_SCI_Write(0x05, 0xAC45);  // 48kHz, ????????????
     
-    // 볼륨 및 음질 설정
+    // ���� ?? ????? ??????
     VS1053b_SetVolume(volume);
     VS1053b_SetBassTreble(8, 3);
 }
 
-// WAV 데이터 전송
+// WAV ????????? ??????
 void SendWAVData(uint8_t* buffer, uint16_t* index) {
     GPIOC->BSRR = 0x00400000;      // -MP3_DCS = 0
     
     for(uint8_t i = 0; i < 32; i++) {
-        while((GPIOC->IDR & 0x0080) == 0); // DREQ 대기
+        while((GPIOC->IDR & 0x0080) == 0); // DREQ ?????
         SPI3_write(buffer[(*index)++]);
     }
     
@@ -459,9 +459,9 @@ void TFT_filename(void) {
   else if (file_flag == 1)                      // Long file name
     TFT_long_filename(3, 5, White, Black);
   else if (file_flag == 2)                      // File name is longer than 195 characters
-    TFT_string(3, 5, Red, Black, "* 파일명 길이 초과 *");
+    TFT_string(3, 5, Red, Black, "* ????? ???? ??? *");
   else                                          // File name error
-    TFT_string(3, 5, Red, Black, "*** 파일명 오류 ***");
+    TFT_string(3, 5, Red, Black, "*** ????? ???? ***");
 
   file_KB = file_size[file_number] / 1024;      // Calculate file size in KB
   if ((file_size[file_number] % 1024) != 0)
@@ -509,13 +509,13 @@ void TFT_treble(void) {
   TFT_signed_decimal(treble, 0, 1);
 }
 
-// 파일 확장자 체크 수정
+// ?????? ????????? üũ ??????
 void Check_valid_increment_file(void) {
     unsigned char file_OK_flag = 0;
     do {
-        // WAV 파일 확장자 추가 (0x00574156)
+        // WAV ?????? ????????? ��??? (0x00574156)
         if ((extension != 0x004D5033) &&    // MP3
-            (extension != 0x00574156) &&    // WAV 추가
+            (extension != 0x00574156) &&    // WAV ��???
             (extension != 0x00414143) &&    // AAC
             (extension != 0x00574D41) &&    // WMA
             (extension != 0x004D4944)) {    // MIDI

@@ -22,13 +22,19 @@
 #define START_Y         220
 #define MAX_HEIGHT      140
 #define INITIAL_VOLUME  200
-#define BUFFER_SIZE     (FFT_SIZE * 2)    // WAV 데이터 버퍼 크기 (샘플 수 * 2바이트)
+#define BUFFER_SIZE     512    // WAV 데이터 버퍼 크기 (샘플 수 * 2바이트)
 #define BUFFER_COUNT    2
 #define UPDATE_PERIOD   20            // 스펙트럼 업데이트 주기(ms)
 
 #define FFT_SIZE        1024          // FFT 크기 (2의 거듭제곱)
 
 #define WAV_HEADER_SIZE 44            // WAV 헤더 크기
+
+// WAV 파일 재생을 위한 추가 상수
+#define WAV_HEADER_SIZE 44
+#define SAMPLE_RATE     48000
+#define CHANNELS        2
+#define BITS_PER_SAMPLE 16
 
 /*******************************************************************************
  * 함수 선언
@@ -39,16 +45,15 @@ void TFT_bass(void);                              // 베이스 표시
 void TFT_treble(void);                            // 트레블 표시
 void Check_valid_increment_file(void);            // 유효한 다음 파일 확인
 void Check_valid_decrement_file(void);            // 유효한 이전 파일 확인
+void TFT_MP3_bitrate(U16 highbyte, U16 lowbyte);
 unsigned char Icon_input(void);                   // 터치 스크린 아이콘 입력
 
 void SetupMainScreen(void);                       // 메인 화면 구성 함수
 
-void Initialize_VS1053b(void);                    // VS1053B 초기화 함수
-
 // WAV 파일 관련 함수
 uint8_t ParseWAVHeader(uint32_t sector);
 void ConfigureVS1053ForWAV(void);
-void ReadWAVData(uint32_t sector, uint8_t* buffer);
+void SendWAVData(uint8_t* buffer, uint16_t* index);
 
 // FFT 관련 함수
 void FFT_Init(void);
@@ -56,6 +61,7 @@ void PrepareFFTInput(uint8_t* buffer);
 void PerformFFT(void);
 void DrawSpectrum(void);
 void DrawSpectrumBar(uint8_t index, uint16_t height);
+void Initialize_VS1053b(void);                    // VS1053B 초기화 함수
 
 /*******************************************************************************
  * 전역 변수
@@ -110,9 +116,13 @@ void SysTick_Initialize(void) {
  ******************************************************************************/
 int main(void) {
     unsigned char i, key;
-    unsigned char func_mode = 0;                  // 기능 모드
-    bass = 10;
-    treble = 5;
+    unsigned char func_mode = 0;                  // Function key mode
+    unsigned short index = 512;                   // Byte index in a sector
+    unsigned short loop = 0;                      // MP3 play loop counter
+    unsigned int playPercentage;                  // Play percentage
+
+    unsigned short time, stereo;                  // Decode time and mono/stereo
+    unsigned short HDAT1, HDAT0;                  // MP3 file frame header information data
 
     Initialize_MCU();                             // MCU 및 키트 초기화
     Delay_ms(50);                                 // 시스템 안정화 대기
@@ -133,6 +143,10 @@ int main(void) {
     SysTick_Initialize();                         // SysTick 초기화
     Delay_ms(1000);
 
+    volume = 175;                       // 볼륨 변수
+    bass = 10;                          // 베이스 변수
+    treble = 5;                         // 트레블 변수
+
     VS1053b_SetVolume(volume);
     Delay_ms(1);
     VS1053b_SetBassTreble(bass, treble);
@@ -149,86 +163,11 @@ int main(void) {
     // 메인 화면 구성 함수 호출
     SetupMainScreen();
 
-    FFT_Init();                                   // FFT 초기화
-
     while (1) {
-        if (play_flag == 1) {
-            // WAV 파일 읽기
-            ReadWAVData(WAV_start_sector[file_number], WAVbuffer[currentBuffer]);
-            WAV_start_sector[file_number] += (BUFFER_SIZE / 512); // 섹터 단위로 이동
-
-            // WAV 데이터를 VS1053b로 전송
-            for (int i = 0; i < BUFFER_SIZE; i += 32) {
-                VS1053b_SDI_Write_Bytes(&WAVbuffer[currentBuffer][i], 32);
-                Delay_us(10);  // 전송 속도에 따라 조정 필요
-            }
-            // FFT 입력 데이터 준비
-            PrepareFFTInput(WAVbuffer[currentBuffer]);
-
-            // FFT 수행
-            PerformFFT();
-
-            // 스펙트럼 그리기
-            DrawSpectrum();
-
-            // 다음 버퍼로 전환
-            currentBuffer ^= 1;
-
-            // 파일 끝에 도달하면 다음 파일로 이동
-            if (WAV_start_sector[file_number] >= WAV_end_sector) {
-                if (file_number < total_file - 1)
-                    file_number++;
-                else
-                    file_number = 0;
-
-                TFT_filename();
-                Check_valid_increment_file();
-
-                WAV_start_sector[file_number] = WAV_start_backup[file_number];
-                // WAV 파일 헤더 파싱 및 끝 위??? 재설정
-                if (ParseWAVHeader(WAV_start_sector[file_number])) {
-                    WAV_start_sector[file_number] += (WAV_HEADER_SIZE / 512);
-                    WAV_end_sector = (wavHeader.dataSize / 512) + WAV_start_sector[file_number];
-                } else {
-                    TFT_string(0, 23, Red, Black, "WAV 파일 헤더 읽기 실패");
-                    play_flag = 0;
-                }
-            }
-        }
-
-        key = Key_input();                       // 키 입력
-        if (key == no_key)                       // 키 입력이 없으면 터치 스크린 아이콘 입력 읽기
-            key = Icon_input();
-
-        switch (key) {
-            case KEY1:
-                play_flag ^= 0x01;               // 재생 또는 정지 토글
-                if (play_flag == 1) {
-                    TFT_string(33, 13, THEME_HIGHLIGHT, THEME_BG, "재생중");
-                    // WAV 파일 재생 설정
-                    ConfigureVS1053ForWAV();
-                    if (ParseWAVHeader(WAV_start_sector[file_number])) {
-                        WAV_start_sector[file_number] += (WAV_HEADER_SIZE / 512);
-                        WAV_end_sector = (wavHeader.dataSize / 512) + WAV_start_sector[file_number];
-                    } else {
-                        TFT_string(0, 23, Red, Black, "WAV 파일 헤더 읽기 실패");
-                        play_flag = 0;
-                    }
-                } else {
-                    TFT_string(33, 13, THEME_TEXT, THEME_BG, " 정지 ");
-                }
-                break;
-
-            case KEY2:
-                // 기능 선택
-                func_mode = (func_mode + 1) % 4;
-                TFT_string(0, 5 + func_mode * 2, Magenta, Black, ">>");
-                break;
-
-            case KEY3:
-                // 볼륨, 베이스, 트레블 조절 또는 다음 파일 선택
-                if (func_mode == 0) {            // 다음 음악 선택
-                    if (file_number < total_file - 1)
+        if (((GPIOC->IDR & 0x0080) == 0x0080) && (play_flag == 1)) {
+            if (index == 512) {
+                if (WAV_start_sector[file_number] >= WAV_end_sector) {
+                    if (file_number != (total_file - 1))
                         file_number++;
                     else
                         file_number = 0;
@@ -237,14 +176,121 @@ int main(void) {
                     Check_valid_increment_file();
 
                     WAV_start_sector[file_number] = WAV_start_backup[file_number];
-                    // WAV 파일 헤더 파싱 및 끝 위치 재설정
-                    if (ParseWAVHeader(WAV_start_sector[file_number])) {
-                        WAV_start_sector[file_number] += (WAV_HEADER_SIZE / 512);
-                        WAV_end_sector = (wavHeader.dataSize / 512) + WAV_start_sector[file_number];
-                    } else {
-                        TFT_string(0, 23, Red, Black, "WAV 파일 헤더 읽기 실패");
-                        play_flag = 0;
-                    }
+                    WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
+                    VS1053b_software_reset();  // VS1053b software reset to change music file
+                }
+                index = 0;
+                SD_read_sector(WAV_start_sector[file_number]++, WAVbuffer[currentBuffer]);
+            }
+
+            for (i = 0; i < 32; i++) {           // Send 32 data bytes
+                GPIOC->BSRR = 0x00400000;        // -MP3_DCS = 0
+                SPI3_write(WAVbuffer[currentBuffer][index++]);  // Write a byte of MP3 data to VS1053b
+                GPIOC->BSRR = 0x00000040;        // -MP3_DCS = 1
+            }
+        }
+
+        loop++;                                  // Display MP3 file bitrate or play percentage
+        if ((extension == 0x004D5033) && (loop == 250) && (play_flag == 1)) {
+            HDAT1 = VS1053b_SCI_Read(0x09);
+            HDAT0 = VS1053b_SCI_Read(0x08);
+
+            if ((HDAT1 & 0xFFE0) == 0xFFE0)
+                if (((HDAT1 & 0x0006) != 0x0000) && ((HDAT0 & 0x0C00) != 0x0C00))
+                    TFT_MP3_bitrate(HDAT1, HDAT0);
+        } else if ((loop == 500) && (play_flag == 1)) {
+            loop = 0;
+
+            time = VS1053b_SCI_Read(0x04);       // Decode time
+            TFT_xy(18, 13);
+            TFT_color(Magenta, Black);
+            TFT_unsigned_decimal(time / 60, 1, 2);
+            TFT_xy(21, 13);
+            TFT_unsigned_decimal(time % 60, 1, 2);
+
+            playPercentage = WAV_end_sector - WAV_start_sector[file_number];
+            playPercentage = (unsigned int)((float)playPercentage / (float)(file_size[file_number] >> 9) * 100.);
+            playPercentage = 100 - playPercentage;
+
+            TFT_xy(24, 13);                      // Display play percentage
+            TFT_color(Yellow, Black);
+            if (playPercentage >= 100)
+                TFT_unsigned_decimal(playPercentage, 0, 3);
+            else if (playPercentage >= 10)
+                TFT_unsigned_decimal(playPercentage, 0, 2);
+            else
+                TFT_unsigned_decimal(playPercentage, 0, 1);
+            TFT_color(Cyan, Black);
+            TFT_English('%');
+            TFT_English(')');
+            TFT_English(' ');
+            TFT_English(' ');
+
+            stereo = VS1053b_SCI_Read(0x05);
+            TFT_xy(27, 11);                      // Sampling rate
+            TFT_color(Yellow, Black);
+            TFT_unsigned_decimal(stereo >> 1, 0, 5);
+            if ((stereo & 0x0001) == 0x0001) {   // Channel mode = stereo
+                TFT_string(32, 17, Cyan, Black, "(");
+                TFT_string(33, 17, Yellow, Black, "stereo");
+                TFT_string(39, 17, Cyan, Black, ")");
+            } else {                             // Channel mode = mono
+                TFT_string(32, 17, Cyan, Black, "(");
+                TFT_string(33, 17, Yellow, Black, " mono ");
+                TFT_string(39, 17, Cyan, Black, ")");
+            }
+        }
+
+
+        key = Key_input();                       // 키 입력
+        if (key == no_key)                       // 키 입력이 없으면 터치 스크린 아이콘 입력 읽기
+            key = Icon_input();
+
+        switch (key) {
+            case KEY1:
+                play_flag ^= 0x01;               // 재생 또는 정지 토글
+                if (play_flag == 1) 
+                    TFT_string(33, 13, THEME_HIGHLIGHT, THEME_BG, "재생중");
+                else
+                    TFT_string(33, 13, THEME_TEXT, THEME_BG, " 정지 ");
+                break;
+
+            case KEY2:
+                if (func_mode == 0) {            // Select function
+                    func_mode = 1;
+                    TFT_string(0, 5, Magenta, Black, "  ");
+                    TFT_string(0,17, Magenta, Black, ">>");
+                } else if (func_mode == 1) {
+                    func_mode = 2;
+                    TFT_string(0,17, Magenta, Black, "  ");
+                    TFT_string(0,19, Magenta, Black, ">>");
+                } else if (func_mode == 2) {
+                    func_mode = 3;
+                    TFT_string(0,19, Magenta, Black, "  ");
+                    TFT_string(0,21, Magenta, Black, ">>");
+                } else {
+                    func_mode = 0;
+                    TFT_string(0,21, Magenta, Black, "  ");
+                    TFT_string(0, 5, Magenta, Black, ">>");
+                }
+                break;
+
+            case KEY3:
+                // 볼륨, 베이스, 트레블 조절 또는 다음 파일 선택
+                if (func_mode == 0) {            // 다음 음악 선택
+                    if (file_number != (total_file - 1))
+                        file_number++;
+                    else
+                        file_number = 0;
+
+                    VS1053b_software_reset();
+                    TFT_filename();
+                    Check_valid_increment_file();
+
+                    WAV_start_sector[file_number] = WAV_start_backup[file_number];
+                    WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
+                    index = 512;
+                    VS1053b_software_reset();
                 } else if (func_mode == 1) {     // 볼륨 증가
                     if (volume < 250)
                         volume++;
@@ -322,10 +368,7 @@ void SetupMainScreen(void) {
     Check_valid_increment_file();
 
     // WAV 파일 헤더 파싱 및 종료 섹터 설정
-    if (ParseWAVHeader(WAV_start_sector[file_number])) {
-        WAV_start_sector[file_number] += (WAV_HEADER_SIZE / 512);
-        WAV_end_sector = (wavHeader.dataSize / 512) + WAV_start_sector[file_number];
-    }
+    WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
 }
 
 /*******************************************************************************
@@ -361,17 +404,24 @@ void ConfigureVS1053ForWAV(void) {
     VS1053b_SCI_Write(0x00, 0x0820);
     Delay_ms(1);
     
+    // 샘플링 레이트 설정
+    VS1053b_SCI_Write(0x05, 0xAC45);  // 48kHz, 스테레오
+    
     // 볼륨 및 음질 설정
     VS1053b_SetVolume(volume);
-    VS1053b_SetBassTreble(bass, treble);
+    VS1053b_SetBassTreble(8, 3);
 }
 
-// WAV 데이터 읽기
-void ReadWAVData(uint32_t sector, uint8_t* buffer) {
-    uint16_t sectors_to_read = BUFFER_SIZE / 512;
-    for (uint16_t i = 0; i < sectors_to_read; i++) {
-        SD_read_sector(sector + i, buffer + (i * 512));
+// WAV 데이터 전송
+void SendWAVData(uint8_t* buffer, uint16_t* index) {
+    GPIOC->BSRR = 0x00400000;      // -MP3_DCS = 0
+    
+    for(uint8_t i = 0; i < 32; i++) {
+        while((GPIOC->IDR & 0x0080) == 0); // DREQ 대기
+        SPI3_write(buffer[(*index)++]);
     }
+    
+    GPIOC->BSRR = 0x00000040;      // -MP3_DCS = 1
 }
 
 /*******************************************************************************
@@ -582,6 +632,85 @@ void Check_valid_decrement_file(void) {
             file_OK_flag = 1;
         }
     } while (file_OK_flag == 0);
+}
+
+void TFT_MP3_bitrate(U16 highbyte, U16 lowbyte) {
+  unsigned short MPEG10_Layer1[16] = {
+    0, 32, 64, 96, 128, 160, 192, 224,
+    256, 288, 320, 352, 384, 416, 448, 0
+  };
+  unsigned short MPEG10_Layer2[16] = {
+    0, 32, 48, 56, 64, 80, 96, 112,
+    128, 160, 192, 224, 256, 320, 384, 0
+  };
+  unsigned short MPEG10_Layer3[16] = {
+    0, 32, 40, 48, 56, 64, 80, 96,
+    112, 128, 160, 192, 224, 256, 320, 0
+  };
+  unsigned short MPEG20_Layer1[16] = {
+    0, 32, 48, 56, 64, 80, 96, 112,
+    128, 144, 160, 176, 192, 224, 256, 0
+  };
+  unsigned short MPEG20_Layer2[16] = {
+    0, 8, 16, 24, 32, 40, 48, 56,
+    64, 80, 96, 112, 128, 144, 160, 0
+  };
+
+  if ((highbyte & 0x0018) == 0x0018) {              // MPEG-1.0
+    switch (highbyte & 0x0006) {
+      case 0x0002:                              // Layer-3
+        TFT_xy(27, 9);
+        TFT_color(Yellow, Black);
+        TFT_unsigned_decimal(MPEG10_Layer3[lowbyte >> 12], 1, 3);
+		        break;
+      case 0x0004:                              // Layer-2
+        TFT_xy(27, 9);
+        TFT_color(Yellow, Black);
+        TFT_unsigned_decimal(MPEG10_Layer2[lowbyte >> 12], 1, 3);
+		        break;
+      case 0x0006:                              // Layer-1
+        TFT_xy(27, 9);
+        TFT_color(Yellow, Black);
+        TFT_unsigned_decimal(MPEG10_Layer1[lowbyte >> 12], 1, 3);
+		        break;
+	}
+  } else if ((highbyte & 0x0018) == 0x0010) {       // MPEG-2.0
+    switch (highbyte & 0x0006) {
+      case 0x0002:                              // Layer-3
+        TFT_xy(27, 9);
+        TFT_color(Yellow, Black);
+        TFT_unsigned_decimal(MPEG20_Layer2[lowbyte >> 12], 1, 3);
+		        break;
+      case 0x0004:                              // Layer-2
+        TFT_xy(27, 9);
+        TFT_color(Yellow, Black);
+        TFT_unsigned_decimal(MPEG20_Layer2[lowbyte >> 12], 1, 3);
+		        break;
+      case 0x0006:                              // Layer-1
+        TFT_xy(27, 9);
+        TFT_color(Yellow, Black);
+        TFT_unsigned_decimal(MPEG20_Layer1[lowbyte >> 12], 1, 3);
+		        break;
+	}
+  } else {                                          // MPEG-2.5
+    switch (highbyte & 0x0006) {
+      case 0x0002:                              // Layer-3
+        TFT_xy(27, 9);
+        TFT_color(Yellow, Black);
+        TFT_unsigned_decimal(MPEG20_Layer2[lowbyte >> 12], 1, 3);
+		        break;
+      case 0x0004:                              // Layer-2
+        TFT_xy(27, 9);
+        TFT_color(Yellow, Black);
+        TFT_unsigned_decimal(MPEG20_Layer2[lowbyte >> 12], 1, 3);
+		        break;
+      case 0x0006:                              // Layer-1
+        TFT_xy(27, 9);
+        TFT_color(Yellow, Black);
+        TFT_unsigned_decimal(MPEG20_Layer1[lowbyte >> 12], 1, 3);
+		        break;
+	}
+    }
 }
 
 unsigned char icon_flag = 0;

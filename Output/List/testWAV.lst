@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ANSI C/C++ Compiler V7.80.4.12462/W32 for ARM       26/Nov/2024  03:34:40
+# IAR ANSI C/C++ Compiler V7.80.4.12462/W32 for ARM       26/Nov/2024  15:00:19
 # Copyright 1999-2017 IAR Systems AB.
 #
 #    Cpu mode     =  thumb
@@ -25619,10 +25619,10 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000006   0x4604             MOV      R4,R0
    \   00000008   0x2500             MOVS     R5,#+0
    \   0000000A   0x2600             MOVS     R6,#+0
-   \   0000000C   0x.... 0x....      LDR.W    R9,??DataTable120
-   \   00000010   0x.... 0x....      LDR.W    R8,??DataTable121
-   \   00000014   0x.... 0x....      LDR.W    R7,??DataTable121_1
-   \   00000018   0x.... 0x....      LDR.W    R10,??DataTable121_2
+   \   0000000C   0x.... 0x....      LDR.W    R9,??DataTable121
+   \   00000010   0x.... 0x....      LDR.W    R8,??DataTable121_1
+   \   00000014   0x.... 0x....      LDR.W    R7,??DataTable121_2
+   \   00000018   0x.... 0x....      LDR.W    R10,??DataTable121_3
    \   0000001C   0xE005             B.N      ??fatGetDirEntry_0
    \                     ??fatGetDirEntry_1: (+1)
    \   0000001E   0x1C49             ADDS     R1,R1,#+1
@@ -25781,7 +25781,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000000   0xE92D 0x4BF0      PUSH     {R4-R9,R11,LR}
    \   00000004   0xB084             SUB      SP,SP,#+16
    \   00000006   0x4681             MOV      R9,R0
-   \   00000008   0x.... 0x....      LDR.W    R11,??DataTable121_2
+   \   00000008   0x.... 0x....      LDR.W    R11,??DataTable121_3
    \   0000000C   0x.... 0x....      LDR.W    R7,??DataTable118
    \   00000010   0xF85B 0x0029      LDR      R0,[R11, R9, LSL #+2]
    \   00000014   0x4639             MOV      R1,R7
@@ -25790,7 +25790,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   0000001A   0x.... 0x....      LDR.W    R8,??DataTable118_5
    \   0000001E   0x.... 0x....      LDR.W    R4,??DataTable125_1
    \   00000022   0x.... 0x....      BL       SD_read_sector
-   \   00000026   0x.... 0x....      LDR.W    R0,??DataTable121_1
+   \   00000026   0x.... 0x....      LDR.W    R0,??DataTable121_2
    \   0000002A   0xF810 0x0009      LDRB     R0,[R0, R9]
    \   0000002E   0x0140             LSLS     R0,R0,#+5
    \   00000030   0x1839             ADDS     R1,R7,R0
@@ -26287,15 +26287,15 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
       6          #include "arm_math.h"
       7          
       8          /*******************************************************************************
-      9           * 상수 정의
+      9           * ?????? ??????
      10           ******************************************************************************/
-     11          #define THEME_BG        Black       // 배경색
-     12          #define THEME_HEADER    0x861D      // 진한 보라색
-     13          #define THEME_TEXT      0xBDF7      // 밝은 회색
-     14          #define THEME_HIGHLIGHT 0x05FF      // 청록색
-     15          #define THEME_ACCENT    0xFD20      // 산호색
-     16          #define THEME_BUTTON    0x2DB7      // 청남색
-     17          #define THEME_WARNING   0xFBE0      // amber색
+     11          #define THEME_BG        Black       // ���???
+     12          #define THEME_HEADER    0x861D      // ���� ����???
+     13          #define THEME_TEXT      0xBDF7      // ��??? ??????
+     14          #define THEME_HIGHLIGHT 0x05FF      // ??�ϻ�
+     15          #define THEME_ACCENT    0xFD20      // ?????????
+     16          #define THEME_BUTTON    0x2DB7      // ????????
+     17          #define THEME_WARNING   0xFBE0      // amber???
      18          
      19          #define BAR_WIDTH       15 
      20          #define BAR_GAP         4
@@ -26304,20 +26304,20 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
      23          #define INITIAL_VOLUME  200
      24          #define BUFFER_SIZE     512
      25          #define BUFFER_COUNT    2
-     26          #define UPDATE_PERIOD   20    /* 스펙트럼 업데이트 주기(ms) */
+     26          #define UPDATE_PERIOD   20    /* ???????????? ???????????? �ֱ�(ms) */
      27          
-     28          // 디버그 정보 표시를 위한 상수 추가
+     28          // ???���� ????? ???????? ?????? ?????? ��???
      29          #define DEBUG_MODE      1
      30          #define FREQ_BANDS      16
      31          
-     32          // WAV 파일 재생을 위한 추가 상수
+     32          // WAV ?????? ????????? ?????? ��??? ??????
      33          #define WAV_HEADER_SIZE 44
      34          #define SAMPLE_RATE     48000
      35          #define CHANNELS        2
      36          #define BITS_PER_SAMPLE 16
      37          
      38          /*******************************************************************************
-     39           * 함수 선언
+     39           * ?????? ??????
      40           ******************************************************************************/
      41          void TFT_filename(void);                          // Display MP3 file name, number, size
      42          void TFT_volume(void);                            // Display volume
@@ -26328,7 +26328,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
      47          void TFT_MP3_bitrate(U16 highbyte, U16 lowbyte);  // Display MP3 file bitrate
      48          unsigned char Icon_input(void);                   // Input touch screen icon
      49          
-     50          void SetupMainScreen(void);                       // 메인 화면 구성 함수 추가
+     50          void SetupMainScreen(void);                       // ���� ????? ���� ?????? ��???
      51          
      52          
      53          void InitSpectrum(void);
@@ -26337,24 +26337,24 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
      56          void UpdateSpectrum(void);
      57          void DrawSpectrumBar(uint8_t index, uint16_t height);
      58          void DebugSpectrum(void);
-     59          void Initialize_VS1053b(void);                    // VS1053B 초기화 함수 선언
+     59          void Initialize_VS1053b(void);                    // VS1053B �ʱ�??? ?????? ??????
      60          
-     61          // WAV 파일 헤더 파싱
+     61          // WAV ?????? ?????? ??????
      62          uint8_t ParseWAVHeader(uint32_t sector);
      63          
-     64          // VS1053B WAV 재생 설정
+     64          // VS1053B WAV ?????? ??????
      65          void ConfigureVS1053ForWAV(void);
      66          
-     67          // WAV 데이터 전송
+     67          // WAV ????????? ??????
      68          void SendWAVData(uint8_t* buffer, uint16_t* index);
      69          
      70          /*******************************************************************************
-     71           * 전역 변수
+     71           * ?????? ?????
      72           ******************************************************************************/
      73          unsigned char total_file;                         // Total file number
      74          unsigned char file_number = 0;                    // Current file number
      75          
-     76          /* 추가된 전역 변수 */
+     76          /* ��?????? ?????? ????? */
 
    \                                 In section .bss, align 4
      77          volatile uint32_t SysTick_Count = 0;
@@ -26393,7 +26393,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000000                      DS8 1000
      86          uint16_t volume = INITIAL_VOLUME;
      87          
-     88          // WAV 파일 헤더 정보를 저장할 구조체
+     88          // WAV ?????? ?????? ???��??? ????????? ����??
      89          typedef struct {
      90              uint32_t sampleRate;
      91              uint16_t numChannels;
@@ -26408,7 +26408,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000000                      DS8 12
      97          
      98          /*******************************************************************************
-     99           * SysTick 관련 함수
+     99           * SysTick ????? ??????
     100           ******************************************************************************/
 
    \                                 In section .text, align 2, keep-with-next
@@ -26425,22 +26425,22 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
 
    \                                 In section .text, align 2, keep-with-next
     105          void SysTick_Initialize(void) {
-    106              SysTick->LOAD = 216000 - 1;    /* 216MHz/1000 = 216000 (1ms 주기) */
+    106              SysTick->LOAD = 216000 - 1;    /* 216MHz/1000 = 216000 (1ms �ֱ�) */
    \                     SysTick_Initialize: (+1)
    \   00000000   0x.... 0x....      LDR.W    R0,??DataTable130  ;; 0xe000e010
    \   00000004   0x.... 0x....      LDR.W    R1,??DataTable130_10  ;; 0x34bbf
    \   00000008   0x6041             STR      R1,[R0, #+4]
-    107              SysTick->VAL = 0;              /* 카운터 초기화 */
+    107              SysTick->VAL = 0;              /* ī��??? �ʱ�??? */
    \   0000000A   0x2100             MOVS     R1,#+0
    \   0000000C   0x6081             STR      R1,[R0, #+8]
-    108              SysTick->CTRL = 0x07;          /* 클록 소스, 인터럽트, 타이머 활성화 */
+    108              SysTick->CTRL = 0x07;          /* ????? ??????, ????????????, ???????? ????????? */
    \   0000000E   0x2107             MOVS     R1,#+7
    \   00000010   0x6001             STR      R1,[R0, #+0]
     109          }
    \   00000012   0x4770             BX       LR               ;; return
     110          
     111          /*******************************************************************************
-    112           * 메인 함수
+    112           * ���� ??????
     113           ******************************************************************************/
 
    \                                 In section .text, align 4, keep-with-next
@@ -26497,7 +26497,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   0000005A   0xF240 0x72FF      MOVW     R2,#+2047
    \   0000005E   0x2117             MOVS     R1,#+23
    \   00000060   0x.... 0x....      BL       ??Subroutine7_0
-    132              TFT_string(0, 23, Cyan, Black, "           SD 카드 초기화...            ");
+    132              TFT_string(0, 23, Cyan, Black, "           SD ????...            ");
     133              Beep();
    \                     ??CrossCallReturnLabel_13: (+1)
    \   00000064   0x.... 0x....      BL       Beep
@@ -26516,20 +26516,20 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000080   0x.... 0x....      BL       Initialize_FAT32
     139              Initialize_VS1053b();                         // Initialize VS1053b
    \   00000084   0x.... 0x....      BL       Initialize_VS1053b
-    140              SysTick_Initialize();                         // SysTick 초기화
+    140              SysTick_Initialize();                         // SysTick �ʱ�???
    \   00000088   0x.... 0x....      BL       SysTick_Initialize
     141              Delay_ms(1000);
    \   0000008C   0xF44F 0x707A      MOV      R0,#+1000
    \   00000090   0x2700             MOVS     R7,#+0
    \   00000092   0x.... 0x....      BL       Delay_ms
     142          
-    143              volume = 175;                       // 볼륨 변수
+    143              volume = 175;                       // ���� ?????
    \   00000096   0x20AF             MOVS     R0,#+175
-    144              bass = 10;                          // 베이스 변수
-    145              treble = 5;                         // 트레블 변수
+    144              bass = 10;                          // ����??? ?????
+    145              treble = 5;                         // ???????? ?????
     146          
     147              VS1053b_SetVolume(volume);
-   \   00000098   0x.... 0x....      LDR.W    R11,??DataTable120
+   \   00000098   0x.... 0x....      LDR.W    R11,??DataTable121
    \   0000009C   0x8168             STRH     R0,[R5, #+10]
    \   0000009E   0x200A             MOVS     R0,#+10
    \   000000A0   0x80E8             STRH     R0,[R5, #+6]
@@ -26575,7 +26575,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   000000F0   0x70AC             STRB     R4,[R5, #+2]
    \   000000F2   0xF64F 0x0A1F      MOVW     R10,#+63519
     159          
-    160              // 메인 화면 구성 함수 호출
+    160              // ���� ????? ���� ?????? ?????
     161              SetupMainScreen();
    \   000000F6   0x.... 0x....      BL       SetupMainScreen
    \   000000FA   0xE009             B.N      ??main_2
@@ -26666,7 +26666,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
     246                      case KEY1:
     247                          play_flag ^= 0x01;               // Toggle play or stop
     248                          if(play_flag == 1)
-    249                              TFT_string(33, 13, THEME_HIGHLIGHT, THEME_BG, "재생중");
+    249                              TFT_string(33, 13, THEME_HIGHLIGHT, THEME_BG, " play ");
    \                     ??main_3: (+1)
    \   000000FC   0x.... 0x....      ADR.W    R0,?_31
    \   00000100   0x2300             MOVS     R3,#+0
@@ -26908,7 +26908,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000360   0x7070             STRB     R0,[R6, #+1]
    \   00000362   0xF43F 0xAECB      BEQ.W    ??main_3
     250                          else
-    251                              TFT_string(33, 13, THEME_TEXT, THEME_BG, " 정지 ");
+    251                              TFT_string(33, 13, THEME_TEXT, THEME_BG, " stop ");
    \   00000366   0x.... 0x....      ADR.W    R0,?_32
    \   0000036A   0x2300             MOVS     R3,#+0
    \   0000036C   0x9000             STR      R0,[SP, #+0]
@@ -26992,7 +26992,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
     272                          break;
     273          
     274                      case KEY3:
-    275                          if (func_mode == 0) {            // 다음 음악 선택
+    275                          if (func_mode == 0) {            // ?????? ?????? ??????
    \                     ??main_16: (+1)
    \   000003E0   0xB994             CBNZ.N   R4,??main_22
     276                              if (file_number != (total_file - 1))
@@ -27021,7 +27021,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
     286                              MP3_end_sector = (file_size[file_number] >> 9) + MP3_start_sector[file_number];
     287                              index = 512;
     288                              VS1053b_software_reset();
-    289                          } else if (func_mode == 1) {     // 볼륨 증가
+    289                          } else if (func_mode == 1) {     // ���� ��???
    \                     ??CrossCallReturnLabel_263: (+1)
    \   00000406   0xE683             B.N      ??main_2
    \                     ??main_22: (+1)
@@ -27034,13 +27034,13 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000410   0xB280             UXTH     R0,R0
    \   00000412   0x28FB             CMP      R0,#+251
    \   00000414   0xDB1B             BLT.N    ??main_24
-    292                                  volume = 5;  // 최소값으로 롤오버
+    292                                  volume = 5;  // �ּҰ���?? �ѿ�??
    \   00000416   0x2005             MOVS     R0,#+5
    \   00000418   0xE018             B.N      ??main_25
     293                              }
     294                              VS1053b_SetVolume(volume);
     295                              TFT_volume();
-    296                          } else if (func_mode == 2) {     // 베이스 증가
+    296                          } else if (func_mode == 2) {     // ����??? ��???
    \                     ??main_23: (+1)
    \   0000041A   0x2C02             CMP      R4,#+2
    \   0000041C   0xD106             BNE.N    ??main_26
@@ -27051,13 +27051,13 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000422   0xB280             UXTH     R0,R0
    \   00000424   0x2810             CMP      R0,#+16
    \   00000426   0xDB1F             BLT.N    ??main_27
-    299                                  bass = 0;  // 최소값으로 롤오버
+    299                                  bass = 0;  // �ּҰ���?? �ѿ�??
    \   00000428   0x2000             MOVS     R0,#+0
    \   0000042A   0xE01C             B.N      ??main_28
     300                              }
     301                              VS1053b_SetBassTreble(bass, treble);
     302                              TFT_bass();
-    303                          } else {                         // 트레블 증가
+    303                          } else {                         // ???????? ��???
     304                              treble++;
    \                     ??main_26: (+1)
    \   0000042C   0x1C48             ADDS     R0,R1,#+1
@@ -27066,7 +27066,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000430   0xB200             SXTH     R0,R0
    \   00000432   0x2808             CMP      R0,#+8
    \   00000434   0xDB23             BLT.N    ??main_29
-    306                                  treble = -8;  // 최소값으로 롤오버
+    306                                  treble = -8;  // �ּҰ���?? �ѿ�??
    \   00000436   0xF06F 0x0007      MVN      R0,#+7
    \   0000043A   0xE01F             B.N      ??main_30
     307                              }
@@ -27080,8 +27080,8 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \                     ??main_15: (+1)
    \   0000043C   0x2C00             CMP      R4,#+0
    \   0000043E   0xD00B             BEQ.N    ??main_31
-    315                              //기능 없음
-    316                          } else if (func_mode == 1) {     // 볼륨 감소
+    315                              //��� ??????
+    316                          } else if (func_mode == 1) {     // ���� ����
    \   00000440   0x2C01             CMP      R4,#+1
    \   00000442   0xD10A             BNE.N    ??main_32
     317                              if (volume > 5)
@@ -27091,7 +27091,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   0000044A   0x20FA             MOVLT    R0,#+250
     318                                  volume--;
     319                              else
-    320                                  volume = 250;  // 최대값으로 롤오버
+    320                                  volume = 250;  // ��???����?? �ѿ�??
    \                     ??main_25: (+1)
    \   0000044C   0x8168             STRH     R0,[R5, #+10]
     321                              VS1053b_SetVolume(volume);
@@ -27102,7 +27102,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000454   0x.... 0x....      BL       TFT_volume
    \                     ??main_31: (+1)
    \   00000458   0xE65A             B.N      ??main_2
-    323                          } else if (func_mode == 2) {     // 베이스 감소
+    323                          } else if (func_mode == 2) {     // ����??? ����
    \                     ??main_32: (+1)
    \   0000045A   0x2C02             CMP      R4,#+2
    \   0000045C   0xD10A             BNE.N    ??main_33
@@ -27113,7 +27113,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000464   0x200F             MOVEQ    R0,#+15
     325                                  bass--;
     326                              else
-    327                                  bass = 15;  // 최대값으로 롤오버
+    327                                  bass = 15;  // ��???����?? �ѿ�??
    \                     ??main_28: (+1)
    \   00000466   0x80E8             STRH     R0,[R5, #+6]
     328                              VS1053b_SetBassTreble(bass, treble);
@@ -27123,7 +27123,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
     329                              TFT_bass();
    \   0000046E   0x.... 0x....      BL       TFT_bass
    \   00000472   0xE64D             B.N      ??main_2
-    330                          } else {                         // 트레블 감소
+    330                          } else {                         // ???????? ����
     331                              if (treble > -8)
    \                     ??main_33: (+1)
    \   00000474   0xF111 0x0F07      CMN      R1,#+7
@@ -27131,7 +27131,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   0000047A   0x1E48             SUBGE    R0,R1,#+1
     332                                  treble--;
     333                              else
-    334                                  treble = 7;  // 최대값으로 롤오버
+    334                                  treble = 7;  // ��???����?? �ѿ�??
    \                     ??main_30: (+1)
    \   0000047C   0x8128             STRH     R0,[R5, #+8]
     335                              VS1053b_SetBassTreble(bass, treble);
@@ -27186,13 +27186,13 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000002   0x201B             MOVS     R0,#+27
    \   00000004   0x.... 0x....      B.W      TFT_xy
     345          
-    346          /* 메인 화면 구성 함수 */
+    346          /* ���� ????? ���� ?????? */
 
    \                                 In section .text, align 2, keep-with-next
     347          void SetupMainScreen(void) {
    \                     SetupMainScreen: (+1)
    \   00000000   0xB538             PUSH     {R3-R5,LR}
-    348              // 메인 화면 구성
+    348              // ���� ????? ����
     349              TFT_clear_screen();                           
    \   00000002   0x2000             MOVS     R0,#+0
    \   00000004   0xF64B 0x54F7      MOVW     R4,#+48631
@@ -27227,21 +27227,21 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000042   0x4622             MOV      R2,R4
    \   00000044   0x2107             MOVS     R1,#+7
    \   00000046   0x.... 0x....      BL       ??Subroutine7_0
-    354              TFT_string(0, 9, THEME_TEXT, THEME_BG, "      파일 번호 : 000/000 (   kbps)     ");
+    354              TFT_string(0, 9, THEME_TEXT, THEME_BG, "      ���� ��ȣ : 000/000 (   kbps)     ");
    \                     ??CrossCallReturnLabel_9: (+1)
    \   0000004A   0x.... 0x....      ADR.W    R0,?_37
    \   0000004E   0x.... 0x....      BL       ?Subroutine56
    \                     ??CrossCallReturnLabel_200: (+1)
    \   00000052   0x2109             MOVS     R1,#+9
    \   00000054   0x.... 0x....      BL       ??Subroutine7_0
-    355              TFT_string(0,11, THEME_TEXT, THEME_BG, "      파일 용량 : 0000KB  (     Hz)     ");
+    355              TFT_string(0,11, THEME_TEXT, THEME_BG, "      ���� �뷮 : 0000KB  (     Hz)     ");
    \                     ??CrossCallReturnLabel_8: (+1)
    \   00000058   0x.... 0x....      ADR.W    R0,?_38
    \   0000005C   0x.... 0x....      BL       ?Subroutine56
    \                     ??CrossCallReturnLabel_201: (+1)
    \   00000060   0x210B             MOVS     R1,#+11
    \   00000062   0x.... 0x....      BL       ??Subroutine7_0
-    356              TFT_string(0,13, THEME_TEXT, THEME_BG, "     Music Play : 00:00(000%)   (      )");
+    356              TFT_string(0,13, THEME_TEXT, THEME_BG, "     Music play : 00:00(000%)   (      )");
    \                     ??CrossCallReturnLabel_7: (+1)
    \   00000066   0x.... 0x....      ADR.W    R0,?_39
    \   0000006A   0x.... 0x....      BL       ?Subroutine56
@@ -27255,21 +27255,21 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000078   0x4622             MOV      R2,R4
    \   0000007A   0x210F             MOVS     R1,#+15
    \   0000007C   0x.... 0x....      BL       ??Subroutine7_0
-    358              TFT_string(0,17, THEME_TEXT, THEME_BG, "   음량(Volume) : 000%(000/250)         ");
+    358              TFT_string(0,17, THEME_TEXT, THEME_BG, "   ����(Volume) : 000%(000/250)         ");
    \                     ??CrossCallReturnLabel_5: (+1)
    \   00000080   0x.... 0x....      ADR.W    R0,?_40
    \   00000084   0x.... 0x....      BL       ?Subroutine56
    \                     ??CrossCallReturnLabel_203: (+1)
    \   00000088   0x2111             MOVS     R1,#+17
    \   0000008A   0x.... 0x....      BL       ??Subroutine7_0
-    359              TFT_string(0,19, THEME_TEXT, THEME_BG, "   저음(Bass)   :  00 (00 ~ 15)         ");
+    359              TFT_string(0,19, THEME_TEXT, THEME_BG, "   ����(Bass)   :  00 (00 ~ 15)         ");
    \                     ??CrossCallReturnLabel_4: (+1)
    \   0000008E   0x.... 0x....      ADR.W    R0,?_41
    \   00000092   0x.... 0x....      BL       ?Subroutine56
    \                     ??CrossCallReturnLabel_204: (+1)
    \   00000096   0x2113             MOVS     R1,#+19
    \   00000098   0x.... 0x....      BL       ??Subroutine7_0
-    360              TFT_string(0,21, THEME_TEXT, THEME_BG, "   고음(Treble) :  00 (-8 ~ +7)         ");
+    360              TFT_string(0,21, THEME_TEXT, THEME_BG, "   ����(Treble) :  00 (-8 ~ +7)         ");
    \                     ??CrossCallReturnLabel_3: (+1)
    \   0000009C   0x.... 0x....      ADR.W    R0,?_42
    \   000000A0   0x.... 0x....      BL       ?Subroutine56
@@ -27289,7 +27289,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \                     ??CrossCallReturnLabel_206: (+1)
    \   000000BC   0x2119             MOVS     R1,#+25
    \   000000BE   0x.... 0x....      BL       ??Subroutine7_0
-    363              TFT_string(0,27, THEME_ACCENT, THEME_BG, "  (PLAY)   (select)    (up)     (mode)  ");
+    363              TFT_string(0,27, THEME_ACCENT, THEME_BG, "  (PLAY)   (select)     (up)     (mode) ");
    \                     ??CrossCallReturnLabel_1: (+1)
    \   000000C2   0x.... 0x....      ADR.W    R0,?_44
    \   000000C6   0x2300             MOVS     R3,#+0
@@ -27298,7 +27298,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   000000CE   0x211B             MOVS     R1,#+27
    \   000000D0   0x.... 0x....      BL       ??Subroutine7_0
     364              
-    365              // 버튼 영역
+    365              // ��ư ??????
     366              Rectangle(12, 196, 67, 235, THEME_BUTTON);    
    \                     ??CrossCallReturnLabel_0: (+1)
    \   000000D4   0xF642 0x54B7      MOVW     R4,#+11703
@@ -27349,7 +27349,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
     379              Check_valid_increment_file();
    \   0000012C   0x.... 0x....      BL       Check_valid_increment_file
    \   00000130   0x78A0             LDRB     R0,[R4, #+2]
-   \   00000132   0x....             LDR.N    R1,??DataTable121
+   \   00000132   0x....             LDR.N    R1,??DataTable121_1
    \   00000134   0x.... 0x....      LDR.W    R2,??DataTable130_11
    \   00000138   0xF851 0x1020      LDR      R1,[R1, R0, LSL #+2]
    \   0000013C   0xF852 0x0020      LDR      R0,[R2, R0, LSL #+2]
@@ -27383,7 +27383,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000006   0x205C             MOVS     R0,#+92
    \   00000008   0x.... 0x....      B.W      Rectangle
     383          
-    384          // MP3 데이터를 VS1053b로 전송하는 함수
+    384          // MP3 ??????????? VS1053b?? ???????????? ??????
 
    \                                 In section .text, align 2, keep-with-next
     385          void SendMP3Data(uint8_t* buffer, uint16_t* index) {
@@ -27400,10 +27400,10 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   0000000A   0x460D             MOV      R5,R1
    \   0000000C   0x60B0             STR      R0,[R6, #+8]
     387              
-    388              /* 32바이트 블록 단위로 전송 */
+    388              /* 32����??? ���� ???????? ?????? */
     389              for(uint8_t i = 0; i < 32; i++) {
    \   0000000E   0x2720             MOVS     R7,#+32
-    390                  while((GPIOC->IDR & 0x0080) == 0);  /* DREQ 대기 */
+    390                  while((GPIOC->IDR & 0x0080) == 0);  /* DREQ ????? */
    \                     ??Subroutine5_0: (+1)
    \   00000010   0x6830             LDR      R0,[R6, #+0]
    \   00000012   0x0600             LSLS     R0,R0,#+24
@@ -27424,7 +27424,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
     395          }
    \   0000002A   0xBDF1             POP      {R0,R4-R7,PC}    ;; return
     396          
-    397          // WAV 파일 헤더 파싱
+    397          // WAV ?????? ?????? ??????
 
    \                                 In section .text, align 2, keep-with-next
     398          uint8_t ParseWAVHeader(uint32_t sector) {
@@ -27436,7 +27436,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000004   0x4669             MOV      R1,SP
    \   00000006   0x.... 0x....      BL       SD_read_sector
     401          
-    402              // WAV 파일 시그니처 확인 ("RIFF" & "WAVE")
+    402              // WAV ?????? ???�״�?? ?????? ("RIFF" & "WAVE")
     403              if(header[0] != 'R' || header[1] != 'I' || header[2] != 'F' || header[3] != 'F' ||
     404                 header[8] != 'W' || header[9] != 'A' || header[10] != 'V' || header[11] != 'E') {
    \   0000000A   0xF89D 0x0000      LDRB     R0,[SP, #+0]
@@ -27469,7 +27469,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   0000004C   0xE00C             B.N      ??ParseWAVHeader_2
     406              }
     407          
-    408              // 헤더 정보 추출
+    408              // ?????? ????? ����
     409              wavHeader.sampleRate = *(uint32_t*)&header[24];
    \                     ??ParseWAVHeader_1: (+1)
    \   0000004E   0x.... 0x....      LDR.W    R0,??DataTable130_12
@@ -27492,7 +27492,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   0000006A   0xBD00             POP      {PC}             ;; return
     415          }
     416          
-    417          // VS1053B WAV 재생 설정
+    417          // VS1053B WAV ?????? ??????
 
    \                                 In section .text, align 2, keep-with-next
     418          void ConfigureVS1053ForWAV(void) {
@@ -27503,7 +27503,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
     420              Delay_ms(10);
    \   00000006   0x.... 0x....      BL       ?Subroutine32
     421              
-    422              // Native SPI 모드 활성화
+    422              // Native SPI ��� ?????????
     423              VS1053b_SCI_Write(0x00, 0x0820);
    \                     ??CrossCallReturnLabel_92: (+1)
    \   0000000A   0xF44F 0x6102      MOV      R1,#+2080
@@ -27512,14 +27512,14 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
     424              Delay_ms(1);
    \   00000014   0x.... 0x....      BL       ?Subroutine31
     425              
-    426              // 샘플링 레이트 설정
-    427              VS1053b_SCI_Write(0x05, 0xAC45);  // 48kHz, 스테레오
+    426              // ???????? ????????? ??????
+    427              VS1053b_SCI_Write(0x05, 0xAC45);  // 48kHz, ????????????
    \                     ??CrossCallReturnLabel_87: (+1)
    \   00000018   0xF64A 0x4145      MOVW     R1,#+44101
    \   0000001C   0x2005             MOVS     R0,#+5
    \   0000001E   0x.... 0x....      BL       VS1053b_SCI_Write
     428              
-    429              // 볼륨 및 음질 설정
+    429              // ���� ?? ????? ??????
     430              VS1053b_SetVolume(volume);
    \   00000022   0x.... 0x....      LDR.W    R0,??DataTable130_8
    \   00000026   0x8940             LDRH     R0,[R0, #+10]
@@ -27531,7 +27531,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   00000034   0x....             B.N      VS1053b_SetBassTreble
     432          }
     433          
-    434          // WAV 데이터 전송
+    434          // WAV ????????? ??????
 
    \                                 In section .text, align 2, keep-with-next
     435          void SendWAVData(uint8_t* buffer, uint16_t* index) {
@@ -27542,7 +27542,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
     436              GPIOC->BSRR = 0x00400000;      // -MP3_DCS = 0
     437              
     438              for(uint8_t i = 0; i < 32; i++) {
-    439                  while((GPIOC->IDR & 0x0080) == 0); // DREQ 대기
+    439                  while((GPIOC->IDR & 0x0080) == 0); // DREQ ?????
     440                  SPI3_write(buffer[(*index)++]);
     441              }
     442              
@@ -27603,9 +27603,9 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
     461            else if (file_flag == 2)                      // File name is longer than 195 characters
    \                     ??TFT_filename_1: (+1)
    \   00000050   0x2D02             CMP      R5,#+2
-    462              TFT_string(3, 5, Red, Black, "* 파일명 길이 초과 *");
+    462              TFT_string(3, 5, Red, Black, "* ????? ???? ??? *");
     463            else                                          // File name error
-    464              TFT_string(3, 5, Red, Black, "*** 파일명 오류 ***");
+    464              TFT_string(3, 5, Red, Black, "*** ????? ???? ***");
    \   00000052   0xF44F 0x4278      MOV      R2,#+63488
    \   00000056   0xBF0C             ITE      EQ 
    \   00000058   0x.... 0x....      ADREQ.W  R0,?_46
@@ -27793,7 +27793,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \   0000001C   0x.... 0x....      B.W      TFT_signed_decimal
     510          }
     511          
-    512          // 파일 확장자 체크 수정
+    512          // ?????? ????????? üũ ??????
 
    \                                 In section .text, align 2, keep-with-next
     513          void Check_valid_increment_file(void) {
@@ -27802,9 +27802,9 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
     514              unsigned char file_OK_flag = 0;
    \   00000002   0xE002             B.N      ??Check_valid_increment_file_0
     515              do {
-    516                  // WAV 파일 확장자 추가 (0x00574156)
+    516                  // WAV ?????? ????????? ��??? (0x00574156)
     517                  if ((extension != 0x004D5033) &&    // MP3
-    518                      (extension != 0x00574156) &&    // WAV 추가
+    518                      (extension != 0x00574156) &&    // WAV ��???
     519                      (extension != 0x00414143) &&    // AAC
     520                      (extension != 0x00574D41) &&    // WMA
     521                      (extension != 0x004D4944)) {    // MIDI
@@ -29038,21 +29038,15 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_26:
-   \   00000000   0x20 0x20          DC8 "           SD \354\271\264\353\223\234 \354\264\210\352\270\260\355\231\224...            "
+   \   00000000   0x20 0x20          DC8 "           SD ????...            "
    \              0x20 0x20    
    \              0x20 0x20    
    \              0x20 0x20    
    \              0x20 0x20    
    \              0x20 0x53    
    \              0x44 0x20    
-   \              0xEC 0xB9    
-   \              0xB4 0xEB    
-   \              0x93 0x9C    
-   \              0x20 0xEC    
-   \              0xB4 0x88    
-   \              0xEA 0xB8    
-   \              0xB0 0xED    
-   \              0x99 0x94    
+   \              0x3F 0x3F    
+   \              0x3F 0x3F    
    \              0x2E 0x2E    
    \              0x2E 0x20    
    \              0x20 0x20    
@@ -29061,7 +29055,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \              0x20 0x20    
    \              0x20 0x20    
    \              0x20 0x00    
-   \   0000002E   0x00 0x00          DC8 0, 0
+   \   00000022   0x00 0x00          DC8 0, 0
 
    \                                 In section .text, align 4, keep-with-next
    \                     ??DataTable118:
@@ -29096,19 +29090,19 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \              0x00 0x00    
 
    \                                 In section .text, align 4, keep-with-next
-   \                     ??DataTable120:
+   \                     ??DataTable121:
    \   00000000   0x........         DC32     file_start_cluster
 
    \                                 In section .text, align 4, keep-with-next
-   \                     ??DataTable121:
+   \                     ??DataTable121_1:
    \   00000000   0x........         DC32     file_size
 
    \                                 In section .text, align 4, keep-with-next
-   \                     ??DataTable121_1:
+   \                     ??DataTable121_2:
    \   00000000   0x........         DC32     file_start_entry
 
    \                                 In section .text, align 4, keep-with-next
-   \                     ??DataTable121_2:
+   \                     ??DataTable121_3:
    \   00000000   0x........         DC32     file_start_sector
 
    \                                 In section .text, align 4, keep-with-next
@@ -29217,22 +29211,19 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_31:
-   \   00000000   0xEC 0x9E          DC8 "\354\236\254\354\203\235\354\244\221"
-   \              0xAC 0xEC    
-   \              0x83 0x9D    
-   \              0xEC 0xA4    
-   \              0x91 0x00    
-   \   0000000A   0x00 0x00          DC8 0, 0
+   \   00000000   0x20 0x70          DC8 " play "
+   \              0x6C 0x61    
+   \              0x79 0x20    
+   \              0x00         
+   \   00000007   0x00               DC8 0
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_32:
-   \   00000000   0x20 0xEC          DC8 " \354\240\225\354\247\200 "
-   \              0xA0 0x95    
-   \              0xEC 0xA7    
-   \              0x80 0x20    
+   \   00000000   0x20 0x73          DC8 " stop "
+   \              0x74 0x6F    
+   \              0x70 0x20    
    \              0x00         
-   \   00000009   0x00 0x00          DC8 0, 0, 0
-   \              0x00         
+   \   00000007   0x00               DC8 0
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_35:
@@ -29273,16 +29264,14 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_37:
-   \   00000000   0x20 0x20          DC8 "      \355\214\214\354\235\274 \353\262\210\355\230\270 : 000/000 (   kbps)     "
+   \   00000000   0x20 0x20          DC8 "      \306\304\300\317 \271\370\310\243 : 000/000 (   kbps)     "
    \              0x20 0x20    
    \              0x20 0x20    
-   \              0xED 0x8C    
-   \              0x8C 0xEC    
-   \              0x9D 0xBC    
-   \              0x20 0xEB    
-   \              0xB2 0x88    
-   \              0xED 0x98    
-   \              0xB8 0x20    
+   \              0xC6 0xC4    
+   \              0xC0 0xCF    
+   \              0x20 0xB9    
+   \              0xF8 0xC8    
+   \              0xA3 0x20    
    \              0x3A 0x20    
    \              0x30 0x30    
    \              0x30 0x2F    
@@ -29296,21 +29285,19 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \              0x20 0x20    
    \              0x20 0x20    
    \              0x00         
-   \   0000002D   0x00 0x00          DC8 0, 0, 0
+   \   00000029   0x00 0x00          DC8 0, 0, 0
    \              0x00         
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_38:
-   \   00000000   0x20 0x20          DC8 "      \355\214\214\354\235\274 \354\232\251\353\237\211 : 0000KB  (     Hz)     "
+   \   00000000   0x20 0x20          DC8 "      \306\304\300\317 \277\353\267\256 : 0000KB  (     Hz)     "
    \              0x20 0x20    
    \              0x20 0x20    
-   \              0xED 0x8C    
-   \              0x8C 0xEC    
-   \              0x9D 0xBC    
-   \              0x20 0xEC    
-   \              0x9A 0xA9    
-   \              0xEB 0x9F    
-   \              0x89 0x20    
+   \              0xC6 0xC4    
+   \              0xC0 0xCF    
+   \              0x20 0xBF    
+   \              0xEB 0xB7    
+   \              0xAE 0x20    
    \              0x3A 0x20    
    \              0x30 0x30    
    \              0x30 0x30    
@@ -29324,17 +29311,17 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \              0x20 0x20    
    \              0x20 0x20    
    \              0x00         
-   \   0000002D   0x00 0x00          DC8 0, 0, 0
+   \   00000029   0x00 0x00          DC8 0, 0, 0
    \              0x00         
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_39:
-   \   00000000   0x20 0x20          DC8 "     Music Play : 00:00(000%)   (      )"
+   \   00000000   0x20 0x20          DC8 "     Music play : 00:00(000%)   (      )"
    \              0x20 0x20    
    \              0x20 0x4D    
    \              0x75 0x73    
    \              0x69 0x63    
-   \              0x20 0x50    
+   \              0x20 0x70    
    \              0x6C 0x61    
    \              0x79 0x20    
    \              0x3A 0x20    
@@ -29355,11 +29342,10 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_40:
-   \   00000000   0x20 0x20          DC8 "   \354\235\214\353\237\211(Volume) : 000%(000/250)         "
-   \              0x20 0xEC    
-   \              0x9D 0x8C    
-   \              0xEB 0x9F    
-   \              0x89 0x28    
+   \   00000000   0x20 0x20          DC8 "   \300\275\267\256(Volume) : 000%(000/250)         "
+   \              0x20 0xC0    
+   \              0xBD 0xB7    
+   \              0xAE 0x28    
    \              0x56 0x6F    
    \              0x6C 0x75    
    \              0x6D 0x65    
@@ -29377,15 +29363,15 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \              0x20 0x20    
    \              0x20 0x20    
    \              0x00         
-   \   0000002B   0x00               DC8 0
+   \   00000029   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_41:
-   \   00000000   0x20 0x20          DC8 "   \354\240\200\354\235\214(Bass)   :  00 (00 ~ 15)         "
-   \              0x20 0xEC    
-   \              0xA0 0x80    
-   \              0xEC 0x9D    
-   \              0x8C 0x28    
+   \   00000000   0x20 0x20          DC8 "   \300\372\300\275(Bass)   :  00 (00 ~ 15)         "
+   \              0x20 0xC0    
+   \              0xFA 0xC0    
+   \              0xBD 0x28    
    \              0x42 0x61    
    \              0x73 0x73    
    \              0x29 0x20    
@@ -29403,15 +29389,15 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \              0x20 0x20    
    \              0x20 0x20    
    \              0x00         
-   \   0000002B   0x00               DC8 0
+   \   00000029   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_42:
-   \   00000000   0x20 0x20          DC8 "   \352\263\240\354\235\214(Treble) :  00 (-8 ~ +7)         "
-   \              0x20 0xEA    
-   \              0xB3 0xA0    
-   \              0xEC 0x9D    
-   \              0x8C 0x28    
+   \   00000000   0x20 0x20          DC8 "   \260\355\300\275(Treble) :  00 (-8 ~ +7)         "
+   \              0x20 0xB0    
+   \              0xED 0xC0    
+   \              0xBD 0x28    
    \              0x54 0x72    
    \              0x65 0x62    
    \              0x6C 0x65    
@@ -29429,7 +29415,8 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \              0x20 0x20    
    \              0x20 0x20    
    \              0x00         
-   \   0000002B   0x00               DC8 0
+   \   00000029   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_43:
@@ -29459,7 +29446,7 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_44:
-   \   00000000   0x20 0x20          DC8 "  (PLAY)   (select)    (up)     (mode)  "
+   \   00000000   0x20 0x20          DC8 "  (PLAY)   (select)     (up)     (mode) "
    \              0x28 0x50    
    \              0x4C 0x41    
    \              0x59 0x29    
@@ -29470,15 +29457,15 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
    \              0x63 0x74    
    \              0x29 0x20    
    \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x28 0x75    
+   \              0x70 0x29    
+   \              0x20 0x20    
+   \              0x20 0x20    
    \              0x20 0x28    
-   \              0x75 0x70    
+   \              0x6D 0x6F    
+   \              0x64 0x65    
    \              0x29 0x20    
-   \              0x20 0x20    
-   \              0x20 0x20    
-   \              0x28 0x6D    
-   \              0x6F 0x64    
-   \              0x65 0x29    
-   \              0x20 0x20    
    \              0x00         
    \   00000029   0x00 0x00          DC8 0, 0, 0
    \              0x00         
@@ -29508,38 +29495,31 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_46:
-   \   00000000   0x2A 0x20          DC8 "* \355\214\214\354\235\274\353\252\205 \352\270\270\354\235\264 \354\264\210\352\263\274 *"
-   \              0xED 0x8C    
-   \              0x8C 0xEC    
-   \              0x9D 0xBC    
-   \              0xEB 0xAA    
-   \              0x85 0x20    
-   \              0xEA 0xB8    
-   \              0xB8 0xEC    
-   \              0x9D 0xB4    
-   \              0x20 0xEC    
-   \              0xB4 0x88    
-   \              0xEA 0xB3    
-   \              0xBC 0x20    
-   \              0x2A 0x00    
+   \   00000000   0x2A 0x20          DC8 "* ????? ???? ??? *"
+   \              0x3F 0x3F    
+   \              0x3F 0x3F    
+   \              0x3F 0x20    
+   \              0x3F 0x3F    
+   \              0x3F 0x3F    
+   \              0x20 0x3F    
+   \              0x3F 0x3F    
+   \              0x20 0x2A    
+   \              0x00         
+   \   00000013   0x00               DC8 0
 
    \                                 In section .text, align 4, keep-with-next
    \                     ?_47:
-   \   00000000   0x2A 0x2A          DC8 "*** \355\214\214\354\235\274\353\252\205 \354\230\244\353\245\230 ***"
+   \   00000000   0x2A 0x2A          DC8 "*** ????? ???? ***"
    \              0x2A 0x20    
-   \              0xED 0x8C    
-   \              0x8C 0xEC    
-   \              0x9D 0xBC    
-   \              0xEB 0xAA    
-   \              0x85 0x20    
-   \              0xEC 0x98    
-   \              0xA4 0xEB    
-   \              0xA5 0x98    
+   \              0x3F 0x3F    
+   \              0x3F 0x3F    
+   \              0x3F 0x20    
+   \              0x3F 0x3F    
+   \              0x3F 0x3F    
    \              0x20 0x2A    
    \              0x2A 0x2A    
    \              0x00         
-   \   00000019   0x00 0x00          DC8 0, 0, 0
-   \              0x00         
+   \   00000013   0x00               DC8 0
 
    \                                 In section .rodata, align 4, keep-with-next
    \                     ?_0:
@@ -29982,10 +29962,10 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
        4  ??DataTable118_4
        4  ??DataTable118_5
        4  ??DataTable119
-       4  ??DataTable120
        4  ??DataTable121
        4  ??DataTable121_1
        4  ??DataTable121_2
+       4  ??DataTable121_3
        4  ??DataTable123
        4  ??DataTable125
        4  ??DataTable125_1
@@ -30152,20 +30132,20 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
       36  ?_23
       44  ?_24
       44  ?_25
-      48  ?_26
+      36  ?_26
        2  ?_27
        8  ?_28
        2  ?_29
       12  ?_3
        8  ?_30
-      12  ?_31
-      12  ?_32
+       8  ?_31
+       8  ?_32
        4  ?_33
        4  ?_34
       16  ?_35
       44  ?_36
-      48  ?_37
-      48  ?_38
+      44  ?_37
+      44  ?_38
       44  ?_39
        8  ?_4
       44  ?_40
@@ -30174,8 +30154,8 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
       44  ?_43
       44  ?_44
       40  ?_45
-      28  ?_46
-      28  ?_47
+      20  ?_46
+      20  ?_47
        4  ?_48
       32  ?_49
       12  ?_5
@@ -30354,9 +30334,9 @@ C:\IAR Systems\oh-in-pe-\testWAV.c
   8 322 bytes in section .bss
      70 bytes in section .data
  11 568 bytes in section .rodata
- 44 658 bytes in section .text
+ 44 614 bytes in section .text
  
- 44 658 bytes of CODE  memory
+ 44 614 bytes of CODE  memory
  11 568 bytes of CONST memory
   8 392 bytes of DATA  memory
 

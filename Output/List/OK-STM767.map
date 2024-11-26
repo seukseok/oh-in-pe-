@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ELF Linker V7.80.4.12462/W32 for ARM                26/Nov/2024  03:34:40
+# IAR ELF Linker V7.80.4.12462/W32 for ARM                26/Nov/2024  15:00:20
 # Copyright 2007-2017 IAR Systems AB.
 #
 #    Output file  =  C:\IAR Systems\oh-in-pe-\Output\Exe\OK-STM767.out
@@ -40,24 +40,35 @@ initialize by copy { rw };
   .intvec            ro code  0x08000000   0x1f8  startup_stm32f767xx.o [1]
                             - 0x080001f8   0x1f8
 
-"P1":                                     0xd46c
-  .text              ro code  0x080001f8  0xa394  testWAV.o [1]
-  .text              ro code  0x0800a58c     0x6  ABImemclr4.o [5]
-  .text              ro code  0x0800a594    0x76  ABImemcpy_unaligned.o [5]
-  .text              ro code  0x0800a60c    0x32  ABImemset48.o [5]
-  .rodata            const    0x0800a640  0x2d00  testWAV.o [1]
-  .text              ro code  0x0800d340    0x40  zero_init3.o [5]
-  .text              ro code  0x0800d380    0x38  packbits_init_single.o [5]
-  .text              ro code  0x0800d3b8    0x28  data_init.o [5]
-  .text              ro code  0x0800d3e0    0x22  fpinit_M.o [4]
-  .iar.init_table    const    0x0800d404    0x20  - Linker created -
-  .text              ro code  0x0800d424    0x1a  cmain.o [5]
-  .text              ro code  0x0800d43e     0x4  low_level_init.o [3]
-  .text              ro code  0x0800d442     0x4  exit.o [3]
-  .text              ro code  0x0800d448     0xa  cexit.o [5]
-  .text              ro code  0x0800d454    0x14  exit.o [6]
-  .text              ro code  0x0800d468    0x10  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d478     0xc  cstartup_M.o [5]
+"P1":                                     0xd440
+  .text              ro code  0x080001f8  0xa368  testWAV.o [1]
+  .text              ro code  0x0800a560     0x6  ABImemclr4.o [5]
+  .text              ro code  0x0800a568    0x76  ABImemcpy_unaligned.o [5]
+  .text              ro code  0x0800a5e0    0x32  ABImemset48.o [5]
+  .rodata            const    0x0800a614  0x2d00  testWAV.o [1]
+  .text              ro code  0x0800d314    0x40  zero_init3.o [5]
+  .text              ro code  0x0800d354    0x38  packbits_init_single.o [5]
+  .text              ro code  0x0800d38c    0x28  data_init.o [5]
+  .text              ro code  0x0800d3b4    0x22  fpinit_M.o [4]
+  .iar.init_table    const    0x0800d3d8    0x20  - Linker created -
+  .text              ro code  0x0800d3f8    0x1a  cmain.o [5]
+  .text              ro code  0x0800d412     0x4  low_level_init.o [3]
+  .text              ro code  0x0800d416     0x4  exit.o [3]
+  .text              ro code  0x0800d41c     0xa  cexit.o [5]
+  .text              ro code  0x0800d428    0x14  exit.o [6]
+  .text              ro code  0x0800d43c    0x10  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800d44c     0xc  cstartup_M.o [5]
+  .text              ro code  0x0800d458     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800d45c     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800d460     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800d464     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800d468     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800d46c     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800d470     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800d474     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800d478     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800d47c     0x4  startup_stm32f767xx.o [1]
+  .text              ro code  0x0800d480     0x4  startup_stm32f767xx.o [1]
   .text              ro code  0x0800d484     0x4  startup_stm32f767xx.o [1]
   .text              ro code  0x0800d488     0x4  startup_stm32f767xx.o [1]
   .text              ro code  0x0800d48c     0x4  startup_stm32f767xx.o [1]
@@ -163,21 +174,10 @@ initialize by copy { rw };
   .text              ro code  0x0800d61c     0x4  startup_stm32f767xx.o [1]
   .text              ro code  0x0800d620     0x4  startup_stm32f767xx.o [1]
   .text              ro code  0x0800d624     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d628     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d62c     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d630     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d634     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d638     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d63c     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d640     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d644     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d648     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d64c     0x4  startup_stm32f767xx.o [1]
-  .text              ro code  0x0800d650     0x4  startup_stm32f767xx.o [1]
-  .rodata            const    0x0800d654     0x0  zero_init3.o [5]
-  .rodata            const    0x0800d654     0x0  packbits_init_single.o [5]
-  Initializer bytes  const    0x0800d654    0x10  <for P2-1>
-                            - 0x0800d664  0xd46c
+  .rodata            const    0x0800d628     0x0  zero_init3.o [5]
+  .rodata            const    0x0800d628     0x0  packbits_init_single.o [5]
+  Initializer bytes  const    0x0800d628    0x10  <for P2-1>
+                            - 0x0800d638  0xd440
 
 "P2", part 1 of 3:                          0x46
   P2-1                        0x20000000    0x46  <Init block>
@@ -217,7 +217,7 @@ Zero (__iar_zero_init3)
 
 Copy/packbits (__iar_packbits_init_single3)
     1 source range, total size 0x10 (22% of destination):
-          0x0800d654    0x10
+          0x0800d628    0x10
     1 destination range, total size 0x46:
           0x20000000    0x46
 
@@ -231,9 +231,9 @@ Copy/packbits (__iar_packbits_init_single3)
     ------                  -------  -------  -------
 C:\IAR Systems\oh-in-pe-\Output\Obj: [1]
     startup_stm32f767xx.o       984
-    testWAV.o                41 876   11 536    7 380
+    testWAV.o                41 832   11 536    7 380
     -------------------------------------------------
-    Total:                   42 860   11 536    7 380
+    Total:                   42 816   11 536    7 380
 
 command line: [2]
     -------------------------------------------------
@@ -271,7 +271,7 @@ shb_l.a: [6]
     Gaps                          8        4
     Linker created                        32    4 096
 -----------------------------------------------------
-    Grand Total:             43 312   11 572   11 476
+    Grand Total:             43 268   11 572   11 476
 
 
 *******************************************************************************
@@ -280,15 +280,15 @@ shb_l.a: [6]
 
 Entry                      Address    Size  Type      Object
 -----                      -------    ----  ----      ------
-.iar.init_table$$Base   0x0800d404           --   Gb  - Linker created -
-.iar.init_table$$Limit  0x0800d424           --   Gb  - Linker created -
-?main                   0x0800d425          Code  Gb  cmain.o [5]
+.iar.init_table$$Base   0x0800d3d8           --   Gb  - Linker created -
+.iar.init_table$$Limit  0x0800d3f8           --   Gb  - Linker created -
+?main                   0x0800d3f9          Code  Gb  cmain.o [5]
 Beep                    0x0800056b    0x1a  Code  Gb  testWAV.o [1]
 Beep_3times             0x08000585    0x1c  Code  Gb  testWAV.o [1]
 CSTACK$$Base            0x20000048           --   Gb  - Linker created -
 CSTACK$$Limit           0x20001048           --   Gb  - Linker created -
 Check_valid_increment_file
-                        0x0800a043    0x3a  Code  Gb  testWAV.o [1]
+                        0x0800a037    0x3a  Code  Gb  testWAV.o [1]
 Delay_ms                0x08000553    0x18  Code  Gb  testWAV.o [1]
 Delay_us                0x08000399   0x1ba  Code  Gb  testWAV.o [1]
 E_font                  0x08007de0   0x800  Data  Gb  testWAV.o [1]
@@ -300,7 +300,7 @@ FirstDirCluster         0x20000020     0x4  Data  Gb  testWAV.o [1]
 FirstFAT2Sector         0x2000001c     0x4  Data  Gb  testWAV.o [1]
 FirstFATSector          0x20000018     0x4  Data  Gb  testWAV.o [1]
 Get_long_filename       0x0800931f    0xba  Code  Gb  testWAV.o [1]
-Icon_input              0x0800a17b    0xd2  Code  Gb  testWAV.o [1]
+Icon_input              0x0800a16f    0xd2  Code  Gb  testWAV.o [1]
 Initialize_FAT32        0x08008fc9    0xf0  Code  Gb  testWAV.o [1]
 Initialize_MCU          0x080001fd   0x192  Code  Gb  testWAV.o [1]
 Initialize_SD           0x08008ad5   0x30c  Code  Gb  testWAV.o [1]
@@ -309,7 +309,7 @@ Initialize_VS1053b      0x080095fd    0x9e  Code  Gb  testWAV.o [1]
 Initialize_touch_screen
                         0x080087fb    0x56  Code  Gb  testWAV.o [1]
 KG_font                 0x08002384  0x2d00  Data  Gb  testWAV.o [1]
-KM_font                 0x0800a640  0x2d00  Data  Gb  testWAV.o [1]
+KM_font                 0x0800a614  0x2d00  Data  Gb  testWAV.o [1]
 KP_font                 0x080050e0  0x2d00  Data  Gb  testWAV.o [1]
 KS_Table                0x08000d0c  0x125c  Data  Gb  testWAV.o [1]
 KS_code_conversion      0x08000ca7    0x38  Code  Gb  testWAV.o [1]
@@ -322,8 +322,8 @@ MP3_start_sector        0x20002004   0x3e8  Data  Gb  testWAV.o [1]
 MP3buffer               0x2000104c   0x400  Data  Gb  testWAV.o [1]
 Read_ADS7846            0x08008851    0x32  Code  Gb  testWAV.o [1]
 Rectangle               0x080087a5    0x46  Code  Gb  testWAV.o [1]
-Region$$Table$$Base     0x0800d404           --   Gb  - Linker created -
-Region$$Table$$Limit    0x0800d424           --   Gb  - Linker created -
+Region$$Table$$Base     0x0800d3d8           --   Gb  - Linker created -
+Region$$Table$$Limit    0x0800d3f8           --   Gb  - Linker created -
 SD_command              0x08008f29    0x44  Code  Gb  testWAV.o [1]
 SD_read_sector          0x08008f6d    0x58  Code  Gb  testWAV.o [1]
 SD_type                 0x20002cd5     0x1  Data  Gb  testWAV.o [1]
@@ -334,7 +334,7 @@ SPI3_write              0x08008a9b    0x18  Code  Gb  testWAV.o [1]
 ScreenMode              0x20000028     0x1  Data  Gb  testWAV.o [1]
 SectorBuffer            0x200027d4   0x200  Data  Gb  testWAV.o [1]
 SectorsPerCluster       0x20000004     0x2  Data  Gb  testWAV.o [1]
-SetupMainScreen         0x08009d17   0x148  Code  Gb  testWAV.o [1]
+SetupMainScreen         0x08009d0b   0x148  Code  Gb  testWAV.o [1]
 SysTick_Count           0x20002cd0     0x4  Data  Gb  testWAV.o [1]
 SysTick_Handler         0x08009775     0xc  Code  Gb  testWAV.o [1]
 SysTick_Initialize      0x08009781    0x14  Code  Gb  testWAV.o [1]
@@ -342,22 +342,22 @@ SystemInit              0x080001f9     0x4  Code  Gb  testWAV.o [1]
 TFT_English             0x08000a79   0x222  Code  Gb  testWAV.o [1]
 TFT_GRAM_address        0x08000901    0x56  Code  Gb  testWAV.o [1]
 TFT_Korean              0x08001f69   0x370  Code  Gb  testWAV.o [1]
-TFT_MP3_bitrate         0x0800a08d    0xde  Code  Gb  testWAV.o [1]
-TFT_bass                0x08009ff1    0x1e  Code  Gb  testWAV.o [1]
+TFT_MP3_bitrate         0x0800a081    0xde  Code  Gb  testWAV.o [1]
+TFT_bass                0x08009fe5    0x1e  Code  Gb  testWAV.o [1]
 TFT_color               0x08000967     0xa  Code  Gb  testWAV.o [1]
 TFT_color_screen        0x080008df    0x22  Code  Gb  testWAV.o [1]
 TFT_command             0x0800086d    0x2e  Code  Gb  testWAV.o [1]
 TFT_data                0x0800089d    0x2c  Code  Gb  testWAV.o [1]
-TFT_filename            0x08009e89    0xf6  Code  Gb  testWAV.o [1]
+TFT_filename            0x08009e7d    0xf6  Code  Gb  testWAV.o [1]
 TFT_hexadecimal         0x080086b1    0x24  Code  Gb  testWAV.o [1]
 TFT_long_filename       0x08009465    0xa0  Code  Gb  testWAV.o [1]
 TFT_pixel               0x08000971    0x68  Code  Gb  testWAV.o [1]
 TFT_short_filename      0x08009403    0x62  Code  Gb  testWAV.o [1]
 TFT_signed_decimal      0x08008645    0x4c  Code  Gb  testWAV.o [1]
 TFT_string              0x08000a09    0x36  Code  Gb  testWAV.o [1]
-TFT_treble              0x0800a023    0x20  Code  Gb  testWAV.o [1]
+TFT_treble              0x0800a017    0x20  Code  Gb  testWAV.o [1]
 TFT_unsigned_decimal    0x080085e1    0x3c  Code  Gb  testWAV.o [1]
-TFT_volume              0x08009f95    0x5c  Code  Gb  testWAV.o [1]
+TFT_volume              0x08009f89    0x5c  Code  Gb  testWAV.o [1]
 TFT_write               0x080008cf    0x10  Code  Gb  testWAV.o [1]
 TFT_xy                  0x0800095d     0xa  Code  Gb  testWAV.o [1]
 Touch_screen_input      0x08008895   0x102  Code  Gb  testWAV.o [1]
@@ -373,28 +373,28 @@ Xcursor                 0x2000002d     0x1  Data  Gb  testWAV.o [1]
 Ycharacter              0x2000002c     0x1  Data  Gb  testWAV.o [1]
 YcharacterLimit         0x2000002a     0x1  Data  Gb  testWAV.o [1]
 Ycursor                 0x2000002e     0x1  Data  Gb  testWAV.o [1]
-__aeabi_memclr4         0x0800a58d          Code  Gb  ABImemclr4.o [5]
-__cmain                 0x0800d425          Code  Gb  cmain.o [5]
-__exit                  0x0800d455    0x14  Code  Gb  exit.o [6]
-__iar_Memset4_word      0x0800a60d          Code  Gb  ABImemset48.o [5]
-__iar_Memset8_word      0x0800a60d          Code  Gb  ABImemset48.o [5]
-__iar_data_init3        0x0800d3b9    0x28  Code  Gb  data_init.o [5]
-__iar_init_vfp          0x0800d3e1          Code  Gb  fpinit_M.o [4]
+__aeabi_memclr4         0x0800a561          Code  Gb  ABImemclr4.o [5]
+__cmain                 0x0800d3f9          Code  Gb  cmain.o [5]
+__exit                  0x0800d429    0x14  Code  Gb  exit.o [6]
+__iar_Memset4_word      0x0800a5e1          Code  Gb  ABImemset48.o [5]
+__iar_Memset8_word      0x0800a5e1          Code  Gb  ABImemset48.o [5]
+__iar_data_init3        0x0800d38d    0x28  Code  Gb  data_init.o [5]
+__iar_init_vfp          0x0800d3b5          Code  Gb  fpinit_M.o [4]
 __iar_packbits_init_single3
-                        0x0800d381    0x38  Code  Gb  packbits_init_single.o [5]
-__iar_program_start     0x0800d479          Code  Gb  cstartup_M.o [5]
+                        0x0800d355    0x38  Code  Gb  packbits_init_single.o [5]
+__iar_program_start     0x0800d44d          Code  Gb  cstartup_M.o [5]
 __iar_unaligned___aeabi_memcpy
-                        0x0800a595          Code  Gb  ABImemcpy_unaligned.o [5]
+                        0x0800a569          Code  Gb  ABImemcpy_unaligned.o [5]
 __iar_unaligned___aeabi_memcpy4
-                        0x0800a5b5          Code  Gb  ABImemcpy_unaligned.o [5]
+                        0x0800a589          Code  Gb  ABImemcpy_unaligned.o [5]
 __iar_unaligned___aeabi_memcpy8
-                        0x0800a5b5          Code  Gb  ABImemcpy_unaligned.o [5]
-__iar_zero_init3        0x0800d341    0x40  Code  Gb  zero_init3.o [5]
-__low_level_init        0x0800d43f     0x4  Code  Gb  low_level_init.o [3]
+                        0x0800a589          Code  Gb  ABImemcpy_unaligned.o [5]
+__iar_zero_init3        0x0800d315    0x40  Code  Gb  zero_init3.o [5]
+__low_level_init        0x0800d413     0x4  Code  Gb  low_level_init.o [3]
 __vector_table          0x08000000          Data  Gb  startup_stm32f767xx.o [1]
-_call_main              0x0800d431          Code  Gb  cmain.o [5]
-_exit                   0x0800d449          Code  Gb  cexit.o [5]
-_main                   0x0800d43b          Code  Gb  cmain.o [5]
+_call_main              0x0800d405          Code  Gb  cmain.o [5]
+_exit                   0x0800d41d          Code  Gb  cexit.o [5]
+_main                   0x0800d40f          Code  Gb  cmain.o [5]
 background              0x2000003c     0x2  Data  Gb  testWAV.o [1]
 bass                    0x20000006     0x2  Data  Gb  testWAV.o [1]
 bul_cho1                0x0800233c    0x18  Data  Gb  testWAV.o [1]
@@ -403,7 +403,7 @@ bul_jong                0x08002354    0x18  Data  Gb  testWAV.o [1]
 currentBuffer           0x20001048     0x1  Data  Gb  testWAV.o [1]
 cursor                  0x20000034     0x2  Data  Gb  testWAV.o [1]
 cursor_flag             0x2000002f     0x1  Data  Gb  testWAV.o [1]
-exit                    0x0800d443     0x4  Code  Gb  exit.o [3]
+exit                    0x0800d417     0x4  Code  Gb  exit.o [3]
 extension               0x20000010     0x4  Data  Gb  testWAV.o [1]
 fatClustToSect          0x0800930b    0x14  Code  Gb  testWAV.o [1]
 fatDir                  0x08009291    0x3c  Code  Gb  testWAV.o [1]
@@ -443,7 +443,7 @@ y_touch                 0x20000044     0x2  Data  Gb  testWAV.o [1]
 [5] = rt7M_tl.a
 [6] = shb_l.a
 
-  43 312 bytes of readonly  code memory
+  43 268 bytes of readonly  code memory
   11 572 bytes of readonly  data memory
   11 476 bytes of readwrite data memory
 
