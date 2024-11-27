@@ -617,7 +617,7 @@ unsigned char Icon_input(void) {
 
   return keyPressed;
 }
-/*
+
 // ===============================================================
 // Music File Sort & Make Select Box
 // ===============================================================
@@ -631,7 +631,7 @@ unsigned int selected_index = 0; // 선택된 파일 인덱스
 
 
 // 긴 파일 이름 잘라내기 함수
-void DelLongFilename(char *filename, char *delLong_filename, unsigned int max_length) {
+void DelLongFilename(char *filename, char *delLong_filename, unsigned int max_length) {  // filename에 들어가는걸 delLong_filename에 가져옴(사이에 검사)
     if (max_length < 2) return;  // 너무 작은 길이는 처리하지 않음
     if (strlen(filename) > max_length) {
         strncpy(delLong_filename, filename, max_length - 1);
@@ -642,19 +642,19 @@ void DelLongFilename(char *filename, char *delLong_filename, unsigned int max_le
     }
 }
 
-// 간단한 터치 감지 함수
-unsigned char TFT_getTouch(unsigned int *x, unsigned int *y) {
-    if (TouchScreen_IsTouched()) {
-        *x = TouchScreen_GetX();
-        *y = TouchScreen_GetY();
-        return 1;
-    }
-    return 0;
-}
-
 // 파일 검토 함수
 unsigned char IsWAVFile(U32 sector) {
     return ParseWAVHeader(sector);
+}
+
+void color_screen(U08 color, int x1, int x2, int y1, int y2){
+  unsigned short i, j;
+
+  TFT_GRAM_address(0,0);
+
+  for(i = x1; i < x2; i++)
+    for(j = y1; j < y2; j++)
+      TFT_data(color);
 }
 
 // 파일 불러오기 및 선택 함수
@@ -687,14 +687,14 @@ void sorting_music_file(void) {
             }
 
             file_flag = Get_long_filename(i);
-            uint8_t cutLong_name[41]; // 화면에 표시할 이름 (최대 40자)
+            char cutLong_name[41]; // 화면에 표시할 이름 (최대 40자)
 
             if (file_flag == 0) {
               DelLongFilename(short_filename_buffer, cutLong_name, 40); // 이름 길이 잘라내기(최대 40자) - 아마 안쓰일것
-              TFT_string(5, line_count, (i == selected_index && touch_flag) ? THEME_HIGHLIGHT : White, Black, cutLong_name);
+              TFT_string(5, line_count, (i == selected_index && touch_flag) ? THEME_HIGHLIGHT : White, Black, (U08 *)cutLong_name);
             } else if (file_flag == 1) {
               DelLongFilename(long_filename_buffer, cutLong_name, 40); // 이름 길이 잘라내기(최대 40자)
-              TFT_string(5, line_count, (i == selected_index && touch_flag) ? THEME_HIGHLIGHT : White, Black, cutLong_name);
+              TFT_string(5, line_count, (i == selected_index && touch_flag) ? THEME_HIGHLIGHT : White, Black, (U08 *)cutLong_name);
             } else if (file_flag == 2) {
               TFT_string(5, line_count, Red, Black, "* 이름이 너무 깁니다 *");
             } else {
@@ -713,7 +713,7 @@ void sorting_music_file(void) {
         }
 
         while (1) {
-            if (TFT_getTouch(&x_touch, &y_touch)) {
+             {
                 if (y_touch >= 24 && y_touch <= 199) {
                     unsigned int temp_index = (y_touch - 24) / 16 + start_file;
                     if (temp_index < total_file) {
@@ -746,7 +746,7 @@ void sorting_music_file(void) {
             }
         }
     }
-    clear_screen();
+    TFT_clear_screen();
     SetupMainScreen();
 }
 
@@ -757,10 +757,10 @@ void sorting_music_file(void) {
 #define WHITE_TILES 7
 #define BLACK_TILES 5
 
-#define WHITE_KEY_WIDTH 40
+#define WHITE_KEY_WIDTH 36
 #define WHITE_KEY_HEIGHT 81
-#define BLACK_KEY_WIDTH 54
-#define BLACK_KEY_HEIGHT 25
+#define BLACK_KEY_WIDTH 22
+#define BLACK_KEY_HEIGHT 54
 
 #define GRAY 0x7BEF
 
@@ -778,6 +778,7 @@ unsigned char IsWhiteKeyTouching[WHITE_TILES] = {0};
 unsigned char IsBlackKeyTouching[BLACK_TILES] = {0};
 
 void Piano_TILES(void){
+  TFT_clear_screen();
   White_key_Init();
   Black_key_Init();
   Delay_ms(10);
@@ -785,7 +786,7 @@ void Piano_TILES(void){
   Draw_Keys();
 }
 
-void White_key_Init(void){
+void White_key_Init(void){  // 백건 초기화
   uint8_t x = 36;
   uint8_t y = 127;
 
@@ -797,7 +798,7 @@ void White_key_Init(void){
     x += WHITE_KEY_WIDTH + 2; 
   }
 }
-void Black_key_Init(void){
+void Black_key_Init(void){  // 흑건 초기화
   uint8_t x = 36 + WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2);
   uint8_t y = 127;
 
@@ -815,30 +816,30 @@ void Black_key_Init(void){
 
 void FFT_REC(void){
     // 사각형 테두리
-    Rectangle(36, 15, 328, 96, THEME_HEADER);
+    Rectangle(36, 15, 294, 96, THEME_HEADER);
     // 함수 들어가는 곳
 }
 
 void Draw_Keys(void) {
     // 흰 건반 그리기
     for (int i = 0; i < 7; i++) {
-        block(White_key[i].xstart, White_key[i].ystart,
+        Block(White_key[i].xstart, White_key[i].ystart,
                      WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT, Black, White);
     }
     // 검은 건반 그리기
     for (int i = 0; i < 5; i++) {
-        block(Black_key[i].xstart, Black_key[i].ystart,
-                     BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT, White);
+        Block(Black_key[i].xstart, Black_key[i].ystart,
+                     BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT, White, Black);
     }
-    Rectangle(36, 127, 328, 208, THEME_HEADER); // 테두리 사각형    
+    Rectangle(36, 127, 294, 208, THEME_HEADER); // 테두리 사각형    
 }
 
-void Key_Touch(U16 touch_x, U16 touch_y){
+void Key_Touch(U16 xpos, U16 ypos){
   for(int i = 0; i < WHITE_TILES; i++){
-    if(x_touch >= White_key[i].xstart && x_touch <= White_key[i].xend && y_touch >= White_key[i].ystart && y_touch <= White_key[i].yend){
+    if(xpos >= White_key[i].xstart && xpos <= White_key[i].xend && ypos >= White_key[i].ystart && ypos <= White_key[i].yend){
       if(!IsWhiteKeyTouching[i]){
         IsWhiteKeyTouching[i] = 1;
-        block(White_key[i].xstart, White_key[i].ystart,
+        Block(White_key[i].xstart, White_key[i].ystart,
                      WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT, Black, GRAY);
         // 출력 음계(Toggle) ex) playWhite(i);
       }
@@ -849,10 +850,10 @@ void Key_Touch(U16 touch_x, U16 touch_y){
   }
 
   for(int i = 0; i < BLACK_TILES; i++){
-    if(x_touch >= Black_key[i].xstart && x_touch <= Black_key[i].xend && y_touch >= Black_key[i].ystart && y_touch <= Black_key[i].yend){
+    if(xpos >= Black_key[i].xstart && xpos <= Black_key[i].xend && ypos >= Black_key[i].ystart && ypos <= Black_key[i].yend){
       if(!IsBlackKeyTouching[i]){
         IsBlackKeyTouching[i] = 1;
-        block(Black_key[i].xstart, Black_key[i].ystart,
+        Block(Black_key[i].xstart, Black_key[i].ystart,
                      BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT, Black, GRAY);
         // 출력 음계(Toggle) ex) playBlack(i)'
       }
@@ -864,10 +865,11 @@ void Key_Touch(U16 touch_x, U16 touch_y){
 }
 
 void Key_input_handler(void){ // SysTick 공부해서 추가예정
-  uint16_t touch_x, touch_y;
   if(graph_piano_mode == 1){
-    if(TFT_getTouch(&x_touch,&y_touch)){
-      Key_Touch(touch_x, touch_y);
+    if(x_touch >= 36 && x_touch <= 294 && y_touch >= 127 && y_touch <= 208){
+      uint8_t xpos = x_touch;
+      uint8_t ypos = y_touch;
+      Key_Touch(xpos, ypos);
     } else {
       for(int i = 0; i < WHITE_TILES; i++){
         IsWhiteKeyTouching[i] = 0;
@@ -880,4 +882,3 @@ void Key_input_handler(void){ // SysTick 공부해서 추가예정
     }
   }
 }
-*/ 
