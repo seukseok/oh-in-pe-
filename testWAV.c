@@ -617,7 +617,7 @@ unsigned char Icon_input(void) {
 
   return keyPressed;
 }
-
+/*
 // ===============================================================
 // Music File Sort & Make Select Box
 // ===============================================================
@@ -667,7 +667,7 @@ void sorting_music_file(void) {
     unsigned int touch_flag = 0;                // 파일 선택 플래그
     unsigned int selected_index = -1;           // 선택된 파일 인덱스
   
-    clear_screen();
+    TFT_clear_screen();
     TFT_string(0, 0, THEME_HEADER, Black, "파일 목록 탐색");
 
     while (stopline) {
@@ -687,7 +687,7 @@ void sorting_music_file(void) {
             }
 
             file_flag = Get_long_filename(i);
-            char cutLong_name[41]; // 화면에 표시할 이름 (최대 40자)
+            uint8_t cutLong_name[41]; // 화면에 표시할 이름 (최대 40자)
 
             if (file_flag == 0) {
               DelLongFilename(short_filename_buffer, cutLong_name, 40); // 이름 길이 잘라내기(최대 40자) - 아마 안쓰일것
@@ -880,3 +880,4 @@ void Key_input_handler(void){ // SysTick 공부해서 추가예정
     }
   }
 }
+*/ 
