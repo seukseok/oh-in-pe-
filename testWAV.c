@@ -39,6 +39,7 @@ unsigned char Icon_input(void);                   // Input touch screen icon
 void SetupMainScreen(void);                       // 메인 화면 구성
 void Initialize_VS1053b(void);                    // VS1053B 초기화
 
+/*
 // 음원 폴더 만들기 함수들
 void DelLongFilename(char *filename, char *delLong_filename, unsigned int max_length);
 unsigned char TFT_getTouch(unsigned int *x, unsigned int *y);
@@ -54,6 +55,7 @@ void Key_Touch(U16 touch_x, U16 touch_y);
 void Key_input_handler(void);
 
 void FFT_REC(void);
+*/
 
 /*******************************************************************************
  * WAV 관련 함수
@@ -617,7 +619,7 @@ unsigned char Icon_input(void) {
 
   return keyPressed;
 }
-
+/*
 // ===============================================================
 // Music File Sort & Make Select Box
 // ===============================================================
@@ -882,3 +884,4 @@ void Key_input_handler(void){ // SysTick 공부해서 추가예정
     }
   }
 }
+*/
