@@ -120,76 +120,74 @@ void Display_FFT_screen(void)             /* FFT 화면 표시 함수 */
 
   TFT_clear_screen();                     // 화면 초기화
 
-  TFT_color(White,Black);
-  TFT_English_pixel(18,213, '0');         // y축 레이블 표시 (0%)
-  TFT_English_pixel(10,195, '1');         // y축 레이블 표시 (10%)
-  TFT_English_pixel(18,195, '0');
-  TFT_English_pixel(10,177, '2');         // y축 레이블 표시 (20%)
-  TFT_English_pixel(18,177, '0');
-  TFT_English_pixel(10,159, '3');         // y축 레이블 표시 (30%)
-  TFT_English_pixel(18,159, '0');
-  TFT_English_pixel(10,141, '4');         // y축 레이블 표시 (40%)
-  TFT_English_pixel(18,141, '0');
-  TFT_English_pixel(10,123, '5');         // y축 레이블 표시 (50%)
-  TFT_English_pixel(18,123, '0');
-  TFT_English_pixel(10,105, '6');         // y축 레이블 표시 (60%)
-  TFT_English_pixel(18,105, '0');
-  TFT_English_pixel(10, 87, '7');         // y축 레이블 표시 (70%)
+  TFT_color(White, Black);
+
+  // y축 레이블 (0% ~ 100%)
+  TFT_English_pixel(18, 213, '0');        // 0%
+  TFT_English_pixel(10, 195, '1');        // 10%
+  TFT_English_pixel(18, 195, '0');
+  TFT_English_pixel(10, 177, '2');        // 20%
+  TFT_English_pixel(18, 177, '0');
+  TFT_English_pixel(10, 159, '3');        // 30%
+  TFT_English_pixel(18, 159, '0');
+  TFT_English_pixel(10, 141, '4');        // 40%
+  TFT_English_pixel(18, 141, '0');
+  TFT_English_pixel(10, 123, '5');        // 50%
+  TFT_English_pixel(18, 123, '0');
+  TFT_English_pixel(10, 105, '6');        // 60%
+  TFT_English_pixel(18, 105, '0');
+  TFT_English_pixel(10, 87, '7');         // 70%
   TFT_English_pixel(18, 87, '0');
-  TFT_English_pixel(10, 69, '8');         // y축 레이블 표시 (80%)
+  TFT_English_pixel(10, 69, '8');         // 80%
   TFT_English_pixel(18, 69, '0');
-  TFT_English_pixel(10, 51, '9');         // y축 레이블 표시 (90%)
+  TFT_English_pixel(10, 51, '9');         // 90%
   TFT_English_pixel(18, 51, '0');
-  TFT_English_pixel(2,  33, '1');         // y축 레이블 표시 (100%)
+  TFT_English_pixel(2, 33, '1');          // 100%
   TFT_English_pixel(10, 33, '0');
   TFT_English_pixel(18, 33, '0');
-  TFT_color(Magenta,Black);
-  TFT_English_pixel(2,  16, '[');         // y축 단위 표시 ([%])
+  
+  TFT_color(Magenta, Black);
+  TFT_English_pixel(2, 16, '[');          // y축 단위 표시 ([%])
   TFT_English_pixel(10, 16, '%');
   TFT_English_pixel(18, 16, ']');
 
-  TFT_color(White,Black);
-  TFT_English_pixel( 26,222, '0');        // x축 레이블 표시 (0kHz)
-  TFT_English_pixel( 46,222, '2');        // x축 레이블 표시 (2kHz)
-  TFT_English_pixel( 66,222, '4');        // x축 레이블 표시 (4kHz)
-  TFT_English_pixel( 86,222, '6');        // x축 레이블 표시 (6kHz)
-  TFT_English_pixel(106,222, '8');        // x축 레이블 표시 (8kHz)
-  TFT_English_pixel(118,222, '1');        // x축 레이블 표시 (10kHz)
-  TFT_English_pixel(126,222, '0');
-  TFT_English_pixel(138,222, '1');        // x축 레이블 표시 (12kHz)
-  TFT_English_pixel(146,222, '2');
-  TFT_English_pixel(158,222, '1');        // x축 레이블 표시 (14kHz)
-  TFT_English_pixel(166,222, '4');
-  TFT_English_pixel(178,222, '1');        // x축 레이블 표시 (16kHz)
-  TFT_English_pixel(186,222, '6');
-  TFT_English_pixel(199,222, '1');        // x축 레이블 표시 (18kHz)
-  TFT_English_pixel(207,222, '8');
-  TFT_English_pixel(220,222, '2');        // x축 레이블 표시 (20kHz)
-  TFT_English_pixel(228,222, '0');
-  TFT_English_pixel(241,222, '2');        // x축 레이블 표시 (22kHz)
-  TFT_English_pixel(249,222, '2');
-  TFT_English_pixel(262,222, '2');        // x축 레이블 표시 (24kHz)
-  TFT_English_pixel(270,222, '4');
+  // x축 레이블 (0kHz ~ 24kHz) 간격 조정
+  for (x = 0; x <= 24; x++) {
+    if (x % 2 == 0) { // 2kHz 간격으로 레이블 표시
+      int pos_x = 30 + (x * 13);  // 1kHz 간격으로 320px에 분배
+      TFT_English_pixel(pos_x, 222, '0' + (x / 10));  // 10의 자릿수
+      TFT_English_pixel(pos_x + 6, 222, '0' + (x % 10));  // 1의 자릿수
+    }
+  }
 
-  TFT_color(Magenta,Black);
-  TFT_English_pixel(280,223, '[');        // x축 단위 표시 ([kHz])
-  TFT_English_pixel(288,223, 'k');
-  TFT_English_pixel(296,223, 'H');
-  TFT_English_pixel(304,223, 'z');
-  TFT_English_pixel(312,223, ']');
+  TFT_English_pixel(280, 223, '[');        // x축 단위 표시 ([kHz])
+  TFT_English_pixel(288, 223, 'k');
+  TFT_English_pixel(296, 223, 'H');
+  TFT_English_pixel(304, 223, 'z');
+  TFT_English_pixel(312, 223, ']');
 
-  Line(30, 220, 310, 220, White);         // x축 선 그리기
-  Line(305,215, 310, 220, White);         // x축 화살표 그리기
-  Line(305,225, 310, 220, White);
-  for(x = 50; x <= 309; x += 20)          // x축 눈금 그리기
-    Line(x,218, x,222, White);
+  // x축 선 그리기
+  Line(30, 220, 310, 220, White);         // x축 선
+  Line(305, 215, 310, 220, White);        // x축 화살표
+  Line(305, 225, 310, 220, White);
+  
+  // x축 눈금 그리기
+  for (x = 50; x <= 309; x += 20) {
+    Line(x, 218, x, 222, White);
+  }
 
-  Line(30,  28,  30, 220, White);         // y축 선 그리기
-  Line(35,  33,  30,  28, White);         // y축 화살표 그리기
-  Line(25,  33,  30,  28, White);
-  for(y = 40; y <= 202; y += 18)          // y축 눈금 그리기
-    Line(28,y, 32,y, White);
+  // y축 선 그리기
+  Line(30, 28, 30, 220, White);          // y축 선
+  Line(35, 33, 30, 28, White);           // y축 화살표
+  Line(25, 33, 30, 28, White);
+
+  // y축 눈금 그리기
+  for (y = 40; y <= 202; y += 18) {
+    Line(28, y, 32, y, White);
+  }
 }
+
+
 
 /* ----- FFT 결과 바 그래프 그리기 함수 ------------------------------------------ */
 
