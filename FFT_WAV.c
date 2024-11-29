@@ -14,6 +14,7 @@ void TIM7_IRQHandler(void);               // TIM7 인터럽트 핸들러 선언 (25.6kHz�
 void Display_FFT_screen(void);            // FFT 화면을 표시하는 함수 선언
 void do_fft(void);                        // FFT 연산을 수행하는 함수 선언
 void Draw_FFT(U16 index, float value);    // FFT 결과를 바 형태로 그리는 함수 선언
+void display_info();                      // 화면에 정보를 표시하는 함수 선언
 
 unsigned char FFT_mode, FFT_flag;         // FFT 모드와 플래그를 위한 변수 선언
 unsigned short FFT_count;                 // FFT 샘플 카운트를 위한 변수 선언
@@ -78,6 +79,7 @@ int main(void)
     {
       FFT_flag = 0;
       do_fft();                           // FFT 연산 수행
+      display_info();                     // 정보 표시
     }
      Delay_us(1);                         // 1μs 지연
   }
@@ -189,8 +191,6 @@ void Display_FFT_screen(void)             /* FFT 화면 표시 함수 */
   }
 }
 
-
-
 /* ----- FFT 결과 바 그래프 그리기 함수 ------------------------------------------ */
 
 void Draw_FFT(U16 index, float value)     /* FFT 결과를 바 형태로 그리는 함수 */
@@ -202,4 +202,21 @@ void Draw_FFT(U16 index, float value)     /* FFT 결과를 바 형태로 그리는 함수 */
 
   Line(30+2*index, 219, 30+2*index, 219 - 180, Black);    // 이전 바 삭제
   Line(30+2*index, 219, 30+2*index, 219 - height, Red);   // 새로운 바 그리기
+}
+
+void display_info() {
+    static uint8_t blink = 0;  // 깜박임 상태를 저장할 변수
+    
+    if(blink) {
+        // 문구를 표시
+        TFT_string(7, 3, Cyan, Black, "오디오를 분석하고 있습니다..."); 
+    } else {
+        // 문구를 지움 (검은색 배경으로 덮어씀)
+        TFT_string(7, 3, Black, Black, "                             ");
+    }
+    
+    Rectangle(0, 0, 319, 239, Blue);
+    
+    // 상태 토글 (0->1, 1->0)
+    blink ^= 1;
 }
