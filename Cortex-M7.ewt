@@ -1167,7 +1167,19 @@
   <group>
     <name>User</name>
     <file>
-      <name>$PROJ_DIR$\testmic.c</name>
+      <name>$PROJ_DIR$\complex.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\complex.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\fft.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\fft.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\FFT_WAV.c</name>
     </file>
   </group>
 </project>
