@@ -148,46 +148,75 @@ void Display_FFT_screen(void)             /* FFT 화면 표시 함수 */
   TFT_English_pixel(10, 16, '%');
   TFT_English_pixel(18, 16, ']');
 
+  // x축 레이블 수정 (200Hz ~ 2000Hz)
   TFT_color(White,Black);
-  TFT_English_pixel( 26,222, '0');        // x축 레이블 표시 (0kHz)
-  TFT_English_pixel( 46,222, '2');        // x축 레이블 표시 (2kHz)
-  TFT_English_pixel( 66,222, '4');        // x축 레이블 표시 (4kHz)
-  TFT_English_pixel( 86,222, '6');        // x축 레이블 표시 (6kHz)
-  TFT_English_pixel(106,222, '8');        // x축 레이블 표시 (8kHz)
-  TFT_English_pixel(118,222, '1');        // x축 레이블 표시 (10kHz)
-  TFT_English_pixel(126,222, '0');
-  TFT_English_pixel(138,222, '1');        // x축 레이블 표시 (12kHz)
-  TFT_English_pixel(146,222, '2');
-  TFT_English_pixel(158,222, '1');        // x축 레이블 표시 (14kHz)
-  TFT_English_pixel(166,222, '4');
-  TFT_English_pixel(178,222, '1');        // x축 레이블 표시 (16kHz)
-  TFT_English_pixel(186,222, '6');
-  TFT_English_pixel(199,222, '1');        // x축 레이블 표시 (18kHz)
-  TFT_English_pixel(207,222, '8');
-  TFT_English_pixel(220,222, '2');        // x축 레이블 표시 (20kHz)
-  TFT_English_pixel(228,222, '0');
-  TFT_English_pixel(241,222, '2');        // x축 레이블 표시 (22kHz)
-  TFT_English_pixel(249,222, '2');
-  TFT_English_pixel(262,222, '2');        // x축 레이블 표시 (24kHz)
-  TFT_English_pixel(270,222, '4');
+  TFT_English_pixel( 26,222, '0');        // 200Hz
+  TFT_English_pixel( 34,222, '2');
+  TFT_English_pixel( 42,222, '0');
+  TFT_English_pixel( 50,222, '0');
+
+  TFT_English_pixel( 66,222, '4');        // 400Hz
+  TFT_English_pixel( 74,222, '0');
+  TFT_English_pixel( 82,222, '0');
+
+  TFT_English_pixel( 98,222, '6');        // 600Hz
+  TFT_English_pixel(106,222, '0');
+  TFT_English_pixel(114,222, '0');
+
+  TFT_English_pixel(130,222, '8');        // 800Hz
+  TFT_English_pixel(138,222, '0');
+  TFT_English_pixel(146,222, '0');
+
+  TFT_English_pixel(158,222, '1');        // 1000Hz
+  TFT_English_pixel(166,222, '0');
+  TFT_English_pixel(174,222, '0');
+  TFT_English_pixel(182,222, '0');
+
+  TFT_English_pixel(194,222, '1');        // 1200Hz
+  TFT_English_pixel(202,222, '2');
+  TFT_English_pixel(210,222, '0');
+  TFT_English_pixel(218,222, '0');
+
+  TFT_English_pixel(230,222, '1');        // 1400Hz
+  TFT_English_pixel(238,222, '4');
+  TFT_English_pixel(246,222, '0');
+  TFT_English_pixel(254,222, '0');
+
+  TFT_English_pixel(266,222, '1');        // 1600Hz
+  TFT_English_pixel(274,222, '6');
+  TFT_English_pixel(282,222, '0');
+  TFT_English_pixel(290,222, '0');
+
+  TFT_English_pixel(302,222, '1');        // 1800Hz
+  TFT_English_pixel(310,222, '8');
+  TFT_English_pixel(318,222, '0');
+  TFT_English_pixel(326,222, '0');
+
+  TFT_English_pixel(338,222, '2');        // 2000Hz
+  TFT_English_pixel(346,222, '0');
+  TFT_English_pixel(354,222, '0');
+  TFT_English_pixel(362,222, '0');
 
   TFT_color(Magenta,Black);
-  TFT_English_pixel(280,223, '[');        // x축 단위 표시 ([kHz])
-  TFT_English_pixel(288,223, 'k');
-  TFT_English_pixel(296,223, 'H');
-  TFT_English_pixel(304,223, 'z');
-  TFT_English_pixel(312,223, ']');
+  TFT_English_pixel(370,223, '[');        // x축 단위 표시 ([Hz])
+  TFT_English_pixel(378,223, 'H');
+  TFT_English_pixel(386,223, 'z');
+  TFT_English_pixel(394,223, ']');
 
+  // 축 그리기
   Line(30, 220, 310, 220, White);         // x축 선 그리기
   Line(305,215, 310, 220, White);         // x축 화살표 그리기
   Line(305,225, 310, 220, White);
-  for(x = 50; x <= 309; x += 20)          // x축 눈금 그리기
+  
+  // x축 눈금 간격 조정 (200Hz 단위로)
+  for(x = 50; x <= 309; x += 28)          // 간격을 28픽셀로 조정
     Line(x,218, x,222, White);
 
-  Line(30,  28,  30, 220, White);         // y축 선 그리기
-  Line(35,  33,  30,  28, White);         // y축 화살표 그리기
+  // y축은 동일하게 유지
+  Line(30,  28,  30, 220, White);
+  Line(35,  33,  30,  28, White);
   Line(25,  33,  30,  28, White);
-  for(y = 40; y <= 202; y += 18)          // y축 눈금 그리기
+  for(y = 40; y <= 202; y += 18)
     Line(28,y, 32,y, White);
 }
 
