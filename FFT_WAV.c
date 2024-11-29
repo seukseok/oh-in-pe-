@@ -151,6 +151,7 @@ void Display_FFT_screen(void)             /* FFT 화면 표시 함수 */
   TFT_English_pixel(10, 16, '%');
   TFT_English_pixel(18, 16, ']');
 
+  TFT_color(Pink,Black);
   // x축 레이블 (0kHz ~ 24kHz) 간격 조정
   for (x = 0; x <= 24; x++) {
     if (x % 2 == 0) { // 2kHz 간격으로 레이블 표시
@@ -159,7 +160,8 @@ void Display_FFT_screen(void)             /* FFT 화면 표시 함수 */
       TFT_English_pixel(pos_x + 6, 222, '0' + (x % 10));  // 1의 자릿수
     }
   }
-
+  
+  TFT_color(Magenta, Black);
   TFT_English_pixel(280, 223, '[');        // x축 단위 표시 ([kHz])
   TFT_English_pixel(288, 223, 'k');
   TFT_English_pixel(296, 223, 'H');
