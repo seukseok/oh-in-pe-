@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ANSI C/C++ Compiler V7.80.4.12462/W32 for ARM       29/Nov/2024  21:58:34
+# IAR ANSI C/C++ Compiler V7.80.4.12462/W32 for ARM       30/Nov/2024  00:28:31
 # Copyright 1999-2017 IAR Systems AB.
 #
 #    Cpu mode     =  thumb
@@ -25067,59 +25067,59 @@ C:\IAR Systems\oh-in-pe-\FFT_WAV.c
    \   0000004A   0x6801             LDR      R1,[R0, #+0]
    \   0000004C   0xF041 0x0120      ORR      R1,R1,#0x20
    \   00000050   0x6001             STR      R1,[R0, #+0]
-     65            TIM7->PSC = 9;                          // 프리스케일러 설정: 108MHz/(9+1) = 10.8MHz
+     65            TIM7->PSC = 1;                           // 프리스케일러 값: 108MHz / (1 + 1) = 54MHz
    \   00000052   0x....             LDR.N    R0,??DataTable47_20  ;; 0x40001400
-   \   00000054   0x2109             MOVS     R1,#+9
+   \   00000054   0x2101             MOVS     R1,#+1
    \   00000056   0x6281             STR      R1,[R0, #+40]
-     66            TIM7->ARR = 421;                        // 자동 재장전 값 설정: 10.8MHz/(421+1) = 25.6kHz
-   \   00000058   0xF240 0x11A5      MOVW     R1,#+421
-   \   0000005C   0x62C1             STR      R1,[R0, #+44]
+     66            TIM7->ARR = 224;                         // ARR 값: 54MHz / (224 + 1) = 48kHz
+   \   00000058   0x21E0             MOVS     R1,#+224
+   \   0000005A   0x62C1             STR      R1,[R0, #+44]
      67            TIM7->CNT = 0;                          // 카운터 초기화
-   \   0000005E   0x2100             MOVS     R1,#+0
-   \   00000060   0x6241             STR      R1,[R0, #+36]
+   \   0000005C   0x2100             MOVS     R1,#+0
+   \   0000005E   0x6241             STR      R1,[R0, #+36]
      68            TIM7->DIER = 0x0001;                    // 업데이트 인터럽트 활성화
-   \   00000062   0x2101             MOVS     R1,#+1
-   \   00000064   0x60C1             STR      R1,[R0, #+12]
+   \   00000060   0x2101             MOVS     R1,#+1
+   \   00000062   0x60C1             STR      R1,[R0, #+12]
      69            TIM7->CR1 = 0x0085;                     // TIM7 활성화, 업데이트 이벤트, 프리로드 설정
-   \   00000066   0x2185             MOVS     R1,#+133
-   \   00000068   0x6001             STR      R1,[R0, #+0]
+   \   00000064   0x2185             MOVS     R1,#+133
+   \   00000066   0x6001             STR      R1,[R0, #+0]
      70            NVIC->ISER[1] |= 0x00800000;            // (55)TIM7 인터럽트 활성화
-   \   0000006A   0x....             LDR.N    R0,??DataTable47_27  ;; 0xe000e104
-   \   0000006C   0x6801             LDR      R1,[R0, #+0]
-   \   0000006E   0xF441 0x0100      ORR      R1,R1,#0x800000
-   \   00000072   0x6001             STR      R1,[R0, #+0]
+   \   00000068   0x....             LDR.N    R0,??DataTable47_27  ;; 0xe000e104
+   \   0000006A   0x6801             LDR      R1,[R0, #+0]
+   \   0000006C   0xF441 0x0100      ORR      R1,R1,#0x800000
+   \   00000070   0x6001             STR      R1,[R0, #+0]
      71          
      72            Display_FFT_screen();                   // FFT 화면 표시
-   \   00000074   0x.... 0x....      BL       Display_FFT_screen
+   \   00000072   0x.... 0x....      BL       Display_FFT_screen
      73            TFT_string(5,0,White,Magenta," 실시간 FFT 변환 및 표시 "); // 화면에 문자열 표시
-   \   00000078   0x.... 0x....      ADR.W    R0,?_1
-   \   0000007C   0xF64F 0x031F      MOVW     R3,#+63519
-   \   00000080   0x9000             STR      R0,[SP, #+0]
-   \   00000082   0xF64F 0x72FF      MOVW     R2,#+65535
-   \   00000086   0x2100             MOVS     R1,#+0
-   \   00000088   0x2005             MOVS     R0,#+5
-   \   0000008A   0x.... 0x....      BL       TFT_string
+   \   00000076   0x.... 0x....      ADR.W    R0,?_1
+   \   0000007A   0xF64F 0x031F      MOVW     R3,#+63519
+   \   0000007E   0x9000             STR      R0,[SP, #+0]
+   \   00000080   0xF64F 0x72FF      MOVW     R2,#+65535
+   \   00000084   0x2100             MOVS     R1,#+0
+   \   00000086   0x2005             MOVS     R0,#+5
+   \   00000088   0x.... 0x....      BL       TFT_string
      74          
      75            while(1)
      76            {   
      77              if(FFT_flag == 1)
    \                     ??main_0: (+1)
-   \   0000008E   0x7820             LDRB     R0,[R4, #+0]
-   \   00000090   0x2801             CMP      R0,#+1
-   \   00000092   0xD103             BNE.N    ??main_1
+   \   0000008C   0x7820             LDRB     R0,[R4, #+0]
+   \   0000008E   0x2801             CMP      R0,#+1
+   \   00000090   0xD103             BNE.N    ??main_1
      78              {
      79                FFT_flag = 0;
-   \   00000094   0x2000             MOVS     R0,#+0
-   \   00000096   0x7020             STRB     R0,[R4, #+0]
+   \   00000092   0x2000             MOVS     R0,#+0
+   \   00000094   0x7020             STRB     R0,[R4, #+0]
      80                do_fft();                           // FFT 연산 수행
-   \   00000098   0x.... 0x....      BL       do_fft
+   \   00000096   0x.... 0x....      BL       do_fft
      81              }
      82               Delay_us(1);                         // 1μs 지연
    \                     ??main_1: (+1)
-   \   0000009C   0x.... 0x....      BL       ?Subroutine20
+   \   0000009A   0x.... 0x....      BL       ?Subroutine20
      83            }
    \                     ??CrossCallReturnLabel_39: (+1)
-   \   000000A0   0xE7F5             B.N      ??main_0
+   \   0000009E   0xE7F5             B.N      ??main_0
      84          }
      85          /* ----- FFT 연산 함수 ---------------------------------------------------------- */
      86          
@@ -25368,308 +25368,219 @@ Warning[Pe177]: variable "N" was declared but never referenced
    \   000000E8   0x2110             MOVS     R1,#+16
    \   000000EA   0x.... 0x....      BL       ?Subroutine47
     150          
-    151            // x축 레이블 수정 (200Hz ~ 2000Hz)
-    152            TFT_color(White,Black);
+    151            TFT_color(White,Black);
    \                     ??CrossCallReturnLabel_137: (+1)
    \   000000EE   0x2100             MOVS     R1,#+0
    \   000000F0   0x4620             MOV      R0,R4
    \   000000F2   0x.... 0x....      BL       TFT_color
-    153            TFT_English_pixel( 26,222, '0');        // 200Hz
+    152            TFT_English_pixel( 26,222, '0');        // x축 레이블 표시 (0kHz)
    \   000000F6   0x2230             MOVS     R2,#+48
    \   000000F8   0x21DE             MOVS     R1,#+222
    \   000000FA   0x201A             MOVS     R0,#+26
    \   000000FC   0x.... 0x....      BL       TFT_English_pixel
-    154            TFT_English_pixel( 34,222, '2');
+    153            TFT_English_pixel( 46,222, '2');        // x축 레이블 표시 (2kHz)
    \   00000100   0x2232             MOVS     R2,#+50
    \   00000102   0x21DE             MOVS     R1,#+222
-   \   00000104   0x2022             MOVS     R0,#+34
+   \   00000104   0x202E             MOVS     R0,#+46
    \   00000106   0x.... 0x....      BL       TFT_English_pixel
-    155            TFT_English_pixel( 42,222, '0');
-   \   0000010A   0x2230             MOVS     R2,#+48
+    154            TFT_English_pixel( 66,222, '4');        // x축 레이블 표시 (4kHz)
+   \   0000010A   0x2234             MOVS     R2,#+52
    \   0000010C   0x21DE             MOVS     R1,#+222
-   \   0000010E   0x202A             MOVS     R0,#+42
+   \   0000010E   0x2042             MOVS     R0,#+66
    \   00000110   0x.... 0x....      BL       TFT_English_pixel
-    156            TFT_English_pixel( 50,222, '0');
-   \   00000114   0x2230             MOVS     R2,#+48
+    155            TFT_English_pixel( 86,222, '6');        // x축 레이블 표시 (6kHz)
+   \   00000114   0x2236             MOVS     R2,#+54
    \   00000116   0x21DE             MOVS     R1,#+222
-   \   00000118   0x2032             MOVS     R0,#+50
+   \   00000118   0x2056             MOVS     R0,#+86
    \   0000011A   0x.... 0x....      BL       TFT_English_pixel
-    157          
-    158            TFT_English_pixel( 66,222, '4');        // 400Hz
-   \   0000011E   0x2234             MOVS     R2,#+52
+    156            TFT_English_pixel(106,222, '8');        // x축 레이블 표시 (8kHz)
+   \   0000011E   0x2238             MOVS     R2,#+56
    \   00000120   0x21DE             MOVS     R1,#+222
-   \   00000122   0x2042             MOVS     R0,#+66
+   \   00000122   0x206A             MOVS     R0,#+106
    \   00000124   0x.... 0x....      BL       TFT_English_pixel
-    159            TFT_English_pixel( 74,222, '0');
-   \   00000128   0x2230             MOVS     R2,#+48
+    157            TFT_English_pixel(118,222, '1');        // x축 레이블 표시 (10kHz)
+   \   00000128   0x2231             MOVS     R2,#+49
    \   0000012A   0x21DE             MOVS     R1,#+222
-   \   0000012C   0x204A             MOVS     R0,#+74
+   \   0000012C   0x2076             MOVS     R0,#+118
    \   0000012E   0x.... 0x....      BL       TFT_English_pixel
-    160            TFT_English_pixel( 82,222, '0');
+    158            TFT_English_pixel(126,222, '0');
    \   00000132   0x2230             MOVS     R2,#+48
    \   00000134   0x21DE             MOVS     R1,#+222
-   \   00000136   0x2052             MOVS     R0,#+82
+   \   00000136   0x207E             MOVS     R0,#+126
    \   00000138   0x.... 0x....      BL       TFT_English_pixel
-    161          
-    162            TFT_English_pixel( 98,222, '6');        // 600Hz
-   \   0000013C   0x2236             MOVS     R2,#+54
+    159            TFT_English_pixel(138,222, '1');        // x축 레이블 표시 (12kHz)
+   \   0000013C   0x2231             MOVS     R2,#+49
    \   0000013E   0x21DE             MOVS     R1,#+222
-   \   00000140   0x2062             MOVS     R0,#+98
+   \   00000140   0x208A             MOVS     R0,#+138
    \   00000142   0x.... 0x....      BL       TFT_English_pixel
-    163            TFT_English_pixel(106,222, '0');
-   \   00000146   0x2230             MOVS     R2,#+48
+    160            TFT_English_pixel(146,222, '2');
+   \   00000146   0x2232             MOVS     R2,#+50
    \   00000148   0x21DE             MOVS     R1,#+222
-   \   0000014A   0x206A             MOVS     R0,#+106
+   \   0000014A   0x2092             MOVS     R0,#+146
    \   0000014C   0x.... 0x....      BL       TFT_English_pixel
-    164            TFT_English_pixel(114,222, '0');
-   \   00000150   0x2230             MOVS     R2,#+48
+    161            TFT_English_pixel(158,222, '1');        // x축 레이블 표시 (14kHz)
+   \   00000150   0x2231             MOVS     R2,#+49
    \   00000152   0x21DE             MOVS     R1,#+222
-   \   00000154   0x2072             MOVS     R0,#+114
+   \   00000154   0x209E             MOVS     R0,#+158
    \   00000156   0x.... 0x....      BL       TFT_English_pixel
-    165          
-    166            TFT_English_pixel(130,222, '8');        // 800Hz
-   \   0000015A   0x2238             MOVS     R2,#+56
+    162            TFT_English_pixel(166,222, '4');
+   \   0000015A   0x2234             MOVS     R2,#+52
    \   0000015C   0x21DE             MOVS     R1,#+222
-   \   0000015E   0x2082             MOVS     R0,#+130
+   \   0000015E   0x20A6             MOVS     R0,#+166
    \   00000160   0x.... 0x....      BL       TFT_English_pixel
-    167            TFT_English_pixel(138,222, '0');
-   \   00000164   0x2230             MOVS     R2,#+48
+    163            TFT_English_pixel(178,222, '1');        // x축 레이블 표시 (16kHz)
+   \   00000164   0x2231             MOVS     R2,#+49
    \   00000166   0x21DE             MOVS     R1,#+222
-   \   00000168   0x208A             MOVS     R0,#+138
+   \   00000168   0x20B2             MOVS     R0,#+178
    \   0000016A   0x.... 0x....      BL       TFT_English_pixel
-    168            TFT_English_pixel(146,222, '0');
-   \   0000016E   0x2230             MOVS     R2,#+48
+    164            TFT_English_pixel(186,222, '6');
+   \   0000016E   0x2236             MOVS     R2,#+54
    \   00000170   0x21DE             MOVS     R1,#+222
-   \   00000172   0x2092             MOVS     R0,#+146
+   \   00000172   0x20BA             MOVS     R0,#+186
    \   00000174   0x.... 0x....      BL       TFT_English_pixel
-    169          
-    170            TFT_English_pixel(158,222, '1');        // 1000Hz
+    165            TFT_English_pixel(199,222, '1');        // x축 레이블 표시 (18kHz)
    \   00000178   0x2231             MOVS     R2,#+49
    \   0000017A   0x21DE             MOVS     R1,#+222
-   \   0000017C   0x209E             MOVS     R0,#+158
+   \   0000017C   0x20C7             MOVS     R0,#+199
    \   0000017E   0x.... 0x....      BL       TFT_English_pixel
-    171            TFT_English_pixel(166,222, '0');
-   \   00000182   0x2230             MOVS     R2,#+48
+    166            TFT_English_pixel(207,222, '8');
+   \   00000182   0x2238             MOVS     R2,#+56
    \   00000184   0x21DE             MOVS     R1,#+222
-   \   00000186   0x20A6             MOVS     R0,#+166
+   \   00000186   0x20CF             MOVS     R0,#+207
    \   00000188   0x.... 0x....      BL       TFT_English_pixel
-    172            TFT_English_pixel(174,222, '0');
-   \   0000018C   0x2230             MOVS     R2,#+48
+    167            TFT_English_pixel(220,222, '2');        // x축 레이블 표시 (20kHz)
+   \   0000018C   0x2232             MOVS     R2,#+50
    \   0000018E   0x21DE             MOVS     R1,#+222
-   \   00000190   0x20AE             MOVS     R0,#+174
+   \   00000190   0x20DC             MOVS     R0,#+220
    \   00000192   0x.... 0x....      BL       TFT_English_pixel
-    173            TFT_English_pixel(182,222, '0');
+    168            TFT_English_pixel(228,222, '0');
    \   00000196   0x2230             MOVS     R2,#+48
    \   00000198   0x21DE             MOVS     R1,#+222
-   \   0000019A   0x20B6             MOVS     R0,#+182
+   \   0000019A   0x20E4             MOVS     R0,#+228
    \   0000019C   0x.... 0x....      BL       TFT_English_pixel
-    174          
-    175            TFT_English_pixel(194,222, '1');        // 1200Hz
-   \   000001A0   0x2231             MOVS     R2,#+49
+    169            TFT_English_pixel(241,222, '2');        // x축 레이블 표시 (22kHz)
+   \   000001A0   0x2232             MOVS     R2,#+50
    \   000001A2   0x21DE             MOVS     R1,#+222
-   \   000001A4   0x20C2             MOVS     R0,#+194
+   \   000001A4   0x20F1             MOVS     R0,#+241
    \   000001A6   0x.... 0x....      BL       TFT_English_pixel
-    176            TFT_English_pixel(202,222, '2');
+    170            TFT_English_pixel(249,222, '2');
    \   000001AA   0x2232             MOVS     R2,#+50
    \   000001AC   0x21DE             MOVS     R1,#+222
-   \   000001AE   0x20CA             MOVS     R0,#+202
+   \   000001AE   0x20F9             MOVS     R0,#+249
    \   000001B0   0x.... 0x....      BL       TFT_English_pixel
-    177            TFT_English_pixel(210,222, '0');
-   \   000001B4   0x2230             MOVS     R2,#+48
+    171            TFT_English_pixel(262,222, '2');        // x축 레이블 표시 (24kHz)
+   \   000001B4   0x2232             MOVS     R2,#+50
    \   000001B6   0x21DE             MOVS     R1,#+222
-   \   000001B8   0x20D2             MOVS     R0,#+210
-   \   000001BA   0x.... 0x....      BL       TFT_English_pixel
-    178            TFT_English_pixel(218,222, '0');
-   \   000001BE   0x2230             MOVS     R2,#+48
-   \   000001C0   0x21DE             MOVS     R1,#+222
-   \   000001C2   0x20DA             MOVS     R0,#+218
-   \   000001C4   0x.... 0x....      BL       TFT_English_pixel
-    179          
-    180            TFT_English_pixel(230,222, '1');        // 1400Hz
-   \   000001C8   0x2231             MOVS     R2,#+49
-   \   000001CA   0x21DE             MOVS     R1,#+222
-   \   000001CC   0x20E6             MOVS     R0,#+230
-   \   000001CE   0x.... 0x....      BL       TFT_English_pixel
-    181            TFT_English_pixel(238,222, '4');
-   \   000001D2   0x2234             MOVS     R2,#+52
-   \   000001D4   0x21DE             MOVS     R1,#+222
-   \   000001D6   0x20EE             MOVS     R0,#+238
-   \   000001D8   0x.... 0x....      BL       TFT_English_pixel
-    182            TFT_English_pixel(246,222, '0');
-   \   000001DC   0x2230             MOVS     R2,#+48
-   \   000001DE   0x21DE             MOVS     R1,#+222
-   \   000001E0   0x20F6             MOVS     R0,#+246
-   \   000001E2   0x.... 0x....      BL       TFT_English_pixel
-    183            TFT_English_pixel(254,222, '0');
-   \   000001E6   0x2230             MOVS     R2,#+48
-   \   000001E8   0x21DE             MOVS     R1,#+222
-   \   000001EA   0x20FE             MOVS     R0,#+254
+   \   000001B8   0xF44F 0x7083      MOV      R0,#+262
+   \   000001BC   0x.... 0x....      BL       TFT_English_pixel
+    172            TFT_English_pixel(270,222, '4');
+   \   000001C0   0x2234             MOVS     R2,#+52
+   \   000001C2   0x21DE             MOVS     R1,#+222
+   \   000001C4   0xF44F 0x7087      MOV      R0,#+270
+   \   000001C8   0x.... 0x....      BL       TFT_English_pixel
+    173          
+    174            TFT_color(Magenta,Black);
+   \   000001CC   0x2100             MOVS     R1,#+0
+   \   000001CE   0x4628             MOV      R0,R5
+   \   000001D0   0x.... 0x....      BL       TFT_color
+    175            TFT_English_pixel(280,223, '[');        // x축 단위 표시 ([kHz])
+   \   000001D4   0x225B             MOVS     R2,#+91
+   \   000001D6   0x21DF             MOVS     R1,#+223
+   \   000001D8   0xF44F 0x708C      MOV      R0,#+280
+   \   000001DC   0xF240 0x1531      MOVW     R5,#+305
+   \   000001E0   0x.... 0x....      BL       TFT_English_pixel
+    176            TFT_English_pixel(288,223, 'k');
+   \   000001E4   0x226B             MOVS     R2,#+107
+   \   000001E6   0x21DF             MOVS     R1,#+223
+   \   000001E8   0xF44F 0x7090      MOV      R0,#+288
    \   000001EC   0x.... 0x....      BL       TFT_English_pixel
-    184          
-    185            TFT_English_pixel(266,222, '1');        // 1600Hz
-   \   000001F0   0x2231             MOVS     R2,#+49
-   \   000001F2   0x21DE             MOVS     R1,#+222
-   \   000001F4   0xF44F 0x7085      MOV      R0,#+266
+    177            TFT_English_pixel(296,223, 'H');
+   \   000001F0   0x2248             MOVS     R2,#+72
+   \   000001F2   0x21DF             MOVS     R1,#+223
+   \   000001F4   0xF44F 0x7094      MOV      R0,#+296
    \   000001F8   0x.... 0x....      BL       TFT_English_pixel
-    186            TFT_English_pixel(274,222, '6');
-   \   000001FC   0x2236             MOVS     R2,#+54
-   \   000001FE   0x21DE             MOVS     R1,#+222
-   \   00000200   0xF44F 0x7089      MOV      R0,#+274
+    178            TFT_English_pixel(304,223, 'z');
+   \   000001FC   0x227A             MOVS     R2,#+122
+   \   000001FE   0x21DF             MOVS     R1,#+223
+   \   00000200   0xF44F 0x7098      MOV      R0,#+304
    \   00000204   0x.... 0x....      BL       TFT_English_pixel
-    187            TFT_English_pixel(282,222, '0');
-   \   00000208   0x2230             MOVS     R2,#+48
-   \   0000020A   0x21DE             MOVS     R1,#+222
-   \   0000020C   0xF44F 0x708D      MOV      R0,#+282
+    179            TFT_English_pixel(312,223, ']');
+   \   00000208   0x225D             MOVS     R2,#+93
+   \   0000020A   0x21DF             MOVS     R1,#+223
+   \   0000020C   0xF44F 0x709C      MOV      R0,#+312
    \   00000210   0x.... 0x....      BL       TFT_English_pixel
-    188            TFT_English_pixel(290,222, '0');
-   \   00000214   0x2230             MOVS     R2,#+48
-   \   00000216   0x21DE             MOVS     R1,#+222
-   \   00000218   0xF44F 0x7091      MOV      R0,#+290
-   \   0000021C   0x.... 0x....      BL       TFT_English_pixel
-    189          
-    190            TFT_English_pixel(302,222, '1');        // 1800Hz
-   \   00000220   0x2231             MOVS     R2,#+49
-   \   00000222   0x21DE             MOVS     R1,#+222
-   \   00000224   0xF44F 0x7097      MOV      R0,#+302
-   \   00000228   0x.... 0x....      BL       TFT_English_pixel
-    191            TFT_English_pixel(310,222, '8');
-   \   0000022C   0x2238             MOVS     R2,#+56
-   \   0000022E   0x21DE             MOVS     R1,#+222
-   \   00000230   0xF44F 0x709B      MOV      R0,#+310
-   \   00000234   0x.... 0x....      BL       TFT_English_pixel
-    192            TFT_English_pixel(318,222, '0');
-   \   00000238   0x2230             MOVS     R2,#+48
-   \   0000023A   0x21DE             MOVS     R1,#+222
-   \   0000023C   0xF44F 0x709F      MOV      R0,#+318
-   \   00000240   0x.... 0x....      BL       TFT_English_pixel
-    193            TFT_English_pixel(326,222, '0');
-   \   00000244   0x2230             MOVS     R2,#+48
-   \   00000246   0x21DE             MOVS     R1,#+222
-   \   00000248   0xF44F 0x70A3      MOV      R0,#+326
-   \   0000024C   0x.... 0x....      BL       TFT_English_pixel
-    194          
-    195            TFT_English_pixel(338,222, '2');        // 2000Hz
-   \   00000250   0x2232             MOVS     R2,#+50
-   \   00000252   0x21DE             MOVS     R1,#+222
-   \   00000254   0xF44F 0x70A9      MOV      R0,#+338
-   \   00000258   0x.... 0x....      BL       TFT_English_pixel
-    196            TFT_English_pixel(346,222, '0');
-   \   0000025C   0x2230             MOVS     R2,#+48
-   \   0000025E   0x21DE             MOVS     R1,#+222
-   \   00000260   0xF44F 0x70AD      MOV      R0,#+346
-   \   00000264   0x.... 0x....      BL       TFT_English_pixel
-    197            TFT_English_pixel(354,222, '0');
-   \   00000268   0x2230             MOVS     R2,#+48
-   \   0000026A   0x21DE             MOVS     R1,#+222
-   \   0000026C   0xF44F 0x70B1      MOV      R0,#+354
-   \   00000270   0x.... 0x....      BL       TFT_English_pixel
-    198            TFT_English_pixel(362,222, '0');
-   \   00000274   0x2230             MOVS     R2,#+48
-   \   00000276   0x21DE             MOVS     R1,#+222
-   \   00000278   0xF44F 0x70B5      MOV      R0,#+362
-   \   0000027C   0x.... 0x....      BL       TFT_English_pixel
-    199          
-    200            TFT_color(Magenta,Black);
-   \   00000280   0x2100             MOVS     R1,#+0
-   \   00000282   0x4628             MOV      R0,R5
-   \   00000284   0x.... 0x....      BL       TFT_color
-    201            TFT_English_pixel(370,223, '[');        // x축 단위 표시 ([Hz])
-   \   00000288   0x225B             MOVS     R2,#+91
-   \   0000028A   0x21DF             MOVS     R1,#+223
-   \   0000028C   0xF44F 0x70B9      MOV      R0,#+370
-   \   00000290   0xF240 0x1531      MOVW     R5,#+305
-   \   00000294   0x.... 0x....      BL       TFT_English_pixel
-    202            TFT_English_pixel(378,223, 'H');
-   \   00000298   0x2248             MOVS     R2,#+72
-   \   0000029A   0x21DF             MOVS     R1,#+223
-   \   0000029C   0xF44F 0x70BD      MOV      R0,#+378
-   \   000002A0   0x.... 0x....      BL       TFT_English_pixel
-    203            TFT_English_pixel(386,223, 'z');
-   \   000002A4   0x227A             MOVS     R2,#+122
-   \   000002A6   0x21DF             MOVS     R1,#+223
-   \   000002A8   0xF44F 0x70C1      MOV      R0,#+386
-   \   000002AC   0x.... 0x....      BL       TFT_English_pixel
-    204            TFT_English_pixel(394,223, ']');
-   \   000002B0   0x225D             MOVS     R2,#+93
-   \   000002B2   0x21DF             MOVS     R1,#+223
-   \   000002B4   0xF44F 0x70C5      MOV      R0,#+394
-   \   000002B8   0x.... 0x....      BL       TFT_English_pixel
-    205          
-    206            // 축 그리기
-    207            Line(30, 220, 310, 220, White);         // x축 선 그리기
-   \   000002BC   0x9400             STR      R4,[SP, #+0]
-   \   000002BE   0x23DC             MOVS     R3,#+220
-   \   000002C0   0xF44F 0x729B      MOV      R2,#+310
-   \   000002C4   0x21DC             MOVS     R1,#+220
-   \   000002C6   0x201E             MOVS     R0,#+30
-   \   000002C8   0x.... 0x....      BL       Line
-    208            Line(305,215, 310, 220, White);         // x축 화살표 그리기
-   \   000002CC   0x9400             STR      R4,[SP, #+0]
-   \   000002CE   0x23DC             MOVS     R3,#+220
-   \   000002D0   0xF44F 0x729B      MOV      R2,#+310
-   \   000002D4   0x21D7             MOVS     R1,#+215
-   \   000002D6   0x4628             MOV      R0,R5
-   \   000002D8   0x.... 0x....      BL       Line
-    209            Line(305,225, 310, 220, White);
-   \   000002DC   0x9400             STR      R4,[SP, #+0]
-   \   000002DE   0x4628             MOV      R0,R5
-   \   000002E0   0x23DC             MOVS     R3,#+220
-   \   000002E2   0xF44F 0x729B      MOV      R2,#+310
-   \   000002E6   0x21E1             MOVS     R1,#+225
-   \   000002E8   0x2532             MOVS     R5,#+50
-   \   000002EA   0x.... 0x....      BL       Line
-    210            
-    211            // x축 눈금 간격 조정 (200Hz 단위로)
-    212            for(x = 50; x <= 309; x += 28)          // 간격을 28픽셀로 조정
-    213              Line(x,218, x,222, White);
+    180          
+    181            Line(30, 220, 310, 220, White);         // x축 선 그리기
+   \   00000214   0x9400             STR      R4,[SP, #+0]
+   \   00000216   0x23DC             MOVS     R3,#+220
+   \   00000218   0xF44F 0x729B      MOV      R2,#+310
+   \   0000021C   0x21DC             MOVS     R1,#+220
+   \   0000021E   0x201E             MOVS     R0,#+30
+   \   00000220   0x.... 0x....      BL       Line
+    182            Line(305,215, 310, 220, White);         // x축 화살표 그리기
+   \   00000224   0x9400             STR      R4,[SP, #+0]
+   \   00000226   0x23DC             MOVS     R3,#+220
+   \   00000228   0xF44F 0x729B      MOV      R2,#+310
+   \   0000022C   0x21D7             MOVS     R1,#+215
+   \   0000022E   0x4628             MOV      R0,R5
+   \   00000230   0x.... 0x....      BL       Line
+    183            Line(305,225, 310, 220, White);
+   \   00000234   0x9400             STR      R4,[SP, #+0]
+   \   00000236   0x4628             MOV      R0,R5
+   \   00000238   0x23DC             MOVS     R3,#+220
+   \   0000023A   0xF44F 0x729B      MOV      R2,#+310
+   \   0000023E   0x21E1             MOVS     R1,#+225
+   \   00000240   0x2532             MOVS     R5,#+50
+   \   00000242   0x.... 0x....      BL       Line
+    184            for(x = 50; x <= 309; x += 20)          // x축 눈금 그리기
+    185              Line(x,218, x,222, White);
    \                     ??Display_FFT_screen_0: (+1)
-   \   000002EE   0x9400             STR      R4,[SP, #+0]
-   \   000002F0   0x23DE             MOVS     R3,#+222
-   \   000002F2   0xB22A             SXTH     R2,R5
-   \   000002F4   0x21DA             MOVS     R1,#+218
-   \   000002F6   0xB228             SXTH     R0,R5
-   \   000002F8   0x351C             ADDS     R5,R5,#+28
-   \   000002FA   0x.... 0x....      BL       Line
-   \   000002FE   0xF5B5 0x7F9B      CMP      R5,#+310
-   \   00000302   0xDBF4             BLT.N    ??Display_FFT_screen_0
-    214          
-    215            // y축은 동일하게 유지
-    216            Line(30,  28,  30, 220, White);
-   \   00000304   0x9400             STR      R4,[SP, #+0]
-   \   00000306   0x23DC             MOVS     R3,#+220
-   \   00000308   0x221E             MOVS     R2,#+30
-   \   0000030A   0x211C             MOVS     R1,#+28
-   \   0000030C   0x201E             MOVS     R0,#+30
-   \   0000030E   0x2528             MOVS     R5,#+40
-   \   00000310   0x.... 0x....      BL       Line
-    217            Line(35,  33,  30,  28, White);
-   \   00000314   0x9400             STR      R4,[SP, #+0]
-   \   00000316   0x231C             MOVS     R3,#+28
-   \   00000318   0x221E             MOVS     R2,#+30
-   \   0000031A   0x2121             MOVS     R1,#+33
-   \   0000031C   0x2023             MOVS     R0,#+35
-   \   0000031E   0x.... 0x....      BL       Line
-    218            Line(25,  33,  30,  28, White);
-   \   00000322   0x9400             STR      R4,[SP, #+0]
-   \   00000324   0x231C             MOVS     R3,#+28
-   \   00000326   0x221E             MOVS     R2,#+30
-   \   00000328   0x2121             MOVS     R1,#+33
-   \   0000032A   0x2019             MOVS     R0,#+25
-   \   0000032C   0x.... 0x....      BL       Line
-    219            for(y = 40; y <= 202; y += 18)
-    220              Line(28,y, 32,y, White);
+   \   00000246   0x9400             STR      R4,[SP, #+0]
+   \   00000248   0x23DE             MOVS     R3,#+222
+   \   0000024A   0xB22A             SXTH     R2,R5
+   \   0000024C   0x21DA             MOVS     R1,#+218
+   \   0000024E   0xB228             SXTH     R0,R5
+   \   00000250   0x3514             ADDS     R5,R5,#+20
+   \   00000252   0x.... 0x....      BL       Line
+   \   00000256   0xF5B5 0x7F9B      CMP      R5,#+310
+   \   0000025A   0xDBF4             BLT.N    ??Display_FFT_screen_0
+    186          
+    187            Line(30,  28,  30, 220, White);         // y축 선 그리기
+   \   0000025C   0x9400             STR      R4,[SP, #+0]
+   \   0000025E   0x23DC             MOVS     R3,#+220
+   \   00000260   0x221E             MOVS     R2,#+30
+   \   00000262   0x211C             MOVS     R1,#+28
+   \   00000264   0x201E             MOVS     R0,#+30
+   \   00000266   0x2528             MOVS     R5,#+40
+   \   00000268   0x.... 0x....      BL       Line
+    188            Line(35,  33,  30,  28, White);         // y축 화살표 그리기
+   \   0000026C   0x9400             STR      R4,[SP, #+0]
+   \   0000026E   0x231C             MOVS     R3,#+28
+   \   00000270   0x221E             MOVS     R2,#+30
+   \   00000272   0x2121             MOVS     R1,#+33
+   \   00000274   0x2023             MOVS     R0,#+35
+   \   00000276   0x.... 0x....      BL       Line
+    189            Line(25,  33,  30,  28, White);
+   \   0000027A   0x9400             STR      R4,[SP, #+0]
+   \   0000027C   0x231C             MOVS     R3,#+28
+   \   0000027E   0x221E             MOVS     R2,#+30
+   \   00000280   0x2121             MOVS     R1,#+33
+   \   00000282   0x2019             MOVS     R0,#+25
+   \   00000284   0x.... 0x....      BL       Line
+    190            for(y = 40; y <= 202; y += 18)          // y축 눈금 그리기
+    191              Line(28,y, 32,y, White);
    \                     ??Display_FFT_screen_1: (+1)
-   \   00000330   0x9400             STR      R4,[SP, #+0]
-   \   00000332   0xB22B             SXTH     R3,R5
-   \   00000334   0x2220             MOVS     R2,#+32
-   \   00000336   0xB229             SXTH     R1,R5
-   \   00000338   0x201C             MOVS     R0,#+28
-   \   0000033A   0x3512             ADDS     R5,R5,#+18
-   \   0000033C   0x.... 0x....      BL       Line
-   \   00000340   0x2DCB             CMP      R5,#+203
-   \   00000342   0xDBF5             BLT.N    ??Display_FFT_screen_1
-    221          }
-   \   00000344   0xBD31             POP      {R0,R4,R5,PC}    ;; return
+   \   00000288   0x9400             STR      R4,[SP, #+0]
+   \   0000028A   0xB22B             SXTH     R3,R5
+   \   0000028C   0x2220             MOVS     R2,#+32
+   \   0000028E   0xB229             SXTH     R1,R5
+   \   00000290   0x201C             MOVS     R0,#+28
+   \   00000292   0x3512             ADDS     R5,R5,#+18
+   \   00000294   0x.... 0x....      BL       Line
+   \   00000298   0x2DCB             CMP      R5,#+203
+   \   0000029A   0xDBF5             BLT.N    ??Display_FFT_screen_1
+    192          }
+   \   0000029C   0xBD31             POP      {R0,R4,R5,PC}    ;; return
 
    \                                 In section .text, align 2, keep-with-next
    \                     ?Subroutine47: (+1)
@@ -25680,41 +25591,41 @@ Warning[Pe177]: variable "N" was declared but never referenced
    \                     ?Subroutine28: (+1)
    \   00000000   0x200A             MOVS     R0,#+10
    \   00000002   0x.... 0x....      B.W      TFT_English_pixel
-    222          
-    223          /* ----- FFT 결과 바 그래프 그리기 함수 ------------------------------------------ */
-    224          
+    193          
+    194          /* ----- FFT 결과 바 그래프 그리기 함수 ------------------------------------------ */
+    195          
 
    \                                 In section .text, align 2, keep-with-next
-    225          void Draw_FFT(U16 index, float value)     /* FFT 결과를 바 형태로 그리는 함수 */
-    226          {
+    196          void Draw_FFT(U16 index, float value)     /* FFT 결과를 바 형태로 그리는 함수 */
+    197          {
    \                     Draw_FFT: (+1)
    \   00000000   0xB538             PUSH     {R3-R5,LR}
-    227            unsigned short height;
-    228          
-    229            height = (unsigned short)value;         // 바의 높이 계산
+    198            unsigned short height;
+    199          
+    200            height = (unsigned short)value;         // 바의 높이 계산
    \   00000002   0xEEBD 0x0AC0      VCVT.S32.F32 S0,S0
    \   00000006   0xEE10 0x4A10      VMOV     R4,S0
-    230            if(height >= 180.) height = 180.;       // 최대 높이 제한
+    201            if(height >= 180.) height = 180.;       // 최대 높이 제한
    \   0000000A   0xB2A1             UXTH     R1,R4
    \   0000000C   0x29B4             CMP      R1,#+180
    \   0000000E   0xBF28             IT       CS 
    \   00000010   0x24B4             MOVCS    R4,#+180
-    231          
-    232            Line(30+2*index, 219, 30+2*index, 219 - 180, Black);    // 이전 바 삭제
+    202          
+    203            Line(30+2*index, 219, 30+2*index, 219 - 180, Black);    // 이전 바 삭제
    \   00000012   0x0040             LSLS     R0,R0,#+1
    \   00000014   0xF100 0x051E      ADD      R5,R0,#+30
    \   00000018   0x2000             MOVS     R0,#+0
    \   0000001A   0x2327             MOVS     R3,#+39
    \   0000001C   0x9000             STR      R0,[SP, #+0]
    \   0000001E   0x.... 0x....      BL       ?Subroutine46
-    233            Line(30+2*index, 219, 30+2*index, 219 - height, Red);   // 새로운 바 그리기
+    204            Line(30+2*index, 219, 30+2*index, 219 - height, Red);   // 새로운 바 그리기
    \                     ??CrossCallReturnLabel_136: (+1)
    \   00000022   0xF44F 0x4078      MOV      R0,#+63488
    \   00000026   0xF1C4 0x03DB      RSB      R3,R4,#+219
    \   0000002A   0x9000             STR      R0,[SP, #+0]
    \   0000002C   0xB21B             SXTH     R3,R3
    \   0000002E   0x.... 0x....      BL       ?Subroutine46
-    234          }
+    205          }
    \                     ??CrossCallReturnLabel_135: (+1)
    \   00000032   0xBD31             POP      {R0,R4,R5,PC}    ;; return
 
@@ -26380,7 +26291,7 @@ Warning[Pe177]: variable "N" was declared but never referenced
       46  DS3234_write
       24  Delay_ms
      442  Delay_us
-     838  Display_FFT_screen
+     670  Display_FFT_screen
       52  Draw_FFT
     2048  E_font
     8192  FFT_buffer
@@ -26471,7 +26382,7 @@ Warning[Pe177]: variable "N" was declared but never referenced
    20480  fft_buffer_pool
           FFT_output
        1  key_flag
-     162  main
+     160  main
        4  max_index
        4  max_value
       24  table_cho
@@ -26482,9 +26393,9 @@ Warning[Pe177]: variable "N" was declared but never referenced
  45 070 bytes in section .bss
      30 bytes in section .data
  11 552 bytes in section .rodata
- 38 732 bytes in section .text
+ 38 562 bytes in section .text
  
- 38 732 bytes of CODE  memory
+ 38 562 bytes of CODE  memory
  11 552 bytes of CONST memory
  45 100 bytes of DATA  memory
 

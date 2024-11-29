@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>668074621</fileChecksum>
+  <fileChecksum>2275978285</fileChecksum>
   <configuration>
     <name>OK-STM767</name>
     <outputs>
@@ -298,7 +298,7 @@
       <inputs>
         <tool>
           <name>ILINK</name>
-          <file> 13 79 80 0 84 33 68 12 62 89</file>
+          <file> 13 79 80 90 0 33 68 12 62 89</file>
         </tool>
       </inputs>
     </file>

@@ -990,7 +990,7 @@
       <name>$PROJ_DIR$\fft.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\testDMA.c</name>
+      <name>$PROJ_DIR$\FFT_WAV.c</name>
     </file>
   </group>
 </project>
