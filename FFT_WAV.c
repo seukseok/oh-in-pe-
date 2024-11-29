@@ -10,8 +10,18 @@
 
 complex_f fft_buffer_pool[SAMPLE_SIZE];   // FFT에 사용할 복소수 버퍼 풀 선언
 
+// 이동 평균 필터의 크기
+#define MOVING_AVG_SIZE 10  // 이동 평균 필터의 크기 증가
+
+
+// 필터 변수
+float moving_avg_buffer[MOVING_AVG_SIZE];
+unsigned int moving_avg_index = 0;
+float moving_avg_sum = 0.0f;
+
 void TIM7_IRQHandler(void);               // TIM7 인터럽트 핸들러 선언 (25.6kHz에서 ADC 입력)
 void Display_FFT_screen(void);            // FFT 화면을 표시하는 함수 선언
+void Clear_FFT_Display(void);             // FFT 화면을 지우는 함수 선언
 void do_fft(void);                        // FFT 연산을 수행하는 함수 선언
 void Draw_FFT(U16 index, float value);    // FFT 결과를 바 형태로 그리는 함수 선언
 void display_info();                      // 화면에 정보를 표시하는 함수 선언
@@ -26,6 +36,17 @@ float FFT_output[SAMPLE_SIZE/2];          // FFT 결과를 저장하는 버퍼
 float max_value;                          // FFT 결과 중 최대값을 저장하는 변수
 unsigned int max_index;                   // 최대값의 인덱스를 저장하는 변수
 
+// RMS 임계값 설정
+#define RMS_THRESHOLD 0.01f  // RMS 값이 0.01 이하일 때는 스펙트럼을 표시하지 않음
+
+// 이동 평균 필터 적용 함수
+float apply_moving_avg(float new_sample) {
+    moving_avg_sum += new_sample - moving_avg_buffer[moving_avg_index];
+    moving_avg_buffer[moving_avg_index] = new_sample;
+    moving_avg_index = (moving_avg_index + 1) % MOVING_AVG_SIZE;
+    return moving_avg_sum / MOVING_AVG_SIZE;
+}
+
 /* ----- 인터럽트 서비스 루틴 ---------------------------------------------------- */
 
 void TIM7_IRQHandler(void)                /* TIM7 인터럽트(25.6kHz)에서 ADC 입력 처리 */
@@ -34,7 +55,13 @@ void TIM7_IRQHandler(void)                /* TIM7 인터럽트(25.6kHz)에서 ADC 입력
 
   ADC1->CR2 |= 0x40000000;                // 소프트웨어로 ADC 변환 시작
   while(!(ADC1->SR & 0x00000002));        // 변환 완료 대기
-  FFT_buffer[FFT_count] = ((float)ADC1->DR - 2048.)/2048.; // ADC 결과를 FFT 버퍼에 저장 및 정규화
+
+  // ADC 값 읽고 이동 평균 필터 적용
+  float adc_value = ((float)ADC1->DR - 2048.0f) / 2048.0f; // 정규화
+  float filtered_value = apply_moving_avg(adc_value);  // 필터링된 값
+
+  // 필터링된 값을 FFT 버퍼에 저장
+  FFT_buffer[FFT_count] = filtered_value;
   FFT_count++;
   
   if(FFT_count >= SAMPLE_SIZE)
@@ -70,7 +97,15 @@ int main(void)
   TIM7->CR1 = 0x0085;                     // TIM7 활성화, 업데이트 이벤트, 프리로드 설정
   NVIC->ISER[1] |= 0x00800000;            // (55)TIM7 인터럽트 활성화
 
-  Display_FFT_screen();                   // FFT 화면 표시
+  // 이동 평균 버퍼 초기화
+  for(int i = 0; i < MOVING_AVG_SIZE; i++)
+  {
+    moving_avg_buffer[i] = 0.0f;
+  }
+  moving_avg_sum = 0.0f;
+  moving_avg_index = 0;
+
+    Display_FFT_screen();                   // FFT 화면 표시
   TFT_string(5,0,White,Magenta," 실시간 FFT 변환 및 표시 "); // 화면에 문자열 표시
 
   while(1)
@@ -88,11 +123,27 @@ int main(void)
 
 void do_fft(void)
 {
+  // RMS 계산 (주파수 영역에서 RMS 계산)
+  float rms_value = 0.0;
+  for (int i = 0; i < SAMPLE_SIZE; i++)
+  {
+      rms_value += FFT_buffer[i] * FFT_buffer[i];
+  }
+  rms_value = sqrtf(rms_value / SAMPLE_SIZE);
+
+  // RMS 값이 임계값 이하일 때는 스펙트럼을 지우고 반환
+  if (rms_value < RMS_THRESHOLD)
+  {
+      Clear_FFT_Display();  // 스펙트럼 지우기 함수 호출
+      return;  // RMS 값이 낮으면 FFT 수행하지 않음
+  }
+
+  // FFT 수행을 위한 준비
   complex_f *fft_data = fft_buffer_pool;  // FFT에 사용할 버퍼 포인터 설정
 
   unsigned r = log2(SAMPLE_SIZE);         // 샘플 크기의 로그2 값 계산
   unsigned N = 1 << r;                    // FFT 크기 N = 2^r 계산
-  float max_data = 0.0;                   // 최대값 변수 초기화
+  float max_data = 0.0f;                   // 최대값 변수 초기화
 
   for(int i = 0; i < SAMPLE_SIZE; i++)
   {
@@ -101,11 +152,13 @@ void do_fft(void)
   }
 
   ffti_f(fft_data, r, FFT_FORWARD);       // FFT 수행
-  for(int i = 1; i < 128; i++)            // 특정 범위의 스펙트럼 사용
+
+  // FFT 결과 처리
+  for(int i = 1; i < 128; i++)
   {
-    FFT_output[i-1] = sqrt(pow(fft_data[i].re,2)+pow(fft_data[i].im,2)); // 스펙트럼의 크기 계산
-    if(max_data < FFT_output[i-1])
-      max_data = FFT_output[i-1];         // 최대값 업데이트
+      FFT_output[i-1] = sqrtf(fft_data[i].re * fft_data[i].re + fft_data[i].im * fft_data[i].im);
+      if(max_data < FFT_output[i-1])
+          max_data = FFT_output[i-1];
   }
   
   for(int i = 0; i < 128; i++)
@@ -190,6 +243,15 @@ void Display_FFT_screen(void)             /* FFT 화면 표시 함수 */
     Line(28, y, 32, y, White);
   }
 }
+
+void Clear_FFT_Display(void)
+{
+    for(int i = 0; i < 128; i++)
+    {
+        Line(30 + 2 * i, 219, 30 + 2 * i, 219 - 180, Black);  // 이전 바 삭제
+    }
+}
+
 
 /* ----- FFT 결과 바 그래프 그리기 함수 ------------------------------------------ */
 
