@@ -424,7 +424,7 @@
         </tool>
         <tool>
           <name>ICCARM</name>
-          <file> 100</file>
+          <file> 100 98</file>
         </tool>
         <tool>
           <name>__cstat</name>
@@ -434,7 +434,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 38 73 35 7 51 63 0 68 36 22 59 53 18 60 26 55 12 43 42 46 23 52 2 21 47 39 1 61</file>
+          <file> 38 55 73 35 7 51 63 0 36 22 59 53 18 60 26 68 12 43 42 46 23 52 2 21 47 39 1 61</file>
         </tool>
         <tool>
           <name>ICCARM</name>
@@ -442,10 +442,6 @@
         </tool>
       </inputs>
     </file>
-    <forcedrebuild>
-      <name>[MULTI_TOOL]</name>
-      <tool>ILINK</tool>
-    </forcedrebuild>
   </configuration>
 </project>
 

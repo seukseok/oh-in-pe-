@@ -1,284 +1,636 @@
-#include "stm32f767xx.h"            // STM32F767 마이크로컨트롤러 헤더 파일 포함
-#include "OK-STM767.h"              // OK-STM767 보드 관련 헤더 파일 포함
-#include <stdlib.h>                 // 표준 라이브러리 함수 사용을 위한 헤더 파일 포함
-#include <arm_math.h>               // ARM의 수학 라이브러리 함수 사용을 위한 헤더 파일 포함
-#include "fft.h"                    // FFT 함수 헤더 파일 포함
-#include "complex.h"                // 복소수 연산을 위한 헤더 파일 포함
+#include "stm32f767xx.h"
+#include "OK-STM767.h"
+#include "OK-STM767_SD_card.h"
+#include "OK-STM767_VS1053b.h"
+#include "arm_math.h"
+#include "stdio.h"
+#include "stdint.h"
 
-#define SAMPLE_SIZE 2048            // 샘플 데이터의 크기를 2048로 정의
-#define FFT_SIZE (SAMPLE_SIZE/2)    // FFT 크기를 샘플 크기의 절반으로 정의
+/*******************************************************************************
+ * 상수 정의
+ ******************************************************************************/
+#define THEME_BG        Black       // 배경색
+#define THEME_HEADER    0x861D      // 진한 회색
+#define THEME_TEXT      0xBDF7      // 밝은 회색
+#define THEME_HIGHLIGHT 0x05FF      // 하이라이트 색상
+#define THEME_ACCENT    0xFD20      // 강조 색상
+#define THEME_BUTTON    0x2DB7      // 버튼 색상
+#define THEME_WARNING   0xFBE0      // 경고 색상
+#define GRAY            0x7BEF      // 회색
 
-complex_f fft_buffer_pool[SAMPLE_SIZE];   // FFT에 사용할 복소수 버퍼 풀 선언
+#define WHITE_TILES         7       // 백건 개수
+#define BLACK_TILES         5       // 흑건 개수
 
-// 이동 평균 필터의 크기
-#define MOVING_AVG_SIZE 10  // 이동 평균 필터의 크기 증가
+#define WHITE_KEY_WIDTH     36      // 백건 건반 가로 길이
+#define WHITE_KEY_HEIGHT    81      // 백건 건반 세로 길이
+#define BLACK_KEY_WIDTH     22      // 흑건 건반 가로 길이
+#define BLACK_KEY_HEIGHT    54      // 흑건 건반 세로 길이
 
+#define C_NOTE  382  // 도 (261.63 Hz)
+#define D_NOTE  340  // 레 (293.66 Hz)
+#define E_NOTE  303  // 미 (329.63 Hz)
+#define F_NOTE  286  // 파 (349.23 Hz)
+#define G_NOTE  255  // 솔 (392.00 Hz)
+#define A_NOTE  227  // 라 (440.00 Hz)
+#define B_NOTE  202  // 시 (493.88 Hz)
+#define CH_NOTE 191  // 높은 도 (523.25 Hz)
 
-// 필터 변수
-float moving_avg_buffer[MOVING_AVG_SIZE];
-unsigned int moving_avg_index = 0;
-float moving_avg_sum = 0.0f;
+#define SLIDER_NUM      3
+#define SLIDER_Y_MAX    180
+#define SLIDER_Y_MIN    60
+#define SLIDER_MOVE     6
 
-void TIM7_IRQHandler(void);               // TIM7 인터럽트 핸들러 선언 (25.6kHz에서 ADC 입력)
-void Display_FFT_screen(void);            // FFT 화면을 표시하는 함수 선언
-void Clear_FFT_Display(void);             // FFT 화면을 지우는 함수 선언
-void do_fft(void);                        // FFT 연산을 수행하는 함수 선언
-void Draw_FFT(U16 index, float value);    // FFT 결과를 바 형태로 그리는 함수 선언
-void display_info();                      // 화면에 정보를 표시하는 함수 선언
+// WAV 재생 관련 상수 정의 추가
+#define BAR_WIDTH       15 
+#define BAR_GAP         4
+#define START_Y         220
+#define MAX_HEIGHT      140
+#define INITIAL_VOLUME  200
+#define BUFFER_SIZE     512
+#define BUFFER_COUNT    2
+#define WAV_HEADER_SIZE 44
 
-unsigned char FFT_mode, FFT_flag;         // FFT 모드와 플래그를 위한 변수 선언
-unsigned short FFT_count;                 // FFT 샘플 카운트를 위한 변수 선언
+/*******************************************************************************
+ * 타입 정의
+ ******************************************************************************/
+typedef struct {
+    uint16_t xstart;
+    uint16_t xend;
+    uint16_t ystart;
+    uint16_t yend;
+} KeyInfo;
 
-float ADC_buffer[SAMPLE_SIZE];            // ADC로부터 수집한 샘플 데이터를 저장하는 버퍼
-float FFT_buffer[SAMPLE_SIZE];            // FFT 입력 데이터를 저장하는 버퍼
-float FFT_input[SAMPLE_SIZE];             // FFT 입력 버퍼 (사용되지 않음)
-float FFT_output[SAMPLE_SIZE/2];          // FFT 결과를 저장하는 버퍼
-float max_value;                          // FFT 결과 중 최대값을 저장하는 변수
-unsigned int max_index;                   // 최대값의 인덱스를 저장하는 변수
+typedef struct {
+    int value;
+    int y;
+} Slider;
 
-// RMS 임계값 설정
-#define RMS_THRESHOLD 0.01f  // RMS 값이 0.01 이하일 때는 스펙트럼을 표시하지 않음
+// WAV 헤더 구조체 추가
+typedef struct {
+    uint32_t sampleRate;
+    uint16_t numChannels;
+    uint16_t bitsPerSample;
+    uint32_t dataSize;
+} WAV_Header;
 
-// 이동 평균 필터 적용 함수
-float apply_moving_avg(float new_sample) {
-    moving_avg_sum += new_sample - moving_avg_buffer[moving_avg_index];
-    moving_avg_buffer[moving_avg_index] = new_sample;
-    moving_avg_index = (moving_avg_index + 1) % MOVING_AVG_SIZE;
-    return moving_avg_sum / MOVING_AVG_SIZE;
-}
+/*******************************************************************************
+ * 함수 선언
+ ******************************************************************************/
+/* 초기화 함수 */
+void System_Init(void);
+void TIM1_Init(void);
+void GPIO_Init(void);
 
-/* ----- 인터럽트 서비스 루틴 ---------------------------------------------------- */
+/* 메인 화면 및 메뉴 */
+void MainScreen(void);
+void Menu_Equalizer(void);
+void Menu_Piano(void);
+void Menu_Piano_WAV(void); // 피아노와 WAV 플레이어를 동시에 표시하는 함수
 
-void TIM7_IRQHandler(void)                /* TIM7 인터럽트(25.6kHz)에서 ADC 입력 처리 */
-{
-  TIM7->SR = 0x0000;                      // TIM7 인터럽트의 팬딩 비트 클리어
+/* 입력 처리 */
+unsigned char Get_Key_Input(void);
+unsigned char Get_Touch_Input(void);
 
-  ADC1->CR2 |= 0x40000000;                // 소프트웨어로 ADC 변환 시작
-  while(!(ADC1->SR & 0x00000002));        // 변환 완료 대기
+/* UI 그리기 */
+void Draw_MainScreen(void);
+void Draw_Equalizer_UI(void);
+void Update_Equalizer_UI(void);
+void Draw_Piano_WAV_UI(void);
+void Draw_Keys(void);
 
-  // ADC 값 읽고 이동 평균 필터 적용
-  float adc_value = ((float)ADC1->DR - 2048.0f) / 2048.0f; // 정규화
-  float filtered_value = apply_moving_avg(adc_value);  // 필터링된 값
+/* 피아노 기능 */
+void White_Key_Init(void);
+void Black_Key_Init(void);
+void Play_Note(unsigned int note);
+void Reset_Key_State(KeyInfo *key, unsigned char *key_touch, int key_count, uint16_t color);
+void Key_Touch_Handler(uint16_t xpos, uint16_t ypos);
+void Piano_Input_Handler(void);
 
-  // 필터링된 값을 FFT 버퍼에 저장
-  FFT_buffer[FFT_count] = filtered_value;
-  FFT_count++;
-  
-  if(FFT_count >= SAMPLE_SIZE)
-  { 
-    FFT_count = 0;                        // 샘플 카운트 초기화
-    FFT_flag = 1;                         // FFT 연산을 수행하도록 플래그 설정
-  }
-}
+/* 이퀄라이저 기능 */
+void Process_Equalizer_Key1(void);
+void Process_Equalizer_Key2(void);
+void Process_Equalizer_Key3(void);
 
-/* ----- 메인 함수 --------------------------------------------------------------- */
+/* WAV 플레이어 기능 추가 */
+void Initialize_Peripherals(void);
+void Play_Audio(void);
+void Update_WAV_Display(void);
+void TFT_Filename(void);
+void Check_valid_increment_file(void);
+void Check_valid_decrement_file(void);
+uint8_t ParseWAVHeader(uint32_t sector);
+void ConfigureVS1053ForWAV(void);
 
-int main(void)
-{
-  Initialize_MCU();                       // MCU 초기화
-  Delay_ms(50);                           // 50ms 지연
-  Initialize_LCD();                       // LCD 초기화
-  Initialize_TFT_LCD();                   // TFT LCD 초기화
+/*******************************************************************************
+ * 전역 변수
+ ******************************************************************************/
+volatile int menu_selected = 0;
+volatile int graph_piano_mode = 0;
 
-  GPIOA->MODER |= 0x00003000;             // PA6를 아날로그 모드(ADC12_IN6)로 설정
-  RCC->APB2ENR |= 0x00000100;             // ADC1 클럭 활성화
-  ADC->CCR = 0x00000000;                  // ADCCLK = 54MHz/2 = 27MHz 설정
-  ADC1->SMPR2 = 0x00040000;               // 채널 6의 샘플링 시간 = 15 사이클 설정
-  ADC1->CR1 = 0x00000000;                 // 12비트 해상도 설정
-  ADC1->CR2 = 0x00000001;                 // 오른쪽 정렬, 단일 변환, ADON = 1 설정
-  ADC1->SQR1 = 0x00000000;                // 총 정규 채널 수 = 1 설정
-  ADC1->SQR3 = 0x00000006;                // 채널 6 선택
+KeyInfo white_keys[WHITE_TILES];
+KeyInfo black_keys[BLACK_TILES];
+unsigned char is_white_key_touching[WHITE_TILES] = {0};
+unsigned char is_black_key_touching[BLACK_TILES] = {0};
 
-  RCC->APB1ENR |= 0x00000020;             // TIM7 클럭 활성화
-  TIM7->PSC = 1;                          // 프리스케일러 값: 108MHz / (1 + 1) = 54MHz
-  TIM7->ARR = 224;                        // ARR 값: 54MHz / (224 + 1) = 48kHz
-  TIM7->CNT = 0;                          // 카운터 초기화
-  TIM7->DIER = 0x0001;                    // 업데이트 인터럽트 활성화
-  TIM7->CR1 = 0x0085;                     // TIM7 활성화, 업데이트 이벤트, 프리로드 설정
-  NVIC->ISER[1] |= 0x00800000;            // (55)TIM7 인터럽트 활성화
+unsigned int notes[] = {C_NOTE, D_NOTE, E_NOTE, F_NOTE, G_NOTE, A_NOTE, B_NOTE, CH_NOTE};
 
-  // 이동 평균 버퍼 초기화
-  for(int i = 0; i < MOVING_AVG_SIZE; i++)
-  {
-    moving_avg_buffer[i] = 0.0f;
-  }
-  moving_avg_sum = 0.0f;
-  moving_avg_index = 0;
+Slider sliders[SLIDER_NUM] = {{10, 120}, {10, 120}, {10, 120}};
+volatile uint8_t selected_slider = 0;
 
-    Display_FFT_screen();                   // FFT 화면 표시
-  TFT_string(5,0,White,Magenta," 실시간 FFT 변환 및 표시 "); // 화면에 문자열 표시
+/* WAV 플레이어 전역 변수 추가 */
+unsigned char total_file;
+unsigned char file_number = 0;
+unsigned short index = 512; 
+volatile uint8_t currentBuffer = 0;
+uint32_t WAV_start_sector[MAX_FILE];
+uint32_t WAV_start_backup[MAX_FILE];
+uint32_t WAV_end_sector;
+uint8_t play_flag = 0;
+uint8_t WAVbuffer[BUFFER_COUNT][BUFFER_SIZE];
+uint32_t file_start[MAX_FILE];
+uint32_t file_size[MAX_FILE];
+uint16_t volume = INITIAL_VOLUME;
+WAV_Header wavHeader;
 
-  while(1)
-  {   
-    if(FFT_flag == 1)
-    {
-      FFT_flag = 0;
-      do_fft();                           // FFT 연산 수행
-      display_info();                     // 정보 표시
-    }
-     Delay_us(1);                         // 1μs 지연
-  }
-}
-/* ----- FFT 연산 함수 ---------------------------------------------------------- */
+/*******************************************************************************
+ * 메인 함수
+ ******************************************************************************/
+int main(void) {
+    System_Init();
 
-void do_fft(void)
-{
-  // RMS 계산 (주파수 영역에서 RMS 계산)
-  float rms_value = 0.0;
-  for (int i = 0; i < SAMPLE_SIZE; i++)
-  {
-      rms_value += FFT_buffer[i] * FFT_buffer[i];
-  }
-  rms_value = sqrtf(rms_value / SAMPLE_SIZE);
+    while (1) {
+        unsigned char key = Get_Key_Input();
 
-  // RMS 값이 임계값 이하일 때는 스펙트럼을 지우고 반환
-  if (rms_value < RMS_THRESHOLD)
-  {
-      Clear_FFT_Display();  // 스펙트럼 지우기 함수 호출
-      return;  // RMS 값이 낮으면 FFT 수행하지 않음
-  }
+        if (menu_selected == 2) {
+            // 피아노 입력 처리
+            Piano_Input_Handler();
+            // WAV 플레이어 동작
+            Play_Audio();
+            Update_WAV_Display();
+        }
 
-  // FFT 수행을 위한 준비
-  complex_f *fft_data = fft_buffer_pool;  // FFT에 사용할 버퍼 포인터 설정
-
-  unsigned r = log2(SAMPLE_SIZE);         // 샘플 크기의 로그2 값 계산
-  unsigned N = 1 << r;                    // FFT 크기 N = 2^r 계산
-  float max_data = 0.0f;                   // 최대값 변수 초기화
-
-  for(int i = 0; i < SAMPLE_SIZE; i++)
-  {
-    fft_data[i].re = FFT_buffer[i];       // 실수부에 FFT 입력 데이터 저장
-    fft_data[i].im = 0.0;                 // 허수부를 0으로 초기화
-  }
-
-  ffti_f(fft_data, r, FFT_FORWARD);       // FFT 수행
-
-  // FFT 결과 처리
-  for(int i = 1; i < 128; i++)
-  {
-      FFT_output[i-1] = sqrtf(fft_data[i].re * fft_data[i].re + fft_data[i].im * fft_data[i].im);
-      if(max_data < FFT_output[i-1])
-          max_data = FFT_output[i-1];
-  }
-  
-  for(int i = 0; i < 128; i++)
-  {
-    Draw_FFT(i, FFT_output[i] * 180 / max_data); // FFT 결과를 바 형태로 표시
-  }
-}
-
-/* ----- FFT 화면 표시 함수 ----------------------------------------------------- */
-
-void Display_FFT_screen(void)             /* FFT 화면 표시 함수 */
-{
-  unsigned short x, y;
-
-  TFT_clear_screen();                     // 화면 초기화
-
-  TFT_color(White, Black);
-
-  // y축 레이블 (0% ~ 100%)
-  TFT_English_pixel(18, 213, '0');        // 0%
-  TFT_English_pixel(10, 195, '1');        // 10%
-  TFT_English_pixel(18, 195, '0');
-  TFT_English_pixel(10, 177, '2');        // 20%
-  TFT_English_pixel(18, 177, '0');
-  TFT_English_pixel(10, 159, '3');        // 30%
-  TFT_English_pixel(18, 159, '0');
-  TFT_English_pixel(10, 141, '4');        // 40%
-  TFT_English_pixel(18, 141, '0');
-  TFT_English_pixel(10, 123, '5');        // 50%
-  TFT_English_pixel(18, 123, '0');
-  TFT_English_pixel(10, 105, '6');        // 60%
-  TFT_English_pixel(18, 105, '0');
-  TFT_English_pixel(10, 87, '7');         // 70%
-  TFT_English_pixel(18, 87, '0');
-  TFT_English_pixel(10, 69, '8');         // 80%
-  TFT_English_pixel(18, 69, '0');
-  TFT_English_pixel(10, 51, '9');         // 90%
-  TFT_English_pixel(18, 51, '0');
-  TFT_English_pixel(2, 33, '1');          // 100%
-  TFT_English_pixel(10, 33, '0');
-  TFT_English_pixel(18, 33, '0');
-  
-  TFT_color(Magenta, Black);
-  TFT_English_pixel(2, 16, '[');          // y축 단위 표시 ([%])
-  TFT_English_pixel(10, 16, '%');
-  TFT_English_pixel(18, 16, ']');
-
-  TFT_color(Pink,Black);
-  // x축 레이블 (0kHz ~ 24kHz) 간격 조정
-  for (x = 0; x <= 24; x++) {
-    if (x % 2 == 0) { // 2kHz 간격으로 레이블 표시
-      int pos_x = 30 + (x * 13);  // 1kHz 간격으로 320px에 분배
-      TFT_English_pixel(pos_x, 222, '0' + (x / 10));  // 10의 자릿수
-      TFT_English_pixel(pos_x + 6, 222, '0' + (x % 10));  // 1의 자릿수
-    }
-  }
-  
-  TFT_color(Magenta, Black);
-  TFT_English_pixel(280, 223, '[');        // x축 단위 표시 ([kHz])
-  TFT_English_pixel(288, 223, 'k');
-  TFT_English_pixel(296, 223, 'H');
-  TFT_English_pixel(304, 223, 'z');
-  TFT_English_pixel(312, 223, ']');
-
-  // x축 선 그리기
-  Line(30, 220, 310, 220, White);         // x축 선
-  Line(305, 215, 310, 220, White);        // x축 화살표
-  Line(305, 225, 310, 220, White);
-  
-  // x축 눈금 그리기
-  for (x = 50; x <= 309; x += 20) {
-    Line(x, 218, x, 222, White);
-  }
-
-  // y축 선 그리기
-  Line(30, 28, 30, 220, White);          // y축 선
-  Line(35, 33, 30, 28, White);           // y축 화살표
-  Line(25, 33, 30, 28, White);
-
-  // y축 눈금 그리기
-  for (y = 40; y <= 202; y += 18) {
-    Line(28, y, 32, y, White);
-  }
-}
-
-void Clear_FFT_Display(void)
-{
-    for(int i = 0; i < 128; i++)
-    {
-        Line(30 + 2 * i, 219, 30 + 2 * i, 219 - 180, Black);  // 이전 바 삭제
+        switch (key) {
+            case KEY1:
+                if (menu_selected == 1) {
+                    Process_Equalizer_Key1();
+                    Update_Equalizer_UI();
+                } else if (menu_selected == 0) {
+                    menu_selected = 1;
+                    Menu_Equalizer();
+                }
+                break;
+            case KEY2:
+                if (menu_selected == 0) {
+                    menu_selected = 2;
+                    Menu_Piano_WAV(); // 피아노와 WAV 플레이어 동시 실행
+                }
+                break;
+            case KEY3:
+                if (menu_selected == 1) {
+                    Process_Equalizer_Key3();
+                    Update_Equalizer_UI();
+                }
+                break;
+            case KEY4:
+                if (menu_selected != 0) {
+                    menu_selected = 0;
+                    graph_piano_mode = 0;
+                    MainScreen();
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
 
-
-/* ----- FFT 결과 바 그래프 그리기 함수 ------------------------------------------ */
-
-void Draw_FFT(U16 index, float value)     /* FFT 결과를 바 형태로 그리는 함수 */
-{
-  unsigned short height;
-
-  height = (unsigned short)value;         // 바의 높이 계산
-  if(height >= 180.) height = 180.;       // 최대 높이 제한
-
-  Line(30+2*index, 219, 30+2*index, 219 - 180, Black);    // 이전 바 삭제
-  Line(30+2*index, 219, 30+2*index, 219 - height, Red);   // 새로운 바 그리기
+/*******************************************************************************
+ * 초기화 함수
+ ******************************************************************************/
+void System_Init(void) {
+    Initialize_MCU();
+    Delay_ms(50);
+    Initialize_TFT_LCD();
+    Initialize_touch_screen();
+    TIM1_Init();
+    White_Key_Init();
+    Black_Key_Init();
+    Initialize_Peripherals(); // WAV 플레이어 초기화 추가
+    MainScreen();
 }
 
-void display_info() {
-    static uint8_t blink = 0;  // 깜박임 상태를 저장할 변수
-    
-    if(blink) {
-        // 문구를 표시
-        TFT_string(7, 3, Cyan, Black, "오디오를 분석하고 있습니다..."); 
-    } else {
-        // 문구를 지움 (검은색 배경으로 덮어씀)
-        TFT_string(7, 3, Black, Black, "                             ");
+void TIM1_Init(void) {
+    GPIOE->MODER &= 0xCFFFFFFF;     // PE14 = alternate function mode
+    GPIOE->MODER |= 0x20000000;
+    GPIOE->AFR[1] &= 0xF0FFFFFF;    // PE14 = TIM1_CH4
+    GPIOE->AFR[1] |= 0x01000000;
+
+    RCC->APB2ENR |= 0x00000001;     // Enable TIM1 clock
+
+    TIM1->PSC = 107;                // 108MHz/(107+1) = 1MHz
+    TIM1->CNT = 0;                  // Clear counter
+    TIM1->CCMR2 = 0x00006C00;       // OC4M = 0110(PWM mode 1), CC4S = 00(output)
+    TIM1->CCER = 0x00001000;        // CC4E = 1(enable OC4 output)
+    TIM1->BDTR = 0x00008000;        // MOE = 1
+    TIM1->CR1 = 0x0005;             // Edge-aligned, up-counter, enable TIM1
+}
+
+/*******************************************************************************
+ * 메인 화면 및 메뉴
+ ******************************************************************************/
+void MainScreen(void) {
+    TFT_clear_screen();
+    Draw_MainScreen();
+}
+
+void Menu_Equalizer(void) {
+    TFT_clear_screen();
+    Draw_Equalizer_UI();
+}
+
+void Menu_Piano_WAV(void) {
+    TFT_clear_screen();
+    Draw_Piano_WAV_UI();
+    graph_piano_mode = 1;
+}
+
+/*******************************************************************************
+ * 입력 처리 함수
+ ******************************************************************************/
+unsigned char Get_Key_Input(void) {
+    unsigned char key = Key_input();
+    if (key == no_key) {
+        key = Get_Touch_Input();
     }
-    
-    Rectangle(0, 0, 319, 239, Blue);
-    
-    // 상태 토글 (0->1, 1->0)
-    blink ^= 1;
+    return key;
+}
+
+unsigned char Get_Touch_Input(void) {
+    unsigned char keyPressed = no_key;
+    Touch_screen_input();
+
+    if (menu_selected == 0) {
+        if (x_touch >= 32 && x_touch <= 152 && y_touch >= 96 && y_touch <= 206) {
+            keyPressed = KEY1;
+        } else if (x_touch >= 168 && x_touch <= 288 && y_touch >= 96 && y_touch <= 206) {
+            keyPressed = KEY2;
+        }
+    } else if (menu_selected == 1) {
+        // 이퀄라이저 메뉴 입력 처리
+        if (x_touch >= 30 && x_touch <= 95 && y_touch >= 206 && y_touch <= 225) {
+            keyPressed = KEY1;
+        } else if (x_touch >= 95 && x_touch <= 160 && y_touch >= 206 && y_touch <= 225) {
+            keyPressed = KEY2;
+        } else if (x_touch >= 160 && x_touch <= 225 && y_touch >= 206 && y_touch <= 225) {
+            keyPressed = KEY3;
+        } else if (x_touch >= 225 && x_touch <= 290 && y_touch >= 206 && y_touch <= 225) {
+            keyPressed = KEY4;
+        }
+    }
+
+    return keyPressed;
+}
+
+/*******************************************************************************
+ * UI 그리기 함수
+ ******************************************************************************/
+void Draw_MainScreen(void) {
+    Block(7, 32, 312, 224, White, White);
+    Block(15, 40, 304, 216, Black, Black);
+    TFT_string(0, 0, Black, THEME_HEADER, "              [ Oh-In-Pe- ]             ");
+    TFT_string(7, 7, White, THEME_BG, " Sound Modulation Project ");
+
+    Block(32, 96, 152, 206, White, GRAY);
+    Block(168, 96, 288, 206, White, GRAY);
+
+    TFT_string(7, 17, THEME_ACCENT, GRAY, "Equalizer");
+    TFT_string(7, 19, THEME_ACCENT, GRAY, "  [KEY1]");
+
+    TFT_string(23, 17, THEME_ACCENT, GRAY, "Piano & WAV");
+    TFT_string(23, 19, THEME_ACCENT, GRAY, "   [KEY2]");
+}
+
+void Draw_Equalizer_UI(void) {
+    TFT_string(0, 1, Black, THEME_HEADER, "              [ Oh-In-Pe- ]             ");
+    TFT_string(6, 3, White, Black, "저주파수");
+    TFT_string(16, 3, White, Black, "중주파수");
+    TFT_string(26, 3, White, Black, "고주파수");
+
+    for (int i = 0; i <= 9; i++) {
+        Line(30, 72 + 12 * i, 290, 72 + 12 * i, GRAY);
+    }
+    Line(30, 60, 290, 60, White);
+    Line(30, 180, 290, 180, White);
+    Line(30, 120, 290, 120, White);
+
+    TFT_string(0, 26, White, THEME_BG, "     Select    UP     DOWN     Home   ");
+
+    Rectangle(30, 206, 95, 225, White);
+    Rectangle(95, 206, 160, 225, White);
+    Rectangle(160, 206, 225, 225, White);
+    Rectangle(225, 206, 290, 225, White);
+
+    Update_Equalizer_UI();
+}
+
+void Update_Equalizer_UI(void) {
+    for (int i = 0; i < SLIDER_NUM; i++) {
+        char value_str[12];
+        memset(value_str, 0, sizeof(value_str));
+        sprintf(value_str, "%2d", sliders[i].value);
+        if (i == selected_slider) {
+            TFT_string(6 + i * 10, 23, White, THEME_BG, "SELECTED");
+            TFT_string(9 + i * 10, 5, THEME_ACCENT, THEME_BG, (U08 *)value_str);
+        } else {
+            TFT_string(6 + i * 10, 23, THEME_BG, THEME_BG, "SELECTED");
+            TFT_string(9 + i * 10, 5, THEME_TEXT, THEME_BG, (U08 *)value_str);
+        }
+        Block(65 + i * 80, 57, 95 + i * 80, 183, THEME_BG, GRAY);
+        Block(65 + i * 80, sliders[i].y, 95 + i * 80, 183, Blue, Blue);
+        Block(65 + i * 80, sliders[i].y - 3, 95 + i * 80, sliders[i].y + 3, White, Blue);
+    }
+}
+
+void Draw_Piano_WAV_UI(void) {
+    TFT_string(0, 0, Black, THEME_HEADER, "              [ Oh-In-Pe- ]             ");
+    Draw_Keys();
+
+    // WAV 플레이어 정보 표시
+    TFT_string(0, 2, THEME_TEXT, THEME_BG, "----------------------------------------");
+    TFT_string(0, 4, THEME_HIGHLIGHT, THEME_BG, "현재 재생 중인 WAV 파일:");
+    TFT_Filename();
+    TFT_string(0, 26, White, THEME_BG, "PLAY[KEY1] Next[KEY2] Prev[KEY3] home[KEY4]");
+}
+
+void Draw_Keys(void) {
+    for (int i = 0; i < WHITE_TILES; i++) {
+        Block(white_keys[i].xstart, white_keys[i].ystart, white_keys[i].xend, white_keys[i].yend, Black, White);
+    }
+    for (int i = 0; i < BLACK_TILES; i++) {
+        Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, White, Black);
+    }
+    Rectangle(32, 127, 296, 208, THEME_HIGHLIGHT);
+}
+
+/*******************************************************************************
+ * 피아노 기능 함수
+ ******************************************************************************/
+void White_Key_Init(void) {
+    int x = 32;
+    for (int i = 0; i < WHITE_TILES; i++) {
+        white_keys[i].xstart = x;
+        white_keys[i].xend = x + WHITE_KEY_WIDTH;
+        white_keys[i].ystart = 127;
+        white_keys[i].yend = 127 + WHITE_KEY_HEIGHT;
+        x += (WHITE_KEY_WIDTH + 2);
+    }
+}
+
+void Black_Key_Init(void) {
+    int x = 32 + WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2);
+    int black_key_pos[5] = {0, 1, 3, 4, 5};
+
+    for (int i = 0; i < BLACK_TILES; i++) {
+        black_keys[i].xstart = x + (black_key_pos[i] * (WHITE_KEY_WIDTH + 2));
+        black_keys[i].xend = black_keys[i].xstart + BLACK_KEY_WIDTH;
+        black_keys[i].ystart = 127;
+        black_keys[i].yend = 127 + BLACK_KEY_HEIGHT;
+    }
+}
+
+void Play_Note(unsigned int note) {
+    TIM1->ARR = note;
+    TIM1->CCR4 = note / 2;
+}
+
+void Reset_Key_State(KeyInfo *key, unsigned char *key_touch, int key_count, uint16_t color) {
+    for (int i = 0; i < key_count; i++) {
+        if (key_touch[i]) {
+            key_touch[i] = 0;
+            Block(key[i].xstart, key[i].ystart, key[i].xend, key[i].yend, Black, color);
+        }
+    }
+}
+
+void Key_Touch_Handler(uint16_t xpos, uint16_t ypos) {
+    for (int i = 0; i < WHITE_TILES; i++) {
+        if (xpos >= white_keys[i].xstart && xpos <= white_keys[i].xend &&
+            ypos >= white_keys[i].ystart && ypos <= white_keys[i].yend) {
+            if (!is_white_key_touching[i]) {
+                is_white_key_touching[i] = 1;
+                Block(white_keys[i].xstart, white_keys[i].ystart, white_keys[i].xend, white_keys[i].yend, Black, GRAY);
+                Play_Note(notes[i]);
+            }
+        } else {
+            is_white_key_touching[i] = 0;
+            Block(white_keys[i].xstart, white_keys[i].ystart, white_keys[i].xend, white_keys[i].yend, Black, White);
+        }
+    }
+
+    for (int i = 0; i < BLACK_TILES; i++) {
+        if (xpos >= black_keys[i].xstart && xpos <= black_keys[i].xend &&
+            ypos >= black_keys[i].ystart && ypos <= black_keys[i].yend) {
+            if (!is_black_key_touching[i]) {
+                is_black_key_touching[i] = 1;
+                Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, Black, GRAY);
+            }
+        } else {
+            is_black_key_touching[i] = 0;
+            Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, Black, Black);
+        }
+    }
+}
+
+void Piano_Input_Handler(void) {
+    if (graph_piano_mode == 1) {
+        if (x_touch >= 32 && x_touch <= 296 && y_touch >= 60 && y_touch <= 141) {
+            Key_Touch_Handler(x_touch, y_touch);
+        } else {
+            Reset_Key_State(white_keys, is_white_key_touching, WHITE_TILES, White);
+            Reset_Key_State(black_keys, is_black_key_touching, BLACK_TILES, Black);
+            TIM1->CCR4 = 0;
+        }
+    }
+}
+
+/*******************************************************************************
+ * 이퀄라이저 기능 함수
+ ******************************************************************************/
+void Process_Equalizer_Key1(void) {
+    selected_slider++;
+    if (selected_slider >= SLIDER_NUM)
+        selected_slider = 0;
+}
+
+void Process_Equalizer_Key2(void) {
+    if (sliders[selected_slider].y > SLIDER_Y_MIN) {
+        sliders[selected_slider].y -= SLIDER_MOVE;
+        sliders[selected_slider].value++;
+        if (sliders[selected_slider].value > 20) {
+            sliders[selected_slider].value = 20;
+        }
+    }
+}
+
+void Process_Equalizer_Key3(void) {
+    if (sliders[selected_slider].y < SLIDER_Y_MAX) {
+        sliders[selected_slider].y += SLIDER_MOVE;
+        sliders[selected_slider].value--;
+        if (sliders[selected_slider].value < 0) {
+            sliders[selected_slider].value = 0;
+        }
+    }
+}
+
+/*******************************************************************************
+ * WAV 플레이어 기능 구현
+ ******************************************************************************/
+void Initialize_Peripherals(void) {
+    Initialize_SD();
+    Initialize_FAT32();
+    Initialize_VS1053b();
+    Delay_ms(1000);
+
+    volume = 175;
+    uint8_t bass = 10;
+    uint8_t treble = 5;
+
+    VS1053b_SetVolume(volume);
+    Delay_ms(1);
+    VS1053b_SetBassTreble(bass, treble);
+
+    total_file = fatGetDirEntry(FirstDirCluster);
+
+    for (unsigned char i = 0; i < total_file; i++) {
+        WAV_start_sector[i] = fatClustToSect(file_start_cluster[i]);
+        WAV_start_backup[i] = WAV_start_sector[i];
+    }
+
+    file_number = 0;
+}
+
+void Play_Audio(void) {
+    static unsigned short index = 512;
+    static unsigned char i;
+
+    if (((GPIOC->IDR & 0x0080) == 0x0080) && (play_flag == 1)) {
+        if (index == 512) {
+            if (WAV_end_sector == WAV_start_sector[file_number]) {
+                if (file_number != (total_file - 1))
+                    file_number++;
+                else
+                    file_number = 0;
+
+                TFT_Filename();
+                Check_valid_increment_file();
+
+                WAV_start_sector[file_number] = WAV_start_backup[file_number];
+                WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
+                VS1053b_software_reset();
+            }
+            index = 0;
+            SD_read_sector(WAV_start_sector[file_number]++, WAVbuffer[currentBuffer]);
+        }
+
+        for (i = 0; i < 32; i++) {
+            GPIOC->BSRR = 0x00400000;
+            SPI3_write(WAVbuffer[currentBuffer][index++]);
+            GPIOC->BSRR = 0x00000040;
+        }
+    }
+}
+
+void Update_WAV_Display(void) {
+    static unsigned short loop = 0;
+    unsigned char key = Key_input();
+
+    loop++;
+    if ((loop == 500) && (play_flag == 1)) {
+        loop = 0;
+    }
+
+    switch (key) {
+        case KEY1:
+            play_flag ^= 0x01;
+            break;
+        case KEY2:
+            if (file_number != (total_file - 1))
+                file_number++;
+            else
+                file_number = 0;
+
+            VS1053b_software_reset();
+            TFT_Filename();
+            Check_valid_increment_file();
+
+            WAV_start_sector[file_number] = WAV_start_backup[file_number];
+            WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
+            index = 512;
+            VS1053b_software_reset();
+            break;
+        case KEY3:
+            if (file_number != 0)
+                file_number--;
+            else
+                file_number = total_file - 1;
+
+            VS1053b_software_reset();
+            TFT_Filename();
+            Check_valid_decrement_file();
+
+            WAV_start_sector[file_number] = WAV_start_backup[file_number];
+            WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
+            index = 512;
+            VS1053b_software_reset();
+            break;
+        default:
+            break;
+    }
+}
+
+void TFT_Filename(void) {
+    unsigned char file_flag;
+
+    TFT_string(0, 6, THEME_TEXT, THEME_BG, "                                    ");
+
+    file_flag = Get_long_filename(file_number);
+
+    if (file_flag == 0)
+        TFT_short_filename(0, 6, White, THEME_BG);
+    else if (file_flag == 1)
+        TFT_long_filename(0, 6, White, THEME_BG);
+    else if (file_flag == 2)
+        TFT_string(0, 6, Red, THEME_BG, "* 파일 이름이 너무 깁니다 *");
+    else
+        TFT_string(0, 6, Red, THEME_BG, "*** 파일 이름 오류 ***");
+}
+
+void Check_valid_increment_file(void) {
+    unsigned char file_OK_flag = 0;
+    do {
+        if (extension != 0x00574156) { // "WAV" 파일인지 확인
+            if (file_number != (total_file - 1))
+                file_number++;
+            else
+                file_number = 0;
+            TFT_Filename();
+        } else {
+            file_OK_flag = 1;
+        }
+    } while (file_OK_flag == 0);
+}
+
+void Check_valid_decrement_file(void) {
+    unsigned char file_OK_flag = 0;
+    do {
+        if (extension != 0x00574156) { // "WAV" 파일인지 확인
+            if (file_number != 0)
+                file_number--;
+            else
+                file_number = total_file - 1;
+            TFT_Filename();
+        } else {
+            file_OK_flag = 1;
+        }
+    } while (file_OK_flag == 0);
 }
