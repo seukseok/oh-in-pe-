@@ -177,18 +177,42 @@ int main(void) {
                 } else if (menu_selected == 0) {
                     menu_selected = 1;
                     Menu_Equalizer();
+                } else if (menu_selected == 2) {
+                    play_flag ^= 0x01; // 재생/일시정지 토글
                 }
                 break;
             case KEY2:
                 if (menu_selected == 0) {
                     menu_selected = 2;
                     Menu_Piano_WAV(); // 피아노와 WAV 플레이어 동시 실행
+                } else if (menu_selected == 2) {
+                    if (file_number != (total_file - 1))
+                        file_number++;
+                    else
+                        file_number = 0;
+                    TFT_Filename();
+                    Check_valid_increment_file();
+                    WAV_start_sector[file_number] = WAV_start_backup[file_number];
+                    WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
+                    index = 512;
+                    VS1053b_software_reset();
                 }
                 break;
             case KEY3:
                 if (menu_selected == 1) {
                     Process_Equalizer_Key3();
                     Update_Equalizer_UI();
+                } else if (menu_selected == 2) {
+                    if (file_number != 0)
+                        file_number--;
+                    else
+                        file_number = total_file - 1;
+                    TFT_Filename();
+                    Check_valid_decrement_file();
+                    WAV_start_sector[file_number] = WAV_start_backup[file_number];
+                    WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
+                    index = 512;
+                    VS1053b_software_reset();
                 }
                 break;
             case KEY4:
@@ -252,6 +276,11 @@ void Menu_Piano_WAV(void) {
     TFT_clear_screen();
     Draw_Piano_WAV_UI();
     graph_piano_mode = 1;
+
+    // WAV 플레이어 초기화
+    TFT_Filename();
+    Check_valid_increment_file();
+    WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
 }
 
 /*******************************************************************************
@@ -286,8 +315,18 @@ unsigned char Get_Touch_Input(void) {
         } else if (x_touch >= 225 && x_touch <= 290 && y_touch >= 206 && y_touch <= 225) {
             keyPressed = KEY4;
         }
+    } else if (menu_selected == 2) {
+        // WAV 플레이어 제어 버튼 입력 처리
+        if (x_touch >= 10 && x_touch <= 70 && y_touch >= 70 && y_touch <= 100) {
+            keyPressed = KEY1; // 재생/일시정지
+        } else if (x_touch >= 80 && x_touch <= 140 && y_touch >= 70 && y_touch <= 100) {
+            keyPressed = KEY2; // 다음 곡
+        } else if (x_touch >= 150 && x_touch <= 210 && y_touch >= 70 && y_touch <= 100) {
+            keyPressed = KEY3; // 이전 곡
+        } else if (x_touch >= 220 && x_touch <= 280 && y_touch >= 70 && y_touch <= 100) {
+            keyPressed = KEY4; // 메인 화면으로
+        }
     }
-
     return keyPressed;
 }
 
@@ -359,7 +398,7 @@ void Draw_Piano_WAV_UI(void) {
     TFT_string(0, 2, THEME_TEXT, THEME_BG, "----------------------------------------");
     TFT_string(0, 4, THEME_HIGHLIGHT, THEME_BG, "현재 재생 중인 WAV 파일:");
     TFT_Filename();
-    TFT_string(0, 26, White, THEME_BG, "PLAY[KEY1] Next[KEY2] Prev[KEY3] home[KEY4]");
+    TFT_string(0, 8, White, THEME_BG, "PLAY[KEY1]Next[KEY2]Prev[KEY3]home[KEY4]");
 }
 
 void Draw_Keys(void) {
@@ -443,7 +482,8 @@ void Key_Touch_Handler(uint16_t xpos, uint16_t ypos) {
 
 void Piano_Input_Handler(void) {
     if (graph_piano_mode == 1) {
-        if (x_touch >= 32 && x_touch <= 296 && y_touch >= 60 && y_touch <= 141) {
+        Touch_screen_input();  // 터치 좌표 업데이트
+        if (x_touch >= 32 && x_touch <= 296 && y_touch >= 127 && y_touch <= 208) {
             Key_Touch_Handler(x_touch, y_touch);
         } else {
             Reset_Key_State(white_keys, is_white_key_touching, WHITE_TILES, White);
@@ -547,44 +587,6 @@ void Update_WAV_Display(void) {
     loop++;
     if ((loop == 500) && (play_flag == 1)) {
         loop = 0;
-    }
-
-    switch (key) {
-        case KEY1:
-            play_flag ^= 0x01;
-            break;
-        case KEY2:
-            if (file_number != (total_file - 1))
-                file_number++;
-            else
-                file_number = 0;
-
-            VS1053b_software_reset();
-            TFT_Filename();
-            Check_valid_increment_file();
-
-            WAV_start_sector[file_number] = WAV_start_backup[file_number];
-            WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
-            index = 512;
-            VS1053b_software_reset();
-            break;
-        case KEY3:
-            if (file_number != 0)
-                file_number--;
-            else
-                file_number = total_file - 1;
-
-            VS1053b_software_reset();
-            TFT_Filename();
-            Check_valid_decrement_file();
-
-            WAV_start_sector[file_number] = WAV_start_backup[file_number];
-            WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
-            index = 512;
-            VS1053b_software_reset();
-            break;
-        default:
-            break;
     }
 }
 
