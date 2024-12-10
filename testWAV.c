@@ -2,7 +2,6 @@
 #include "OK-STM767.h"
 #include "OK-STM767_SD_card.h"
 #include "OK-STM767_VS1053b.h"
-#include "arm_math.h"
 
 /*******************************************************************************
  * 상수 정의
@@ -61,7 +60,6 @@ uint8_t MP3buffer[BUFFER_COUNT][BUFFER_SIZE];
 uint32_t file_start[MAX_FILE];
 uint32_t file_size[MAX_FILE];
 uint16_t volume = INITIAL_VOLUME;
-uint8_t graph_piano_mode = 0;
 
 typedef struct {
     uint32_t sampleRate;
@@ -72,18 +70,6 @@ typedef struct {
 
 WAV_Header wavHeader;
 
-/*******************************************************************************
- * SysTick 관련 함수
- ******************************************************************************/
-void SysTick_Handler(void) {
-    SysTick_Count++;
-}
-
-void SysTick_Initialize(void) {
-    SysTick->LOAD = 216000 - 1;    /* 216MHz/1000 = 216000 (1ms 주기) */
-    SysTick->VAL = 0;              /* 카운터 초기화 */
-    SysTick->CTRL = 0x07;          /* 클록 소스, 인터럽트, 타이머 활성화 */
-}
 
 /*******************************************************************************
  * 메인 함수
@@ -114,7 +100,6 @@ int main(void) {
     Initialize_SD();                              // Initialize SD card
     Initialize_FAT32();                           // Initialize FAT32 file system
     Initialize_VS1053b();                         // Initialize VS1053b
-    SysTick_Initialize();                         // SysTick 초기화
     Delay_ms(1000);
 
     volume = 175;                       // 볼륨
@@ -289,8 +274,6 @@ int main(void) {
 
             case KEY4:
                 // 기능 없음
-                graph_piano_mode = 1;
-                Piano_TILES();
                 break;
 
             default:

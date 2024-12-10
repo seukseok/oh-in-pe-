@@ -1179,7 +1179,7 @@
       <name>$PROJ_DIR$\fft.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\piano.c</name>
+      <name>$PROJ_DIR$\testWAV.c</name>
     </file>
   </group>
 </project>

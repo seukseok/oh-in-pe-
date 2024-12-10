@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>2627753228</fileChecksum>
+  <fileChecksum>619711860</fileChecksum>
   <configuration>
     <name>OK-STM767</name>
     <outputs>
@@ -280,11 +280,11 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 51 35 68 39 1 63 2 21 73 18 60 55 0 52 47 59 61 23 38 36 12 7 22 43 42 53</file>
+          <file> 51 68 73 0 47 63 38 21 39 18 60 55 52 2 36 12 7 22 1 23 59 43</file>
         </tool>
         <tool>
           <name>ICCARM</name>
-          <file> 23 55 0 51 73 36 21 47 12 7 52 39 22 38 2 68 18 59 1 43 63 60 35 61 42 53</file>
+          <file> 23 55 0 51 73 36 21 47 12 7 52 39 22 38 2 68 18 59 1 43 63 60</file>
         </tool>
       </inputs>
     </file>
@@ -384,7 +384,7 @@
       <inputs>
         <tool>
           <name>ILINK</name>
-          <file> 5 84 90 98 11 44 67 3 62 81</file>
+          <file> 5 84 90 11 70 44 67 3 62 81</file>
         </tool>
       </inputs>
     </file>
@@ -434,7 +434,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 38 68 73 35 7 51 63 0 36 22 59 53 18 60 26 55 12 43 42 46 23 52 2 21 47 39 1 61</file>
+          <file> 38 73 35 68 7 51 63 0 36 22 59 53 18 60 26 55 12 43 42 46 23 52 2 21 47 39 1 61</file>
         </tool>
         <tool>
           <name>ICCARM</name>
