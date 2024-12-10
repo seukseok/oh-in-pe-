@@ -108,10 +108,9 @@ void Initialize_Peripherals(void) {
 /* 메인 화면 설정 */
 void SetupMainScreen(void) {
     TFT_clear_screen();
-    TFT_string(0, 0, Black, THEME_HEADER, "  OH-IN-PE-  ");
-    TFT_string(0, 3, THEME_TEXT, THEME_BG, "----------------------------------------");
-    TFT_string(0, 5, THEME_HIGHLIGHT, THEME_BG, ">>");
-    TFT_string(0, 7, THEME_TEXT, THEME_BG, "----------------------------------------");
+    TFT_string(0, 5, THEME_TEXT, THEME_BG, "----------------------------------------");
+    TFT_string(0, 7, THEME_HIGHLIGHT, THEME_BG, ">>");
+    TFT_string(0, 9, THEME_TEXT, THEME_BG, "----------------------------------------");
 
     TFT_filename();
     Check_valid_increment_file();
@@ -157,9 +156,6 @@ void Update_Display(void) {
     unsigned short HDAT1, HDAT0;
     unsigned char key = Key_input();
 
-    if (key == no_key)
-        key = Icon_input();
-
     loop++;
     if ((loop == 500) && (play_flag == 1)) {
         loop = 0;
@@ -193,15 +189,15 @@ void Update_Display(void) {
 void TFT_filename(void) {
     unsigned char file_flag;
 
-    TFT_string(0, 7, Cyan, Black, "----------------------------------------");
-    TFT_string(3, 5, Green, Black, "                                     ");
+    TFT_string(0, 9, THEME_TEXT, THEME_BG, "----------------------------------------");
+    TFT_string(3, 7, THEME_TEXT, THEME_BG, "                                     ");
 
     file_flag = Get_long_filename(file_number);
 
     if (file_flag == 0)
-        TFT_short_filename(3, 5, White, Black);
+        TFT_short_filename(3, 7, White, Black);
     else if (file_flag == 1)
-        TFT_long_filename(3, 5, White, Black);
+        TFT_long_filename(3, 7, White, Black);
     else if (file_flag == 2)
         TFT_string(3, 5, Red, Black, "* 파일 이름이 너무 깁니다 *");
     else
@@ -226,46 +222,6 @@ void Check_valid_increment_file(void) {
             file_OK_flag = 1;
         }
     } while (file_OK_flag == 0);
-}
-
-/* 아이콘 입력 처리 */
-unsigned char Icon_input(void) {
-    static unsigned char icon_flag = 0;
-    unsigned char keyPressed = no_key;
-
-    Touch_screen_input();
-
-    if ((icon_flag == 0) && (x_touch >= 12) && (x_touch <= 67) &&
-        (y_touch >= 196) && (y_touch <= 235)) {
-        keyPressed = KEY1;
-        icon_flag = 1;
-        Rectangle(12, 196, 67, 235, Magenta);
-    } else if ((icon_flag == 0) && (x_touch >= 92) && (x_touch <= 147) &&
-               (y_touch >= 196) && (y_touch <= 235)) {
-        keyPressed = KEY2;
-        icon_flag = 1;
-        Rectangle(92, 196, 147, 235, Magenta);
-    } else if ((icon_flag == 0) && (x_touch >= 176) && (x_touch <= 231) &&
-               (y_touch >= 196) && (y_touch <= 235)) {
-        keyPressed = KEY3;
-        icon_flag = 1;
-        Rectangle(176, 196, 231, 235, Magenta);
-    } else if ((icon_flag == 0) && (x_touch >= 256) && (x_touch <= 311) &&
-               (y_touch >= 196) && (y_touch <= 235)) {
-        keyPressed = KEY4;
-        icon_flag = 1;
-        Rectangle(256, 196, 311, 235, Magenta);
-    } else if ((icon_flag == 1) && (x_touch == 0) && (y_touch == 0)) {
-        keyPressed = no_key;
-        icon_flag = 0;
-        Rectangle(12, 196, 67, 235, Yellow);
-        Rectangle(92, 196, 147, 235, Yellow);
-        Rectangle(176, 196, 231, 235, Yellow);
-        Rectangle(256, 196, 311, 235, Yellow);
-        Delay_ms(50);
-    }
-
-    return keyPressed;
 }
 
 /* WAV 헤더 파싱 */
