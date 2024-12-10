@@ -165,7 +165,7 @@ void Update_Display(void) {
         case KEY1:
             play_flag ^= 0x01;
             break;
-        case KEY3:
+        case KEY2:
             if (file_number != (total_file - 1))
                 file_number++;
             else
