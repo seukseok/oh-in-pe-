@@ -1,3 +1,5 @@
+// main.c (수정된 부분)
+
 #include "stm32f767xx.h"
 #include "OK-STM767.h"
 #include "OK-STM767_SD_card.h"
@@ -9,39 +11,38 @@
 /*******************************************************************************
  * 상수 정의
  ******************************************************************************/
-#define THEME_BG        Black       // 배경색
-#define THEME_HEADER    0x861D      // 진한 회색
-#define THEME_TEXT      0xBDF7      // 밝은 회색
-#define THEME_HIGHLIGHT 0x05FF      // 하이라이트 색상
-#define THEME_ACCENT    0xFD20      // 강조 색상
-#define THEME_BUTTON    0x2DB7      // 버튼 색상
-#define THEME_WARNING   0xFBE0      // 경고 색상
-#define GRAY            0x7BEF      // 회색
+#define THEME_BG        Black
+#define THEME_HEADER    0x861D
+#define THEME_TEXT      0xBDF7
+#define THEME_HIGHLIGHT 0x05FF
+#define THEME_ACCENT    0xFD20
+#define THEME_BUTTON    0x2DB7
+#define THEME_WARNING   0xFBE0
+#define GRAY            0x7BEF
 
-#define WHITE_TILES         7       // 백건 개수
-#define BLACK_TILES         5       // 흑건 개수
+#define WHITE_TILES         7
+#define BLACK_TILES         5
 
-#define WHITE_KEY_WIDTH     36      // 백건 건반 가로 길이
-#define WHITE_KEY_HEIGHT    81      // 백건 건반 세로 길이
-#define BLACK_KEY_WIDTH     22      // 흑건 건반 가로 길이
-#define BLACK_KEY_HEIGHT    54      // 흑건 건반 세로 길이
+#define WHITE_KEY_WIDTH     36
+#define WHITE_KEY_HEIGHT    81
+#define BLACK_KEY_WIDTH     22
+#define BLACK_KEY_HEIGHT    54
 
-#define C_NOTE  382  // 도 (261.63 Hz)
-#define D_NOTE  340  // 레 (293.66 Hz)
-#define E_NOTE  303  // 미 (329.63 Hz)
-#define F_NOTE  286  // 파 (349.23 Hz)
-#define G_NOTE  255  // 솔 (392.00 Hz)
-#define A_NOTE  227  // 라 (440.00 Hz)
-#define B_NOTE  202  // 시 (493.88 Hz)
-#define CH_NOTE 191  // 높은 도 (523.25 Hz)
+#define C_NOTE  382
+#define D_NOTE  340
+#define E_NOTE  303
+#define F_NOTE  286
+#define G_NOTE  255
+#define A_NOTE  227
+#define B_NOTE  202
+#define CH_NOTE 191
 
 #define SLIDER_NUM      3
 #define SLIDER_Y_MAX    180
 #define SLIDER_Y_MIN    60
 #define SLIDER_MOVE     6
 
-// WAV 재생 관련 상수 정의 추가
-#define BAR_WIDTH       15 
+#define BAR_WIDTH       15
 #define BAR_GAP         4
 #define START_Y         220
 #define MAX_HEIGHT      140
@@ -65,7 +66,6 @@ typedef struct {
     int y;
 } Slider;
 
-// WAV 헤더 구조체 추가
 typedef struct {
     uint32_t sampleRate;
     uint16_t numChannels;
@@ -76,19 +76,16 @@ typedef struct {
 /*******************************************************************************
  * 함수 선언
  ******************************************************************************/
-/* 초기화 함수 */
 void System_Init(void);
 void TIM1_Init(void);
-void GPIO_Init(void);
 
 /* 메인 화면 및 메뉴 */
 void MainScreen(void);
 void Menu_Equalizer(void);
-void Menu_Piano(void);
-void Menu_Piano_WAV(void); // 피아노와 WAV 플레이어를 동시에 표시하는 함수
+void Menu_Piano_WAV(void);
 
 /* 입력 처리 */
-unsigned char Get_Key_Input(void);
+unsigned char Get_Only_Key_Input(void);
 unsigned char Get_Touch_Input(void);
 
 /* UI 그리기 */
@@ -98,7 +95,7 @@ void Update_Equalizer_UI(void);
 void Draw_Piano_WAV_UI(void);
 void Draw_Keys(void);
 
-/* 피아노 기능 */
+/* 피아노 기능 (piano.c 방식으로 변경) */
 void White_Key_Init(void);
 void Black_Key_Init(void);
 void Play_Note(unsigned int note);
@@ -111,7 +108,7 @@ void Process_Equalizer_Key1(void);
 void Process_Equalizer_Key2(void);
 void Process_Equalizer_Key3(void);
 
-/* WAV 플레이어 기능 추가 */
+/* WAV 플레이어 기능 */
 void Initialize_Peripherals(void);
 void Play_Audio(void);
 void Update_WAV_Display(void);
@@ -131,16 +128,13 @@ KeyInfo white_keys[WHITE_TILES];
 KeyInfo black_keys[BLACK_TILES];
 unsigned char is_white_key_touching[WHITE_TILES] = {0};
 unsigned char is_black_key_touching[BLACK_TILES] = {0};
-
 unsigned int notes[] = {C_NOTE, D_NOTE, E_NOTE, F_NOTE, G_NOTE, A_NOTE, B_NOTE, CH_NOTE};
 
 Slider sliders[SLIDER_NUM] = {{10, 120}, {10, 120}, {10, 120}};
 volatile uint8_t selected_slider = 0;
 
-/* WAV 플레이어 전역 변수 추가 */
 unsigned char total_file;
 unsigned char file_number = 0;
-unsigned short index = 512; 
 volatile uint8_t currentBuffer = 0;
 uint32_t WAV_start_sector[MAX_FILE];
 uint32_t WAV_start_backup[MAX_FILE];
@@ -150,7 +144,6 @@ uint8_t WAVbuffer[BUFFER_COUNT][BUFFER_SIZE];
 uint32_t file_start[MAX_FILE];
 uint32_t file_size[MAX_FILE];
 uint16_t volume = INITIAL_VOLUME;
-WAV_Header wavHeader;
 
 /*******************************************************************************
  * 메인 함수
@@ -159,12 +152,10 @@ int main(void) {
     System_Init();
 
     while (1) {
-        unsigned char key = Get_Key_Input();
+        unsigned char key = Get_Only_Key_Input();
 
         if (menu_selected == 2) {
-            // 피아노 입력 처리
-            Piano_Input_Handler();
-            // WAV 플레이어 동작
+            Piano_Input_Handler();  // 피아노 입력 처리 (piano.c 방식)
             Play_Audio();
             Update_WAV_Display();
         }
@@ -184,7 +175,10 @@ int main(void) {
             case KEY2:
                 if (menu_selected == 0) {
                     menu_selected = 2;
-                    Menu_Piano_WAV(); // 피아노와 WAV 플레이어 동시 실행
+                    Menu_Piano_WAV();
+                } else if (menu_selected == 1) {
+                    Process_Equalizer_Key2();
+                    Update_Equalizer_UI();
                 } else if (menu_selected == 2) {
                     if (file_number != (total_file - 1))
                         file_number++;
@@ -194,7 +188,6 @@ int main(void) {
                     Check_valid_increment_file();
                     WAV_start_sector[file_number] = WAV_start_backup[file_number];
                     WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
-                    index = 512;
                     VS1053b_software_reset();
                 }
                 break;
@@ -211,7 +204,6 @@ int main(void) {
                     Check_valid_decrement_file();
                     WAV_start_sector[file_number] = WAV_start_backup[file_number];
                     WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
-                    index = 512;
                     VS1053b_software_reset();
                 }
                 break;
@@ -239,24 +231,24 @@ void System_Init(void) {
     TIM1_Init();
     White_Key_Init();
     Black_Key_Init();
-    Initialize_Peripherals(); // WAV 플레이어 초기화 추가
+    Initialize_Peripherals();
     MainScreen();
 }
 
 void TIM1_Init(void) {
-    GPIOE->MODER &= 0xCFFFFFFF;     // PE14 = alternate function mode
+    GPIOE->MODER &= 0xCFFFFFFF;
     GPIOE->MODER |= 0x20000000;
-    GPIOE->AFR[1] &= 0xF0FFFFFF;    // PE14 = TIM1_CH4
+    GPIOE->AFR[1] &= 0xF0FFFFFF;
     GPIOE->AFR[1] |= 0x01000000;
 
-    RCC->APB2ENR |= 0x00000001;     // Enable TIM1 clock
+    RCC->APB2ENR |= 0x00000001;
 
-    TIM1->PSC = 107;                // 108MHz/(107+1) = 1MHz
-    TIM1->CNT = 0;                  // Clear counter
-    TIM1->CCMR2 = 0x00006C00;       // OC4M = 0110(PWM mode 1), CC4S = 00(output)
-    TIM1->CCER = 0x00001000;        // CC4E = 1(enable OC4 output)
-    TIM1->BDTR = 0x00008000;        // MOE = 1
-    TIM1->CR1 = 0x0005;             // Edge-aligned, up-counter, enable TIM1
+    TIM1->PSC = 107;
+    TIM1->CNT = 0;
+    TIM1->CCMR2 = 0x00006C00;
+    TIM1->CCER = 0x00001000;
+    TIM1->BDTR = 0x00008000;
+    TIM1->CR1 = 0x0005;
 }
 
 /*******************************************************************************
@@ -277,57 +269,24 @@ void Menu_Piano_WAV(void) {
     Draw_Piano_WAV_UI();
     graph_piano_mode = 1;
 
-    // WAV 플레이어 초기화
     TFT_Filename();
     Check_valid_increment_file();
     WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
+
+    VS1053b_software_reset();
+    play_flag = 0;
 }
 
 /*******************************************************************************
  * 입력 처리 함수
  ******************************************************************************/
-unsigned char Get_Key_Input(void) {
-    unsigned char key = Key_input();
-    if (key == no_key) {
-        key = Get_Touch_Input();
-    }
-    return key;
+unsigned char Get_Only_Key_Input(void) {
+    return Key_input();
 }
 
 unsigned char Get_Touch_Input(void) {
-    unsigned char keyPressed = no_key;
     Touch_screen_input();
-
-    if (menu_selected == 0) {
-        if (x_touch >= 32 && x_touch <= 152 && y_touch >= 96 && y_touch <= 206) {
-            keyPressed = KEY1;
-        } else if (x_touch >= 168 && x_touch <= 288 && y_touch >= 96 && y_touch <= 206) {
-            keyPressed = KEY2;
-        }
-    } else if (menu_selected == 1) {
-        // 이퀄라이저 메뉴 입력 처리
-        if (x_touch >= 30 && x_touch <= 95 && y_touch >= 206 && y_touch <= 225) {
-            keyPressed = KEY1;
-        } else if (x_touch >= 95 && x_touch <= 160 && y_touch >= 206 && y_touch <= 225) {
-            keyPressed = KEY2;
-        } else if (x_touch >= 160 && x_touch <= 225 && y_touch >= 206 && y_touch <= 225) {
-            keyPressed = KEY3;
-        } else if (x_touch >= 225 && x_touch <= 290 && y_touch >= 206 && y_touch <= 225) {
-            keyPressed = KEY4;
-        }
-    } else if (menu_selected == 2) {
-        // WAV 플레이어 제어 버튼 입력 처리
-        if (x_touch >= 10 && x_touch <= 70 && y_touch >= 70 && y_touch <= 100) {
-            keyPressed = KEY1; // 재생/일시정지
-        } else if (x_touch >= 80 && x_touch <= 140 && y_touch >= 70 && y_touch <= 100) {
-            keyPressed = KEY2; // 다음 곡
-        } else if (x_touch >= 150 && x_touch <= 210 && y_touch >= 70 && y_touch <= 100) {
-            keyPressed = KEY3; // 이전 곡
-        } else if (x_touch >= 220 && x_touch <= 280 && y_touch >= 70 && y_touch <= 100) {
-            keyPressed = KEY4; // 메인 화면으로
-        }
-    }
-    return keyPressed;
+    return no_key;
 }
 
 /*******************************************************************************
@@ -394,7 +353,6 @@ void Draw_Piano_WAV_UI(void) {
     TFT_string(0, 0, Black, THEME_HEADER, "              [ Oh-In-Pe- ]             ");
     Draw_Keys();
 
-    // WAV 플레이어 정보 표시
     TFT_string(0, 2, THEME_TEXT, THEME_BG, "----------------------------------------");
     TFT_string(0, 4, THEME_HIGHLIGHT, THEME_BG, "현재 재생 중인 WAV 파일:");
     TFT_Filename();
@@ -412,7 +370,7 @@ void Draw_Keys(void) {
 }
 
 /*******************************************************************************
- * 피아노 기능 함수
+ * 피아노 기능 함수 (piano.c 로직 복사/적용)
  ******************************************************************************/
 void White_Key_Init(void) {
     int x = 32;
@@ -452,6 +410,8 @@ void Reset_Key_State(KeyInfo *key, unsigned char *key_touch, int key_count, uint
 }
 
 void Key_Touch_Handler(uint16_t xpos, uint16_t ypos) {
+    
+    // 백건 처리
     for (int i = 0; i < WHITE_TILES; i++) {
         if (xpos >= white_keys[i].xstart && xpos <= white_keys[i].xend &&
             ypos >= white_keys[i].ystart && ypos <= white_keys[i].yend) {
@@ -461,33 +421,58 @@ void Key_Touch_Handler(uint16_t xpos, uint16_t ypos) {
                 Play_Note(notes[i]);
             }
         } else {
-            is_white_key_touching[i] = 0;
-            Block(white_keys[i].xstart, white_keys[i].ystart, white_keys[i].xend, white_keys[i].yend, Black, White);
+            // 다른 하얀 키가 눌려있다면 해제
+            if (is_white_key_touching[i]) {
+                is_white_key_touching[i] = 0;
+                Block(white_keys[i].xstart, white_keys[i].ystart, white_keys[i].xend, white_keys[i].yend, Black, White);
+            }
         }
     }
 
+    // 흑건 처리
     for (int i = 0; i < BLACK_TILES; i++) {
         if (xpos >= black_keys[i].xstart && xpos <= black_keys[i].xend &&
             ypos >= black_keys[i].ystart && ypos <= black_keys[i].yend) {
             if (!is_black_key_touching[i]) {
                 is_black_key_touching[i] = 1;
-                Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, Black, GRAY);
             }
         } else {
-            is_black_key_touching[i] = 0;
-            Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, Black, Black);
+            if (is_black_key_touching[i]) {
+                is_black_key_touching[i] = 0;
+            }
+        }
+    }
+
+    // *** 검은 타일을 항상 위에 그리기 ***
+    // 모든 흑건을 다시 그려서 백건 위에 오도록 한다.
+    for (int i = 0; i < BLACK_TILES; i++) {
+        if (is_black_key_touching[i]) {
+            // 눌린 상태의 흑건
+            Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, Black, GRAY);
+        } else {
+            // 기본 상태의 흑건
+            Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, White, Black);
         }
     }
 }
 
 void Piano_Input_Handler(void) {
     if (graph_piano_mode == 1) {
-        Touch_screen_input();  // 터치 좌표 업데이트
+        // 터치 좌표 갱신
+        Touch_screen_input();
+
+        // 터치 범위 판별 및 키 처리
         if (x_touch >= 32 && x_touch <= 296 && y_touch >= 127 && y_touch <= 208) {
             Key_Touch_Handler(x_touch, y_touch);
         } else {
+            // 범위 밖이면 건반 리셋
             Reset_Key_State(white_keys, is_white_key_touching, WHITE_TILES, White);
-            Reset_Key_State(black_keys, is_black_key_touching, BLACK_TILES, Black);
+            for (int i = 0; i < BLACK_TILES; i++) {
+                if (is_black_key_touching[i]) {
+                    is_black_key_touching[i] = 0;
+                    Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, White, Black);
+                }
+            }
             TIM1->CCR4 = 0;
         }
     }
@@ -582,8 +567,6 @@ void Play_Audio(void) {
 
 void Update_WAV_Display(void) {
     static unsigned short loop = 0;
-    unsigned char key = Key_input();
-
     loop++;
     if ((loop == 500) && (play_flag == 1)) {
         loop = 0;
@@ -610,7 +593,7 @@ void TFT_Filename(void) {
 void Check_valid_increment_file(void) {
     unsigned char file_OK_flag = 0;
     do {
-        if (extension != 0x00574156) { // "WAV" 파일인지 확인
+        if (extension != 0x00574156) { // "WAV"
             if (file_number != (total_file - 1))
                 file_number++;
             else
@@ -625,7 +608,7 @@ void Check_valid_increment_file(void) {
 void Check_valid_decrement_file(void) {
     unsigned char file_OK_flag = 0;
     do {
-        if (extension != 0x00574156) { // "WAV" 파일인지 확인
+        if (extension != 0x00574156) { // "WAV"
             if (file_number != 0)
                 file_number--;
             else
@@ -636,3 +619,4 @@ void Check_valid_decrement_file(void) {
         }
     } while (file_OK_flag == 0);
 }
+
