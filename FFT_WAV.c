@@ -76,7 +76,7 @@ int main(void)
   DAC->CR = 0x00030003; // DAC channel 1~2 enable
   
   Display_FFT_screen();     
-  TFT_string(5,0,White,Magenta," 오디오 FFT 분석 결과 ");
+  TFT_string(10,0,White,Pink," 오디오 FFT 분석 결과 ");
 
   while(1)
     {   
@@ -152,7 +152,7 @@ void do_fft(void)
 
     for (int i = 0; i < num_bars; i++)
     {
-        Draw_FFT(i, averaged_values[i] * 180 / max_data);
+        Draw_FFT(i, averaged_values[i] * 360/ max_data);
     }
   ///////////////////////////////////////////
   //Debugging
@@ -239,29 +239,7 @@ void Display_FFT_screen(void)			/* display FFT screen */
   TFT_English_pixel(10, 16, '%');
   TFT_English_pixel(18, 16, ']');
 
-  TFT_color(White,Black);
-  TFT_English_pixel( 26,222, '0');		// 0
-  TFT_English_pixel( 46,222, '2');		// 2
-  TFT_English_pixel( 66,222, '4');		// 4
-  TFT_English_pixel( 86,222, '6');		// 6
-  TFT_English_pixel(106,222, '8');		// 8
-  TFT_English_pixel(118,222, '1');		// 1
-  TFT_English_pixel(126,222, '0');		// 0
-  TFT_English_pixel(138,222, '1');		// 1
-  TFT_English_pixel(146,222, '2');		// 2
-  TFT_English_pixel(158,222, '1');		// 1
-  TFT_English_pixel(166,222, '4');		// 4
-  TFT_English_pixel(178,222, '1');		// 1
-  TFT_English_pixel(186,222, '6');		// 6
-  TFT_English_pixel(199,222, '1');		// 1
-  TFT_English_pixel(207,222, '8');		// 8
-  TFT_English_pixel(220,222, '2');		// 2
-  TFT_English_pixel(228,222, '0');		// 0
-  TFT_English_pixel(241,222, '2');		// 2
-  TFT_English_pixel(249,222, '2');		// 2
-  TFT_English_pixel(262,222, '2');		// 2
-  TFT_English_pixel(270,222, '4');		// 4
-
+  TFT_string(3,28,Yellow,Black,"0 63 125 250 .5K 1K 2K 4K 8K 16K");
   TFT_color(Magenta,Black);
   TFT_English_pixel(280,223, '[');		// [kHz]
   TFT_English_pixel(288,223, 'k');
@@ -272,8 +250,8 @@ void Display_FFT_screen(void)			/* display FFT screen */
   Line(30, 220, 310, 220, White);		// x-axis line
   Line(305,215, 310, 220, White);
   Line(305,225, 310, 220, White);
-  for(x = 50; x <= 309; x += 20)		// x-axis scale
-    Line(x,218, x,222, White);
+  // for(x = 50; x <= 309; x += 20)		// x-axis scale
+  //   Line(x,218, x,222, White);
 
   Line(30,  28,  30, 220, White);		// y-axis line
   Line(35,  33,  30,  28, White);
@@ -304,6 +282,6 @@ void Draw_FFT(U16 index, float value)
     for (int i = 0; i < 7; i++)
     {
         Line(x_pos + i, 219, x_pos + i, 219 - 180, Black);  // 기존 막대 지우기
-        Line(x_pos + i, 219, x_pos + i, 219 - height, Red);  // 새 막대 그리기
+        Line(x_pos + i, 219, x_pos + i, 219 - height, White);  // 새 막대 그리기
     }
 }
