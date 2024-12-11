@@ -1,4 +1,4 @@
-// main.c (수정된 부분)
+// main.c
 #include "stm32f767xx.h"
 #include "OK-STM767.h"
 #include "OK-STM767_SD_card.h"
@@ -129,13 +129,12 @@ unsigned char is_white_key_touching[WHITE_TILES] = {0};
 unsigned char is_black_key_touching[BLACK_TILES] = {0};
 unsigned int notes[] = {C_NOTE, D_NOTE, E_NOTE, F_NOTE, G_NOTE, A_NOTE, B_NOTE, CH_NOTE};
 
-// 슬라이더를 Volume/Bass/Treble로 사용
-// slider[0]: Volume (0~20 -> 150~250), slider[1]: Bass (0~20 -> 0~15), slider[2]: Treble (0~20 -> -8~7)
 Slider sliders[SLIDER_NUM] = {{10, 120}, {10, 120}, {10, 120}};
 volatile uint8_t selected_slider = 0;
 
 unsigned char total_file;
 unsigned char file_number = 0;
+unsigned short index = 512; 
 volatile uint8_t currentBuffer = 0;
 uint32_t WAV_start_sector[MAX_FILE];
 uint32_t WAV_start_backup[MAX_FILE];
@@ -151,18 +150,18 @@ uint32_t file_size[MAX_FILE];
 int main(void) {
     System_Init();
 
-    volume = INITIAL_VOLUME;
+    volume = INITIAL_VOLUME; // 초기 EQ 설정
     bass = 10;
-    treble = 5; // treble은 -8~7 범위 지원 -> 초기값 5는 예시
+    treble = 5;
 
     while (1) {
         unsigned char key = Get_Only_Key_Input();
 
-        // menu_selected 상관없이 WAV 재생 유지
+        // play_flag == 1 이면 메뉴 상관없이 계속 재생
         Play_Audio();
         Update_WAV_Display();
 
-        // 피아노 입력은 menu_selected == 2 일 때만
+        // 피아노 입력은 menu_selected == 2일 때만
         if (menu_selected == 2) {
             Piano_Input_Handler();
         }
@@ -176,18 +175,27 @@ int main(void) {
                     menu_selected = 1;
                     Menu_Equalizer();
                 } else if (menu_selected == 2) {
-                    play_flag ^= 0x01; // 재생/일시정지 토글
+                    // 재생/일시정지 토글
+                    play_flag ^= 0x01;
+                    if (play_flag == 1) {
+                        // 재생 시작 시 VS1053 초기화 및 index 초기화
+                        // VS1053b_software_reset();
+                        // index = 512; // 다음 Play_Audio 호출 시 새 섹터 읽기 시작
+                        TFT_string(33, 9, THEME_HIGHLIGHT, THEME_BG, "[play]");
+                    } else {
+                        TFT_string(33, 9, THEME_TEXT, THEME_BG, "[stop]");
+                    }
                 }
                 break;
             case KEY2:
                 if (menu_selected == 0) {
                     menu_selected = 2;
                     Menu_Piano_WAV();
-                    // play_flag 유지로 다른 메뉴 돌아가도 재생 가능
                 } else if (menu_selected == 1) {
                     Process_Equalizer_Key2();
                     Update_Equalizer_UI();
                 } else if (menu_selected == 2) {
+                    // 다음 파일
                     if (file_number != (total_file - 1))
                         file_number++;
                     else
@@ -197,6 +205,9 @@ int main(void) {
                     WAV_start_sector[file_number] = WAV_start_backup[file_number];
                     WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
                     VS1053b_software_reset();
+                    // 파일 변경 시 자동 재생 시작
+                    play_flag = 1;
+                    TFT_string(33, 9, THEME_HIGHLIGHT, THEME_BG, "[play]");
                 }
                 break;
             case KEY3:
@@ -204,6 +215,7 @@ int main(void) {
                     Process_Equalizer_Key3();
                     Update_Equalizer_UI();
                 } else if (menu_selected == 2) {
+                    // 이전 파일
                     if (file_number != 0)
                         file_number--;
                     else
@@ -213,6 +225,9 @@ int main(void) {
                     WAV_start_sector[file_number] = WAV_start_backup[file_number];
                     WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
                     VS1053b_software_reset();
+                    // 파일 변경 시 자동 재생 시작
+                    play_flag = 1;
+                    TFT_string(33, 9, THEME_HIGHLIGHT, THEME_BG, "[play]");
                 }
                 break;
             case KEY4:
@@ -220,7 +235,7 @@ int main(void) {
                     menu_selected = 0;
                     graph_piano_mode = 0;
                     MainScreen();
-                    // play_flag 상태 유지 -> WAV 계속 재생
+                    // 메뉴 벗어나도 play_flag 유지 -> 재생 계속
                 }
                 break;
             default:
@@ -278,12 +293,15 @@ void Menu_Piano_WAV(void) {
     Draw_Piano_WAV_UI();
     graph_piano_mode = 1;
 
-    TFT_Filename();
+    // 현재 file_number에 맞는 WAV 파일인지 확인하고, 아니면 유효한 WAV 파일로 변경
     Check_valid_increment_file();
-    WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
 
-    VS1053b_software_reset();
-    // play_flag를 여기서 0으로 리셋하지 않음. 한번 재생되면 계속 유지 가능.
+    // 여기서 VS1053b나 play_flag를 건드리지 않는다.
+    // 즉, Menu_Piano_WAV 진입시 재생 상태를 그대로 유지
+    // 만약 이전에 재생 중이었다면 play_flag=1일 것이고,
+    // 그냥 Play_Audio()가 계속 돌며 재생을 시도할 것임.
+    // 만약 이전에 재생 중이 아니었다면 play_flag=0일 것이며,
+    // KEY1을 눌러 재생을 시작할 수 있게 한다.
 }
 
 /*******************************************************************************
@@ -357,16 +375,10 @@ void Update_Equalizer_UI(void) {
         Block(65 + i * 80, sliders[i].y - 3, 95 + i * 80, sliders[i].y + 3, White, Blue);
     }
 
-    // Value 매핑
-    // Volume: 0~20 -> 150~250
+    // EQ 매핑
     volume = 150 + sliders[0].value * 5;
     if (volume > 250) volume = 250;
-
-    // Bass: 0~20 -> 0~15
     bass = (sliders[1].value * 15) / 20;
-
-    // Treble: 0~20 -> -8~7
-    // 총 16단계, sliders[2].value*(15/20) -8
     treble = -8 + (int8_t)((sliders[2].value * 15) / 20);
 
     VS1053b_SetVolume(volume);
@@ -381,7 +393,9 @@ void Draw_Piano_WAV_UI(void) {
     TFT_string(0, 2, THEME_TEXT, THEME_BG, "----------------------------------------");
     TFT_string(0, 4, THEME_HIGHLIGHT, THEME_BG, "현재 재생 중인 WAV 파일:");
     TFT_Filename();
-    TFT_string(0, 26, White, THEME_BG, "PLAY[KEY1]Next[KEY2]Prev[KEY3]home[KEY4]");
+    // 재생 상태 표시 영역
+    TFT_string(33, 9, THEME_TEXT, THEME_BG, "[stop]");
+    TFT_string(0, 27, White, THEME_BG, "PLAY[KEY1]Next[KEY2]Prev[KEY3]home[KEY4]");
 }
 
 void Draw_Keys(void) {
@@ -456,13 +470,9 @@ void Key_Touch_Handler(uint16_t xpos, uint16_t ypos) {
     for (int i = 0; i < BLACK_TILES; i++) {
         if (xpos >= black_keys[i].xstart && xpos <= black_keys[i].xend &&
             ypos >= black_keys[i].ystart && ypos <= black_keys[i].yend) {
-            if (!is_black_key_touching[i]) {
-                is_black_key_touching[i] = 1;
-            }
+            is_black_key_touching[i] = 1;
         } else {
-            if (is_black_key_touching[i]) {
-                is_black_key_touching[i] = 0;
-            }
+            is_black_key_touching[i] = 0;
         }
     }
 
@@ -482,13 +492,9 @@ void Piano_Input_Handler(void) {
         if (x_touch >= 32 && x_touch <= 296 && y_touch >= 127 && y_touch <= 208) {
             Key_Touch_Handler(x_touch, y_touch);
         } else {
-            // 범위 밖이면 건반 리셋
             Reset_Key_State(white_keys, is_white_key_touching, WHITE_TILES, White);
             for (int i = 0; i < BLACK_TILES; i++) {
-                if (is_black_key_touching[i]) {
-                    is_black_key_touching[i] = 0;
-                }
-                // 검은건반 항상 재그리기
+                is_black_key_touching[i] = 0;
                 Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, White, Black);
             }
             TIM1->CCR4 = 0;
@@ -549,12 +555,16 @@ void Initialize_Peripherals(void) {
 }
 
 void Play_Audio(void) {
-    static unsigned short index = 512;
-    static unsigned char i;
+    unsigned char i;
 
+    // play_flag == 1이면 재생
     if (((GPIOC->IDR & 0x0080) == 0x0080) && (play_flag == 1)) {
+        // SPI 버스 사용 전 TFT CS 비활성화
+        GPIOA->BSRR = 0x00000020; // TFT_CS = 1
+
         if (index == 512) {
             if (WAV_end_sector == WAV_start_sector[file_number]) {
+                // 파일 끝 -> 다음 파일로
                 if (file_number != (total_file - 1))
                     file_number++;
                 else
@@ -565,17 +575,23 @@ void Play_Audio(void) {
 
                 WAV_start_sector[file_number] = WAV_start_backup[file_number];
                 WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
+
+                // VS1053b 리셋 및 index 초기화
                 VS1053b_software_reset();
+                index = 512;
             }
             index = 0;
             SD_read_sector(WAV_start_sector[file_number]++, WAVbuffer[currentBuffer]);
         }
 
         for (i = 0; i < 32; i++) {
-            GPIOC->BSRR = 0x00400000;
+            GPIOC->BSRR = 0x00400000; // VS1053b CS 활성화
             SPI3_write(WAVbuffer[currentBuffer][index++]);
-            GPIOC->BSRR = 0x00000040;
+            GPIOC->BSRR = 0x00000040; // VS1053b CS 비활성화
         }
+
+        // SPI 버스 사용 후 TFT CS 활성화
+        GPIOA->BSRR = 0x00200000; // TFT_CS = 0
     }
 }
 
