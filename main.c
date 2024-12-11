@@ -348,7 +348,7 @@ void Draw_Equalizer_UI(void) {
     Line(30, 180, 290, 180, White);
     Line(30, 120, 290, 120, White);
 
-    TFT_string(0, 26, White, THEME_BG, "     Select    UP     DOWN     Home   ");
+    TFT_string(0, 26, White, THEME_BG, "     Select    UP     DOWN    Home   ");
 
     Rectangle(30, 206, 95, 225, White);
     Rectangle(95, 206, 160, 225, White);
@@ -396,7 +396,11 @@ void Draw_Piano_WAV_UI(void) {
     // 재생 상태 표시 영역
     TFT_string(33, 9, THEME_TEXT, THEME_BG, "[stop]");
     TFT_string(0, 12, THEME_TEXT, THEME_BG, "----------------------------------------");
-    TFT_string(0, 27, White, THEME_BG, "PLAY[KEY1]Next[KEY2]Prev[KEY3]home[KEY4]");
+    TFT_string(0, 27, White, THEME_BG, "      Play    Next    Prev    Home   ");
+    Rectangle(30, 210, 95, 230, White);
+    Rectangle(95, 210, 160, 230, White);
+    Rectangle(160, 210, 225, 230, White);
+    Rectangle(225, 210, 290, 230, White);
     
 }
 
