@@ -1,5 +1,4 @@
 // main.c (수정된 부분)
-
 #include "stm32f767xx.h"
 #include "OK-STM767.h"
 #include "OK-STM767_SD_card.h"
@@ -95,7 +94,7 @@ void Update_Equalizer_UI(void);
 void Draw_Piano_WAV_UI(void);
 void Draw_Keys(void);
 
-/* 피아노 기능 (piano.c 방식으로 변경) */
+/* 피아노 기능 */
 void White_Key_Init(void);
 void Black_Key_Init(void);
 void Play_Note(unsigned int note);
@@ -130,6 +129,8 @@ unsigned char is_white_key_touching[WHITE_TILES] = {0};
 unsigned char is_black_key_touching[BLACK_TILES] = {0};
 unsigned int notes[] = {C_NOTE, D_NOTE, E_NOTE, F_NOTE, G_NOTE, A_NOTE, B_NOTE, CH_NOTE};
 
+// 슬라이더를 Volume/Bass/Treble로 사용
+// slider[0]: Volume (0~20 -> 150~250), slider[1]: Bass (0~20 -> 0~15), slider[2]: Treble (0~20 -> -8~7)
 Slider sliders[SLIDER_NUM] = {{10, 120}, {10, 120}, {10, 120}};
 volatile uint8_t selected_slider = 0;
 
@@ -143,7 +144,6 @@ uint8_t play_flag = 0;
 uint8_t WAVbuffer[BUFFER_COUNT][BUFFER_SIZE];
 uint32_t file_start[MAX_FILE];
 uint32_t file_size[MAX_FILE];
-uint16_t volume = INITIAL_VOLUME;
 
 /*******************************************************************************
  * 메인 함수
@@ -151,13 +151,20 @@ uint16_t volume = INITIAL_VOLUME;
 int main(void) {
     System_Init();
 
+    volume = INITIAL_VOLUME;
+    bass = 10;
+    treble = 5; // treble은 -8~7 범위 지원 -> 초기값 5는 예시
+
     while (1) {
         unsigned char key = Get_Only_Key_Input();
 
+        // menu_selected 상관없이 WAV 재생 유지
+        Play_Audio();
+        Update_WAV_Display();
+
+        // 피아노 입력은 menu_selected == 2 일 때만
         if (menu_selected == 2) {
-            Piano_Input_Handler();  // 피아노 입력 처리 (piano.c 방식)
-            Play_Audio();
-            Update_WAV_Display();
+            Piano_Input_Handler();
         }
 
         switch (key) {
@@ -176,6 +183,7 @@ int main(void) {
                 if (menu_selected == 0) {
                     menu_selected = 2;
                     Menu_Piano_WAV();
+                    // play_flag 유지로 다른 메뉴 돌아가도 재생 가능
                 } else if (menu_selected == 1) {
                     Process_Equalizer_Key2();
                     Update_Equalizer_UI();
@@ -212,6 +220,7 @@ int main(void) {
                     menu_selected = 0;
                     graph_piano_mode = 0;
                     MainScreen();
+                    // play_flag 상태 유지 -> WAV 계속 재생
                 }
                 break;
             default:
@@ -274,7 +283,7 @@ void Menu_Piano_WAV(void) {
     WAV_end_sector = (file_size[file_number] >> 9) + WAV_start_sector[file_number];
 
     VS1053b_software_reset();
-    play_flag = 0;
+    // play_flag를 여기서 0으로 리셋하지 않음. 한번 재생되면 계속 유지 가능.
 }
 
 /*******************************************************************************
@@ -310,9 +319,9 @@ void Draw_MainScreen(void) {
 
 void Draw_Equalizer_UI(void) {
     TFT_string(0, 1, Black, THEME_HEADER, "              [ Oh-In-Pe- ]             ");
-    TFT_string(6, 3, White, Black, "저주파수");
-    TFT_string(16, 3, White, Black, "중주파수");
-    TFT_string(26, 3, White, Black, "고주파수");
+    TFT_string(7, 3, White, Black, "Volume");
+    TFT_string(18, 3, White, Black, "Bass");
+    TFT_string(27, 3, White, Black, "Treble");
 
     for (int i = 0; i <= 9; i++) {
         Line(30, 72 + 12 * i, 290, 72 + 12 * i, GRAY);
@@ -347,6 +356,22 @@ void Update_Equalizer_UI(void) {
         Block(65 + i * 80, sliders[i].y, 95 + i * 80, 183, Blue, Blue);
         Block(65 + i * 80, sliders[i].y - 3, 95 + i * 80, sliders[i].y + 3, White, Blue);
     }
+
+    // Value 매핑
+    // Volume: 0~20 -> 150~250
+    volume = 150 + sliders[0].value * 5;
+    if (volume > 250) volume = 250;
+
+    // Bass: 0~20 -> 0~15
+    bass = (sliders[1].value * 15) / 20;
+
+    // Treble: 0~20 -> -8~7
+    // 총 16단계, sliders[2].value*(15/20) -8
+    treble = -8 + (int8_t)((sliders[2].value * 15) / 20);
+
+    VS1053b_SetVolume(volume);
+    Delay_ms(1);
+    VS1053b_SetBassTreble(bass, treble);
 }
 
 void Draw_Piano_WAV_UI(void) {
@@ -356,7 +381,7 @@ void Draw_Piano_WAV_UI(void) {
     TFT_string(0, 2, THEME_TEXT, THEME_BG, "----------------------------------------");
     TFT_string(0, 4, THEME_HIGHLIGHT, THEME_BG, "현재 재생 중인 WAV 파일:");
     TFT_Filename();
-    TFT_string(0, 8, White, THEME_BG, "PLAY[KEY1]Next[KEY2]Prev[KEY3]home[KEY4]");
+    TFT_string(0, 26, White, THEME_BG, "PLAY[KEY1]Next[KEY2]Prev[KEY3]home[KEY4]");
 }
 
 void Draw_Keys(void) {
@@ -370,7 +395,7 @@ void Draw_Keys(void) {
 }
 
 /*******************************************************************************
- * 피아노 기능 함수 (piano.c 로직 복사/적용)
+ * 피아노 기능 함수
  ******************************************************************************/
 void White_Key_Init(void) {
     int x = 32;
@@ -410,7 +435,6 @@ void Reset_Key_State(KeyInfo *key, unsigned char *key_touch, int key_count, uint
 }
 
 void Key_Touch_Handler(uint16_t xpos, uint16_t ypos) {
-    
     // 백건 처리
     for (int i = 0; i < WHITE_TILES; i++) {
         if (xpos >= white_keys[i].xstart && xpos <= white_keys[i].xend &&
@@ -421,7 +445,6 @@ void Key_Touch_Handler(uint16_t xpos, uint16_t ypos) {
                 Play_Note(notes[i]);
             }
         } else {
-            // 다른 하얀 키가 눌려있다면 해제
             if (is_white_key_touching[i]) {
                 is_white_key_touching[i] = 0;
                 Block(white_keys[i].xstart, white_keys[i].ystart, white_keys[i].xend, white_keys[i].yend, Black, White);
@@ -443,14 +466,11 @@ void Key_Touch_Handler(uint16_t xpos, uint16_t ypos) {
         }
     }
 
-    // *** 검은 타일을 항상 위에 그리기 ***
-    // 모든 흑건을 다시 그려서 백건 위에 오도록 한다.
+    // 검은 타일 항상 위에
     for (int i = 0; i < BLACK_TILES; i++) {
         if (is_black_key_touching[i]) {
-            // 눌린 상태의 흑건
             Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, Black, GRAY);
         } else {
-            // 기본 상태의 흑건
             Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, White, Black);
         }
     }
@@ -458,10 +478,7 @@ void Key_Touch_Handler(uint16_t xpos, uint16_t ypos) {
 
 void Piano_Input_Handler(void) {
     if (graph_piano_mode == 1) {
-        // 터치 좌표 갱신
         Touch_screen_input();
-
-        // 터치 범위 판별 및 키 처리
         if (x_touch >= 32 && x_touch <= 296 && y_touch >= 127 && y_touch <= 208) {
             Key_Touch_Handler(x_touch, y_touch);
         } else {
@@ -470,8 +487,9 @@ void Piano_Input_Handler(void) {
             for (int i = 0; i < BLACK_TILES; i++) {
                 if (is_black_key_touching[i]) {
                     is_black_key_touching[i] = 0;
-                    Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, White, Black);
                 }
+                // 검은건반 항상 재그리기
+                Block(black_keys[i].xstart, black_keys[i].ystart, black_keys[i].xend, black_keys[i].yend, White, Black);
             }
             TIM1->CCR4 = 0;
         }
@@ -515,10 +533,6 @@ void Initialize_Peripherals(void) {
     Initialize_FAT32();
     Initialize_VS1053b();
     Delay_ms(1000);
-
-    volume = 175;
-    uint8_t bass = 10;
-    uint8_t treble = 5;
 
     VS1053b_SetVolume(volume);
     Delay_ms(1);
@@ -619,4 +633,3 @@ void Check_valid_decrement_file(void) {
         }
     } while (file_OK_flag == 0);
 }
-
