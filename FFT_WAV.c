@@ -178,20 +178,19 @@ void do_fft(void)
  // ----- Perform Inverse FFT -----
   ffti_f(fft_data, r, FFT_INVERSE);
 
-  // ----- Scale the Inverse FFT Output -----
+
   for (int i = 0; i < SAMPLE_SIZE; i++)
   {
     fft_data[i].re /= SAMPLE_SIZE;
   }
 
-  // ----- Output the Time-Domain Signal to DAC -----
+
   for (int i = 0; i < SAMPLE_SIZE; i++)
   {
-    // Scale and offset to fit the 12-bit DAC range (0 to 4095)
     uint16_t dac_value = (uint16_t)((fft_data[i].re + 1.0f) * 2048.0f);
-    DAC->DHR12R1 = dac_value; // Output to DAC channel 1 (PA4)
+    DAC->DHR12R1 = dac_value; // DAC channel 1 (PA4)
 
-    Delay_us(39); // Delay to maintain a sampling rate of ~25.6 kHz (adjust as needed)
+    Delay_us(39); //샘플링 rate ~25.6 kHz
   }
 
 }
@@ -283,18 +282,28 @@ void Display_FFT_screen(void)			/* display FFT screen */
     Line(28,y, 32,y, White);
 }
 
-void Draw_FFT(U16 index, float value)		/* draw bar of FFT result */
+void Draw_FFT(U16 index, float value)
 {
-  unsigned short height;
+    unsigned short height;
+    if (index >= 10)  // 고주파 영역에 대해 높이를 스케일링
+    {
+      height = (unsigned short)(value * 1.7);
+    }
+    else if(index >= 5)
+    {
+      height = (unsigned short)(value * 1.4);
+    }
+    else
+    {
+      height = (unsigned short)value;
+    }
 
-  // height = (unsigned short)(180.*value/max_value + 0.5);
-  height = (unsigned short)value;
-  if(height >= 180.) height = 180.;
-int x_pos = 30 + (index * 15); // 15 is the gap between the bars
+    if (height >= 180.) height = 180.;
+    int x_pos = 30 + (index * 15);  // 15 픽셀 간격
 
     for (int i = 0; i < 7; i++)
     {
-        Line(x_pos + i, 219, x_pos + i, 219 - 180, Black); // delete old bar
-        Line(x_pos + i, 219, x_pos + i, 219 - height, Red); // draw new bar
+        Line(x_pos + i, 219, x_pos + i, 219 - 180, Black);  // 기존 막대 지우기
+        Line(x_pos + i, 219, x_pos + i, 219 - height, Red);  // 새 막대 그리기
     }
 }

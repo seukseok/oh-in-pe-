@@ -1,45 +1,45 @@
-#include "stm32f767xx.h"            // STM32F767 ë§ˆì´í¬ë¡œì»¨íŠ¸ë¡¤ëŸ¬ í—¤ë” íŒŒì¼ í¬í•¨
-#include "OK-STM767.h"              // OK-STM767 ë³´ë“œ ê´€ë ¨ í—¤ë” íŒŒì¼ í¬í•¨
-#include <stdlib.h>                 // í‘œì¤€ ë¼ì´ë¸ŒëŸ¬ë¦¬ í•¨ìˆ˜ ì‚¬ìš©ì„ ìœ„í•œ í—¤ë” íŒŒì¼ í¬í•¨
-#include <arm_math.h>               // ARMì˜ ìˆ˜í•™ ë¼ì´ë¸ŒëŸ¬ë¦¬ í•¨ìˆ˜ ì‚¬ìš©ì„ ìœ„í•œ í—¤ë” íŒŒì¼ í¬í•¨
-#include "fft.h"                    // FFT í•¨ìˆ˜ í—¤ë” íŒŒì¼ í¬í•¨
-#include "complex.h"                // ë³µì†Œìˆ˜ ì—°ì‚°ì„ ìœ„í•œ í—¤ë” íŒŒì¼ í¬í•¨
+#include "stm32f767xx.h"            // STM32F767 ¸¶ÀÌÅ©·ÎÄÁÆ®·Ñ·¯ Çì´õ ÆÄÀÏ Æ÷ÇÔ
+#include "OK-STM767.h"              // OK-STM767 º¸µå °ü·Ã Çì´õ ÆÄÀÏ Æ÷ÇÔ
+#include <stdlib.h>                 // Ç¥ÁØ ¶óÀÌºê·¯¸® ÇÔ¼ö »ç¿ëÀ» À§ÇÑ Çì´õ ÆÄÀÏ Æ÷ÇÔ
+#include <arm_math.h>               // ARMÀÇ ¼öÇÐ ¶óÀÌºê·¯¸® ÇÔ¼ö »ç¿ëÀ» À§ÇÑ Çì´õ ÆÄÀÏ Æ÷ÇÔ
+#include "fft.h"                    // FFT ÇÔ¼ö Çì´õ ÆÄÀÏ Æ÷ÇÔ
+#include "complex.h"                // º¹¼Ò¼ö ¿¬»êÀ» À§ÇÑ Çì´õ ÆÄÀÏ Æ÷ÇÔ
 
-#define SAMPLE_SIZE 2048            // ìƒ˜í”Œ ë°ì´í„°ì˜ í¬ê¸°ë¥¼ 2048ë¡œ ì •ì˜
-#define FFT_SIZE (SAMPLE_SIZE/2)    // FFT í¬ê¸°ë¥¼ ìƒ˜í”Œ í¬ê¸°ì˜ ì ˆë°˜ìœ¼ë¡œ ì •ì˜
+#define SAMPLE_SIZE 2048            // »ùÇÃ µ¥ÀÌÅÍÀÇ Å©±â¸¦ 2048·Î Á¤ÀÇ
+#define FFT_SIZE (SAMPLE_SIZE/2)    // FFT Å©±â¸¦ »ùÇÃ Å©±âÀÇ Àý¹ÝÀ¸·Î Á¤ÀÇ
 
-complex_f fft_buffer_pool[SAMPLE_SIZE];   // FFTì— ì‚¬ìš©í•  ë³µì†Œìˆ˜ ë²„í¼ í’€ ì„ ì–¸
+complex_f fft_buffer_pool[SAMPLE_SIZE];   // FFT¿¡ »ç¿ëÇÒ º¹¼Ò¼ö ¹öÆÛ Ç® ¼±¾ð
 
-// ì´ë™ í‰ê·  í•„í„°ì˜ í¬ê¸°
-#define MOVING_AVG_SIZE 10  // ì´ë™ í‰ê·  í•„í„°ì˜ í¬ê¸° ì¦ê°€
+// ÀÌµ¿ Æò±Õ ÇÊÅÍÀÇ Å©±â
+#define MOVING_AVG_SIZE 10  // ÀÌµ¿ Æò±Õ ÇÊÅÍÀÇ Å©±â Áõ°¡
 
 
-// í•„í„° ë³€ìˆ˜
+// ÇÊÅÍ º¯¼ö
 float moving_avg_buffer[MOVING_AVG_SIZE];
 unsigned int moving_avg_index = 0;
 float moving_avg_sum = 0.0f;
 
-void TIM7_IRQHandler(void);               // TIM7 ì¸í„°ëŸ½íŠ¸ í•¸ë“¤ëŸ¬ ì„ ì–¸ (25.6kHzì—ì„œ ADC ìž…ë ¥)
-void Display_FFT_screen(void);            // FFT í™”ë©´ì„ í‘œì‹œí•˜ëŠ” í•¨ìˆ˜ ì„ ì–¸
-void Clear_FFT_Display(void);             // FFT í™”ë©´ì„ ì§€ìš°ëŠ” í•¨ìˆ˜ ì„ ì–¸
-void do_fft(void);                        // FFT ì—°ì‚°ì„ ìˆ˜í–‰í•˜ëŠ” í•¨ìˆ˜ ì„ ì–¸
-void Draw_FFT(U16 index, float value);    // FFT ê²°ê³¼ë¥¼ ë°” í˜•íƒœë¡œ ê·¸ë¦¬ëŠ” í•¨ìˆ˜ ì„ ì–¸
-void display_info();                      // í™”ë©´ì— ì •ë³´ë¥¼ í‘œì‹œí•˜ëŠ” í•¨ìˆ˜ ì„ ì–¸
+void TIM7_IRQHandler(void);               // TIM7 ÀÎÅÍ·´Æ® ÇÚµé·¯ ¼±¾ð (25.6kHz¿¡¼­ ADC ÀÔ·Â)
+void Display_FFT_screen(void);            // FFT È­¸éÀ» Ç¥½ÃÇÏ´Â ÇÔ¼ö ¼±¾ð
+void Clear_FFT_Display(void);             // FFT È­¸éÀ» Áö¿ì´Â ÇÔ¼ö ¼±¾ð
+void do_fft(void);                        // FFT ¿¬»êÀ» ¼öÇàÇÏ´Â ÇÔ¼ö ¼±¾ð
+void Draw_FFT(U16 index, float value);    // FFT °á°ú¸¦ ¹Ù ÇüÅÂ·Î ±×¸®´Â ÇÔ¼ö ¼±¾ð
+void display_info();                      // È­¸é¿¡ Á¤º¸¸¦ Ç¥½ÃÇÏ´Â ÇÔ¼ö ¼±¾ð
 
-unsigned char FFT_mode, FFT_flag;         // FFT ëª¨ë“œì™€ í”Œëž˜ê·¸ë¥¼ ìœ„í•œ ë³€ìˆ˜ ì„ ì–¸
-unsigned short FFT_count;                 // FFT ìƒ˜í”Œ ì¹´ìš´íŠ¸ë¥¼ ìœ„í•œ ë³€ìˆ˜ ì„ ì–¸
+unsigned char FFT_mode, FFT_flag;         // FFT ¸ðµå¿Í ÇÃ·¡±×¸¦ À§ÇÑ º¯¼ö ¼±¾ð
+unsigned short FFT_count;                 // FFT »ùÇÃ Ä«¿îÆ®¸¦ À§ÇÑ º¯¼ö ¼±¾ð
 
-float ADC_buffer[SAMPLE_SIZE];            // ADCë¡œë¶€í„° ìˆ˜ì§‘í•œ ìƒ˜í”Œ ë°ì´í„°ë¥¼ ì €ìž¥í•˜ëŠ” ë²„í¼
-float FFT_buffer[SAMPLE_SIZE];            // FFT ìž…ë ¥ ë°ì´í„°ë¥¼ ì €ìž¥í•˜ëŠ” ë²„í¼
-float FFT_input[SAMPLE_SIZE];             // FFT ìž…ë ¥ ë²„í¼ (ì‚¬ìš©ë˜ì§€ ì•ŠìŒ)
-float FFT_output[SAMPLE_SIZE/2];          // FFT ê²°ê³¼ë¥¼ ì €ìž¥í•˜ëŠ” ë²„í¼
-float max_value;                          // FFT ê²°ê³¼ ì¤‘ ìµœëŒ€ê°’ì„ ì €ìž¥í•˜ëŠ” ë³€ìˆ˜
-unsigned int max_index;                   // ìµœëŒ€ê°’ì˜ ì¸ë±ìŠ¤ë¥¼ ì €ìž¥í•˜ëŠ” ë³€ìˆ˜
+float ADC_buffer[SAMPLE_SIZE];            // ADC·ÎºÎÅÍ ¼öÁýÇÑ »ùÇÃ µ¥ÀÌÅÍ¸¦ ÀúÀåÇÏ´Â ¹öÆÛ
+float FFT_buffer[SAMPLE_SIZE];            // FFT ÀÔ·Â µ¥ÀÌÅÍ¸¦ ÀúÀåÇÏ´Â ¹öÆÛ
+float FFT_input[SAMPLE_SIZE];             // FFT ÀÔ·Â ¹öÆÛ (»ç¿ëµÇÁö ¾ÊÀ½)
+float FFT_output[SAMPLE_SIZE/2];          // FFT °á°ú¸¦ ÀúÀåÇÏ´Â ¹öÆÛ
+float max_value;                          // FFT °á°ú Áß ÃÖ´ë°ªÀ» ÀúÀåÇÏ´Â º¯¼ö
+unsigned int max_index;                   // ÃÖ´ë°ªÀÇ ÀÎµ¦½º¸¦ ÀúÀåÇÏ´Â º¯¼ö
 
-// RMS ìž„ê³„ê°’ ì„¤ì •
-#define RMS_THRESHOLD 0.01f  // RMS ê°’ì´ 0.01 ì´í•˜ì¼ ë•ŒëŠ” ìŠ¤íŽ™íŠ¸ëŸ¼ì„ í‘œì‹œí•˜ì§€ ì•ŠìŒ
+// RMS ÀÓ°è°ª ¼³Á¤
+#define RMS_THRESHOLD 0.01f  // RMS °ªÀÌ 0.01 ÀÌÇÏÀÏ ¶§´Â ½ºÆåÆ®·³À» Ç¥½ÃÇÏÁö ¾ÊÀ½
 
-// ì´ë™ í‰ê·  í•„í„° ì ìš© í•¨ìˆ˜
+// ÀÌµ¿ Æò±Õ ÇÊÅÍ Àû¿ë ÇÔ¼ö
 float apply_moving_avg(float new_sample) {
     moving_avg_sum += new_sample - moving_avg_buffer[moving_avg_index];
     moving_avg_buffer[moving_avg_index] = new_sample;
@@ -47,57 +47,57 @@ float apply_moving_avg(float new_sample) {
     return moving_avg_sum / MOVING_AVG_SIZE;
 }
 
-/* ----- ì¸í„°ëŸ½íŠ¸ ì„œë¹„ìŠ¤ ë£¨í‹´ ---------------------------------------------------- */
+/* ----- ÀÎÅÍ·´Æ® ¼­ºñ½º ·çÆ¾ ---------------------------------------------------- */
 
-void TIM7_IRQHandler(void)                /* TIM7 ì¸í„°ëŸ½íŠ¸(25.6kHz)ì—ì„œ ADC ìž…ë ¥ ì²˜ë¦¬ */
+void TIM7_IRQHandler(void)                /* TIM7 ÀÎÅÍ·´Æ®(25.6kHz)¿¡¼­ ADC ÀÔ·Â Ã³¸® */
 {
-  TIM7->SR = 0x0000;                      // TIM7 ì¸í„°ëŸ½íŠ¸ì˜ íŒ¬ë”© ë¹„íŠ¸ í´ë¦¬ì–´
+  TIM7->SR = 0x0000;                      // TIM7 ÀÎÅÍ·´Æ®ÀÇ ÆÒµù ºñÆ® Å¬¸®¾î
 
-  ADC1->CR2 |= 0x40000000;                // ì†Œí”„íŠ¸ì›¨ì–´ë¡œ ADC ë³€í™˜ ì‹œìž‘
-  while(!(ADC1->SR & 0x00000002));        // ë³€í™˜ ì™„ë£Œ ëŒ€ê¸°
+  ADC1->CR2 |= 0x40000000;                // ¼ÒÇÁÆ®¿þ¾î·Î ADC º¯È¯ ½ÃÀÛ
+  while(!(ADC1->SR & 0x00000002));        // º¯È¯ ¿Ï·á ´ë±â
 
-  // ADC ê°’ ì½ê³  ì´ë™ í‰ê·  í•„í„° ì ìš©
-  float adc_value = ((float)ADC1->DR - 2048.0f) / 2048.0f; // ì •ê·œí™”
-  float filtered_value = apply_moving_avg(adc_value);  // í•„í„°ë§ëœ ê°’
+  // ADC °ª ÀÐ°í ÀÌµ¿ Æò±Õ ÇÊÅÍ Àû¿ë
+  float adc_value = ((float)ADC1->DR - 2048.0f) / 2048.0f; // Á¤±ÔÈ­
+  float filtered_value = apply_moving_avg(adc_value);  // ÇÊÅÍ¸µµÈ °ª
 
-  // í•„í„°ë§ëœ ê°’ì„ FFT ë²„í¼ì— ì €ìž¥
+  // ÇÊÅÍ¸µµÈ °ªÀ» FFT ¹öÆÛ¿¡ ÀúÀå
   FFT_buffer[FFT_count] = filtered_value;
   FFT_count++;
   
   if(FFT_count >= SAMPLE_SIZE)
   { 
-    FFT_count = 0;                        // ìƒ˜í”Œ ì¹´ìš´íŠ¸ ì´ˆê¸°í™”
-    FFT_flag = 1;                         // FFT ì—°ì‚°ì„ ìˆ˜í–‰í•˜ë„ë¡ í”Œëž˜ê·¸ ì„¤ì •
+    FFT_count = 0;                        // »ùÇÃ Ä«¿îÆ® ÃÊ±âÈ­
+    FFT_flag = 1;                         // FFT ¿¬»êÀ» ¼öÇàÇÏµµ·Ï ÇÃ·¡±× ¼³Á¤
   }
 }
 
-/* ----- ë©”ì¸ í•¨ìˆ˜ --------------------------------------------------------------- */
+/* ----- ¸ÞÀÎ ÇÔ¼ö --------------------------------------------------------------- */
 
 int main(void)
 {
-  Initialize_MCU();                       // MCU ì´ˆê¸°í™”
-  Delay_ms(50);                           // 50ms ì§€ì—°
-  Initialize_LCD();                       // LCD ì´ˆê¸°í™”
-  Initialize_TFT_LCD();                   // TFT LCD ì´ˆê¸°í™”
+  Initialize_MCU();                       // MCU ÃÊ±âÈ­
+  Delay_ms(50);                           // 50ms Áö¿¬
+  Initialize_LCD();                       // LCD ÃÊ±âÈ­
+  Initialize_TFT_LCD();                   // TFT LCD ÃÊ±âÈ­
 
-  GPIOA->MODER |= 0x00003000;             // PA6ë¥¼ ì•„ë‚ ë¡œê·¸ ëª¨ë“œ(ADC12_IN6)ë¡œ ì„¤ì •
-  RCC->APB2ENR |= 0x00000100;             // ADC1 í´ëŸ­ í™œì„±í™”
-  ADC->CCR = 0x00000000;                  // ADCCLK = 54MHz/2 = 27MHz ì„¤ì •
-  ADC1->SMPR2 = 0x00040000;               // ì±„ë„ 6ì˜ ìƒ˜í”Œë§ ì‹œê°„ = 15 ì‚¬ì´í´ ì„¤ì •
-  ADC1->CR1 = 0x00000000;                 // 12ë¹„íŠ¸ í•´ìƒë„ ì„¤ì •
-  ADC1->CR2 = 0x00000001;                 // ì˜¤ë¥¸ìª½ ì •ë ¬, ë‹¨ì¼ ë³€í™˜, ADON = 1 ì„¤ì •
-  ADC1->SQR1 = 0x00000000;                // ì´ ì •ê·œ ì±„ë„ ìˆ˜ = 1 ì„¤ì •
-  ADC1->SQR3 = 0x00000006;                // ì±„ë„ 6 ì„ íƒ
+  GPIOA->MODER |= 0x00003000;             // PA6¸¦ ¾Æ³¯·Î±× ¸ðµå(ADC12_IN6)·Î ¼³Á¤
+  RCC->APB2ENR |= 0x00000100;             // ADC1 Å¬·° È°¼ºÈ­
+  ADC->CCR = 0x00000000;                  // ADCCLK = 54MHz/2 = 27MHz ¼³Á¤
+  ADC1->SMPR2 = 0x00040000;               // Ã¤³Î 6ÀÇ »ùÇÃ¸µ ½Ã°£ = 15 »çÀÌÅ¬ ¼³Á¤
+  ADC1->CR1 = 0x00000000;                 // 12ºñÆ® ÇØ»óµµ ¼³Á¤
+  ADC1->CR2 = 0x00000001;                 // ¿À¸¥ÂÊ Á¤·Ä, ´ÜÀÏ º¯È¯, ADON = 1 ¼³Á¤
+  ADC1->SQR1 = 0x00000000;                // ÃÑ Á¤±Ô Ã¤³Î ¼ö = 1 ¼³Á¤
+  ADC1->SQR3 = 0x00000006;                // Ã¤³Î 6 ¼±ÅÃ
 
-  RCC->APB1ENR |= 0x00000020;             // TIM7 í´ëŸ­ í™œì„±í™”
-  TIM7->PSC = 1;                          // í”„ë¦¬ìŠ¤ì¼€ì¼ëŸ¬ ê°’: 108MHz / (1 + 1) = 54MHz
-  TIM7->ARR = 224;                        // ARR ê°’: 54MHz / (224 + 1) = 48kHz
-  TIM7->CNT = 0;                          // ì¹´ìš´í„° ì´ˆê¸°í™”
-  TIM7->DIER = 0x0001;                    // ì—…ë°ì´íŠ¸ ì¸í„°ëŸ½íŠ¸ í™œì„±í™”
-  TIM7->CR1 = 0x0085;                     // TIM7 í™œì„±í™”, ì—…ë°ì´íŠ¸ ì´ë²¤íŠ¸, í”„ë¦¬ë¡œë“œ ì„¤ì •
-  NVIC->ISER[1] |= 0x00800000;            // (55)TIM7 ì¸í„°ëŸ½íŠ¸ í™œì„±í™”
+  RCC->APB1ENR |= 0x00000020;             // TIM7 Å¬·° È°¼ºÈ­
+  TIM7->PSC = 1;                          // ÇÁ¸®½ºÄÉÀÏ·¯ °ª: 108MHz / (1 + 1) = 54MHz
+  TIM7->ARR = 224;                        // ARR °ª: 54MHz / (224 + 1) = 48kHz
+  TIM7->CNT = 0;                          // Ä«¿îÅÍ ÃÊ±âÈ­
+  TIM7->DIER = 0x0001;                    // ¾÷µ¥ÀÌÆ® ÀÎÅÍ·´Æ® È°¼ºÈ­
+  TIM7->CR1 = 0x0085;                     // TIM7 È°¼ºÈ­, ¾÷µ¥ÀÌÆ® ÀÌº¥Æ®, ÇÁ¸®·Îµå ¼³Á¤
+  NVIC->ISER[1] |= 0x00800000;            // (55)TIM7 ÀÎÅÍ·´Æ® È°¼ºÈ­
 
-  // ì´ë™ í‰ê·  ë²„í¼ ì´ˆê¸°í™”
+  // ÀÌµ¿ Æò±Õ ¹öÆÛ ÃÊ±âÈ­
   for(int i = 0; i < MOVING_AVG_SIZE; i++)
   {
     moving_avg_buffer[i] = 0.0f;
@@ -105,25 +105,25 @@ int main(void)
   moving_avg_sum = 0.0f;
   moving_avg_index = 0;
 
-    Display_FFT_screen();                   // FFT í™”ë©´ í‘œì‹œ
-  TFT_string(5,0,White,Magenta," ì‹¤ì‹œê°„ FFT ë³€í™˜ ë° í‘œì‹œ "); // í™”ë©´ì— ë¬¸ìžì—´ í‘œì‹œ
+    Display_FFT_screen();                   // FFT È­¸é Ç¥½Ã
+  TFT_string(5,0,White,Magenta," ½Ç½Ã°£ FFT º¯È¯ ¹× Ç¥½Ã "); // È­¸é¿¡ ¹®ÀÚ¿­ Ç¥½Ã
 
   while(1)
   {   
     if(FFT_flag == 1)
     {
       FFT_flag = 0;
-      do_fft();                           // FFT ì—°ì‚° ìˆ˜í–‰
-      display_info();                     // ì •ë³´ í‘œì‹œ
+      do_fft();                           // FFT ¿¬»ê ¼öÇà
+      display_info();                     // Á¤º¸ Ç¥½Ã
     }
-     Delay_us(1);                         // 1Î¼s ì§€ì—°
+     Delay_us(1);                         // 1¥ìs Áö¿¬
   }
 }
-/* ----- FFT ì—°ì‚° í•¨ìˆ˜ ---------------------------------------------------------- */
+/* ----- FFT ¿¬»ê ÇÔ¼ö ---------------------------------------------------------- */
 
 void do_fft(void)
 {
-  // RMS ê³„ì‚° (ì£¼íŒŒìˆ˜ ì˜ì—­ì—ì„œ RMS ê³„ì‚°)
+  // RMS °è»ê (ÁÖÆÄ¼ö ¿µ¿ª¿¡¼­ RMS °è»ê)
   float rms_value = 0.0;
   for (int i = 0; i < SAMPLE_SIZE; i++)
   {
@@ -131,29 +131,29 @@ void do_fft(void)
   }
   rms_value = sqrtf(rms_value / SAMPLE_SIZE);
 
-  // RMS ê°’ì´ ìž„ê³„ê°’ ì´í•˜ì¼ ë•ŒëŠ” ìŠ¤íŽ™íŠ¸ëŸ¼ì„ ì§€ìš°ê³  ë°˜í™˜
+  // RMS °ªÀÌ ÀÓ°è°ª ÀÌÇÏÀÏ ¶§´Â ½ºÆåÆ®·³À» Áö¿ì°í ¹ÝÈ¯
   if (rms_value < RMS_THRESHOLD)
   {
-      Clear_FFT_Display();  // ìŠ¤íŽ™íŠ¸ëŸ¼ ì§€ìš°ê¸° í•¨ìˆ˜ í˜¸ì¶œ
-      return;  // RMS ê°’ì´ ë‚®ìœ¼ë©´ FFT ìˆ˜í–‰í•˜ì§€ ì•ŠìŒ
+      Clear_FFT_Display();  // ½ºÆåÆ®·³ Áö¿ì±â ÇÔ¼ö È£Ãâ
+      return;  // RMS °ªÀÌ ³·À¸¸é FFT ¼öÇàÇÏÁö ¾ÊÀ½
   }
 
-  // FFT ìˆ˜í–‰ì„ ìœ„í•œ ì¤€ë¹„
-  complex_f *fft_data = fft_buffer_pool;  // FFTì— ì‚¬ìš©í•  ë²„í¼ í¬ì¸í„° ì„¤ì •
+  // FFT ¼öÇàÀ» À§ÇÑ ÁØºñ
+  complex_f *fft_data = fft_buffer_pool;  // FFT¿¡ »ç¿ëÇÒ ¹öÆÛ Æ÷ÀÎÅÍ ¼³Á¤
 
-  unsigned r = log2(SAMPLE_SIZE);         // ìƒ˜í”Œ í¬ê¸°ì˜ ë¡œê·¸2 ê°’ ê³„ì‚°
-  unsigned N = 1 << r;                    // FFT í¬ê¸° N = 2^r ê³„ì‚°
-  float max_data = 0.0f;                   // ìµœëŒ€ê°’ ë³€ìˆ˜ ì´ˆê¸°í™”
+  unsigned r = log2(SAMPLE_SIZE);         // »ùÇÃ Å©±âÀÇ ·Î±×2 °ª °è»ê
+  unsigned N = 1 << r;                    // FFT Å©±â N = 2^r °è»ê
+  float max_data = 0.0f;                   // ÃÖ´ë°ª º¯¼ö ÃÊ±âÈ­
 
   for(int i = 0; i < SAMPLE_SIZE; i++)
   {
-    fft_data[i].re = FFT_buffer[i];       // ì‹¤ìˆ˜ë¶€ì— FFT ìž…ë ¥ ë°ì´í„° ì €ìž¥
-    fft_data[i].im = 0.0;                 // í—ˆìˆ˜ë¶€ë¥¼ 0ìœ¼ë¡œ ì´ˆê¸°í™”
+    fft_data[i].re = FFT_buffer[i];       // ½Ç¼öºÎ¿¡ FFT ÀÔ·Â µ¥ÀÌÅÍ ÀúÀå
+    fft_data[i].im = 0.0;                 // Çã¼öºÎ¸¦ 0À¸·Î ÃÊ±âÈ­
   }
 
-  ffti_f(fft_data, r, FFT_FORWARD);       // FFT ìˆ˜í–‰
+  ffti_f(fft_data, r, FFT_FORWARD);       // FFT ¼öÇà
 
-  // FFT ê²°ê³¼ ì²˜ë¦¬
+  // FFT °á°ú Ã³¸®
   for(int i = 1; i < 128; i++)
   {
       FFT_output[i-1] = sqrtf(fft_data[i].re * fft_data[i].re + fft_data[i].im * fft_data[i].im);
@@ -163,21 +163,21 @@ void do_fft(void)
   
   for(int i = 0; i < 128; i++)
   {
-    Draw_FFT(i, FFT_output[i] * 180 / max_data); // FFT ê²°ê³¼ë¥¼ ë°” í˜•íƒœë¡œ í‘œì‹œ
+    Draw_FFT(i, FFT_output[i] * 180 / max_data); // FFT °á°ú¸¦ ¹Ù ÇüÅÂ·Î Ç¥½Ã
   }
 }
 
-/* ----- FFT í™”ë©´ í‘œì‹œ í•¨ìˆ˜ ----------------------------------------------------- */
+/* ----- FFT È­¸é Ç¥½Ã ÇÔ¼ö ----------------------------------------------------- */
 
-void Display_FFT_screen(void)             /* FFT í™”ë©´ í‘œì‹œ í•¨ìˆ˜ */
+void Display_FFT_screen(void)             /* FFT È­¸é Ç¥½Ã ÇÔ¼ö */
 {
   unsigned short x, y;
 
-  TFT_clear_screen();                     // í™”ë©´ ì´ˆê¸°í™”
+  TFT_clear_screen();                     // È­¸é ÃÊ±âÈ­
 
   TFT_color(White, Black);
 
-  // yì¶• ë ˆì´ë¸” (0% ~ 100%)
+  // yÃà ·¹ÀÌºí (0% ~ 100%)
   TFT_English_pixel(18, 213, '0');        // 0%
   TFT_English_pixel(10, 195, '1');        // 10%
   TFT_English_pixel(18, 195, '0');
@@ -202,43 +202,43 @@ void Display_FFT_screen(void)             /* FFT í™”ë©´ í‘œì‹œ í•¨ìˆ˜ */
   TFT_English_pixel(18, 33, '0');
   
   TFT_color(Magenta, Black);
-  TFT_English_pixel(2, 16, '[');          // yì¶• ë‹¨ìœ„ í‘œì‹œ ([%])
+  TFT_English_pixel(2, 16, '[');          // yÃà ´ÜÀ§ Ç¥½Ã ([%])
   TFT_English_pixel(10, 16, '%');
   TFT_English_pixel(18, 16, ']');
 
   TFT_color(Pink,Black);
-  // xì¶• ë ˆì´ë¸” (0kHz ~ 24kHz) ê°„ê²© ì¡°ì •
+  // xÃà ·¹ÀÌºí (0kHz ~ 24kHz) °£°Ý Á¶Á¤
   for (x = 0; x <= 24; x++) {
-    if (x % 2 == 0) { // 2kHz ê°„ê²©ìœ¼ë¡œ ë ˆì´ë¸” í‘œì‹œ
-      int pos_x = 30 + (x * 13);  // 1kHz ê°„ê²©ìœ¼ë¡œ 320pxì— ë¶„ë°°
-      TFT_English_pixel(pos_x, 222, '0' + (x / 10));  // 10ì˜ ìžë¦¿ìˆ˜
-      TFT_English_pixel(pos_x + 6, 222, '0' + (x % 10));  // 1ì˜ ìžë¦¿ìˆ˜
+    if (x % 2 == 0) { // 2kHz °£°ÝÀ¸·Î ·¹ÀÌºí Ç¥½Ã
+      int pos_x = 30 + (x * 13);  // 1kHz °£°ÝÀ¸·Î 320px¿¡ ºÐ¹è
+      TFT_English_pixel(pos_x, 222, '0' + (x / 10));  // 10ÀÇ ÀÚ¸´¼ö
+      TFT_English_pixel(pos_x + 6, 222, '0' + (x % 10));  // 1ÀÇ ÀÚ¸´¼ö
     }
   }
   
   TFT_color(Magenta, Black);
-  TFT_English_pixel(280, 223, '[');        // xì¶• ë‹¨ìœ„ í‘œì‹œ ([kHz])
+  TFT_English_pixel(280, 223, '[');        // xÃà ´ÜÀ§ Ç¥½Ã ([kHz])
   TFT_English_pixel(288, 223, 'k');
   TFT_English_pixel(296, 223, 'H');
   TFT_English_pixel(304, 223, 'z');
   TFT_English_pixel(312, 223, ']');
 
-  // xì¶• ì„  ê·¸ë¦¬ê¸°
-  Line(30, 220, 310, 220, White);         // xì¶• ì„ 
-  Line(305, 215, 310, 220, White);        // xì¶• í™”ì‚´í‘œ
+  // xÃà ¼± ±×¸®±â
+  Line(30, 220, 310, 220, White);         // xÃà ¼±
+  Line(305, 215, 310, 220, White);        // xÃà È­»ìÇ¥
   Line(305, 225, 310, 220, White);
   
-  // xì¶• ëˆˆê¸ˆ ê·¸ë¦¬ê¸°
+  // xÃà ´«±Ý ±×¸®±â
   for (x = 50; x <= 309; x += 20) {
     Line(x, 218, x, 222, White);
   }
 
-  // yì¶• ì„  ê·¸ë¦¬ê¸°
-  Line(30, 28, 30, 220, White);          // yì¶• ì„ 
-  Line(35, 33, 30, 28, White);           // yì¶• í™”ì‚´í‘œ
+  // yÃà ¼± ±×¸®±â
+  Line(30, 28, 30, 220, White);          // yÃà ¼±
+  Line(35, 33, 30, 28, White);           // yÃà È­»ìÇ¥
   Line(25, 33, 30, 28, White);
 
-  // yì¶• ëˆˆê¸ˆ ê·¸ë¦¬ê¸°
+  // yÃà ´«±Ý ±×¸®±â
   for (y = 40; y <= 202; y += 18) {
     Line(28, y, 32, y, White);
   }
@@ -248,37 +248,37 @@ void Clear_FFT_Display(void)
 {
     for(int i = 0; i < 128; i++)
     {
-        Line(30 + 2 * i, 219, 30 + 2 * i, 219 - 180, Black);  // ì´ì „ ë°” ì‚­ì œ
+        Line(30 + 2 * i, 219, 30 + 2 * i, 219 - 180, Black);  // ÀÌÀü ¹Ù »èÁ¦
     }
 }
 
 
-/* ----- FFT ê²°ê³¼ ë°” ê·¸ëž˜í”„ ê·¸ë¦¬ê¸° í•¨ìˆ˜ ------------------------------------------ */
+/* ----- FFT °á°ú ¹Ù ±×·¡ÇÁ ±×¸®±â ÇÔ¼ö ------------------------------------------ */
 
-void Draw_FFT(U16 index, float value)     /* FFT ê²°ê³¼ë¥¼ ë°” í˜•íƒœë¡œ ê·¸ë¦¬ëŠ” í•¨ìˆ˜ */
+void Draw_FFT(U16 index, float value)     /* FFT °á°ú¸¦ ¹Ù ÇüÅÂ·Î ±×¸®´Â ÇÔ¼ö */
 {
   unsigned short height;
 
-  height = (unsigned short)value;         // ë°”ì˜ ë†’ì´ ê³„ì‚°
-  if(height >= 180.) height = 180.;       // ìµœëŒ€ ë†’ì´ ì œí•œ
+  height = (unsigned short)value;         // ¹ÙÀÇ ³ôÀÌ °è»ê
+  if(height >= 180.) height = 180.;       // ÃÖ´ë ³ôÀÌ Á¦ÇÑ
 
-  Line(30+2*index, 219, 30+2*index, 219 - 180, Black);    // ì´ì „ ë°” ì‚­ì œ
-  Line(30+2*index, 219, 30+2*index, 219 - height, Red);   // ìƒˆë¡œìš´ ë°” ê·¸ë¦¬ê¸°
+  Line(30+2*index, 219, 30+2*index, 219 - 180, Black);    // ÀÌÀü ¹Ù »èÁ¦
+  Line(30+2*index, 219, 30+2*index, 219 - height, Red);   // »õ·Î¿î ¹Ù ±×¸®±â
 }
 
 void display_info() {
-    static uint8_t blink = 0;  // ê¹œë°•ìž„ ìƒíƒœë¥¼ ì €ìž¥í•  ë³€ìˆ˜
+    static uint8_t blink = 0;  // ±ô¹ÚÀÓ »óÅÂ¸¦ ÀúÀåÇÒ º¯¼ö
     
     if(blink) {
-        // ë¬¸êµ¬ë¥¼ í‘œì‹œ
-        TFT_string(7, 3, Cyan, Black, "ì˜¤ë””ì˜¤ë¥¼ ë¶„ì„í•˜ê³  ìžˆìŠµë‹ˆë‹¤..."); 
+        // ¹®±¸¸¦ Ç¥½Ã
+        TFT_string(7, 3, Cyan, Black, "¿Àµð¿À¸¦ ºÐ¼®ÇÏ°í ÀÖ½À´Ï´Ù..."); 
     } else {
-        // ë¬¸êµ¬ë¥¼ ì§€ì›€ (ê²€ì€ìƒ‰ ë°°ê²½ìœ¼ë¡œ ë®ì–´ì”€)
+        // ¹®±¸¸¦ Áö¿ò (°ËÀº»ö ¹è°æÀ¸·Î µ¤¾î¾¸)
         TFT_string(7, 3, Black, Black, "                             ");
     }
     
     Rectangle(0, 0, 319, 239, Blue);
     
-    // ìƒíƒœ í† ê¸€ (0->1, 1->0)
+    // »óÅÂ Åä±Û (0->1, 1->0)
     blink ^= 1;
 }

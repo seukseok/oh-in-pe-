@@ -395,7 +395,9 @@ void Draw_Piano_WAV_UI(void) {
     TFT_Filename();
     // 재생 상태 표시 영역
     TFT_string(33, 9, THEME_TEXT, THEME_BG, "[stop]");
+    TFT_string(0, 12, THEME_TEXT, THEME_BG, "----------------------------------------");
     TFT_string(0, 27, White, THEME_BG, "PLAY[KEY1]Next[KEY2]Prev[KEY3]home[KEY4]");
+    
 }
 
 void Draw_Keys(void) {

@@ -1,4 +1,4 @@
-"C:\IAR Systems\oh-in-pe-\testfft.c"
+"C:\IAR Systems\oh-in-pe-\testFFT.c"
 -std=c99
 -ferror-limit=100
 -I
