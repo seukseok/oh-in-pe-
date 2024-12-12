@@ -153,3 +153,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ![alt text](image-3.png)
 ![alt text](image-4.png)
 ![alt text](image-5.png)
+
+---
+
+### Diagrams
+ - main.c
+![alt text](image-6.png)
+
+ - FFT_WAV.c
+![alt text](image-7.png)
