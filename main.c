@@ -27,14 +27,14 @@
 #define BLACK_KEY_WIDTH     22
 #define BLACK_KEY_HEIGHT    54
 
-#define C_NOTE  382
-#define D_NOTE  340
-#define E_NOTE  303
-#define F_NOTE  286
-#define G_NOTE  255
-#define A_NOTE  227
-#define B_NOTE  202
-#define CH_NOTE 191
+#define C_NOTE  382  // 도 (261.63 Hz)
+#define D_NOTE  340  // 레 (293.66 Hz)
+#define E_NOTE  303  // 미 (329.63 Hz)
+#define F_NOTE  286  // 파 (349.23 Hz)
+#define G_NOTE  255  // 솔 (392.00 Hz)
+#define A_NOTE  227  // 라 (440.00 Hz)
+#define B_NOTE  202  // 시 (493.88 Hz)
+#define CH_NOTE 191  // 높은 도 (523.25 Hz)
 
 #define SLIDER_NUM      3
 #define SLIDER_Y_MAX    180
